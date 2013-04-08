@@ -24,12 +24,12 @@ namespace Grean.AtomEventStore
         {
             return Task.Factory.StartNew(() =>
             {
-                var feed = new SyndicationFeed();
-                this.headWriter.CreateOrUpdate(feed);
-
                 var item = new SyndicationItem();
                 item.Content = XmlSyndicationContent.CreateXmlContent(@event);
                 this.entryWriter.Create(item);
+
+                var feed = new SyndicationFeed();
+                this.headWriter.CreateOrUpdate(feed);
             });
         }
     }

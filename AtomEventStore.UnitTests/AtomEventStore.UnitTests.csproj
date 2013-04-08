@@ -59,6 +59,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MockEnvy.cs" />
+    <Compile Include="SpySequence.cs" />
     <Compile Include="SyndicationStoreTests.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

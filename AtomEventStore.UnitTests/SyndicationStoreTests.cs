@@ -23,8 +23,7 @@ namespace Grean.AtomEventStore.UnitTests
             string id,
             TestEvent @event)
         {
-            sut.Append(id, @event).Wait();
-
+            var sequence = new SpySequence();
             var expectedEntry = new SyndicationItemBuilder()
                 .WithXmlContent(@event)
                 .Build()
@@ -32,8 +31,22 @@ namespace Grean.AtomEventStore.UnitTests
             var expectedHead = new SyndicationFeedBuilder()
                 .Build()
                 .ToResemblance();
-            entryWriterMock.Verify(w => w.Create(expectedEntry));
-            headWriterMock.Verify(w => w.CreateOrUpdate(expectedHead));
+            entryWriterMock
+                .Setup(w => w.Create(expectedEntry))
+                .InSequence(sequence)
+                .Verifiable();
+            headWriterMock
+                .Setup(w => w.CreateOrUpdate(expectedHead))
+                .InSequence(sequence)
+                .Verifiable();
+
+            sut.Append(id, @event).Wait();
+
+            entryWriterMock.Verify();
+            headWriterMock.Verify();
+            Assert.True(
+                sequence.IsOrdered,
+                "Mocks were invoked out of expected order.");
         }
     }
 }
