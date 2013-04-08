@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtomEventStore.UnitTests", "AtomEventStore.UnitTests\AtomEventStore.UnitTests.csproj", "{C55E16B8-9FA9-4A22-A1A2-C72A8CB71701}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtomEventStore", "AtomEventStore\AtomEventStore.csproj", "{A9D6CB62-1949-402A-95EB-007710E98735}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{C55E16B8-9FA9-4A22-A1A2-C72A8CB71701}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C55E16B8-9FA9-4A22-A1A2-C72A8CB71701}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C55E16B8-9FA9-4A22-A1A2-C72A8CB71701}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9D6CB62-1949-402A-95EB-007710E98735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9D6CB62-1949-402A-95EB-007710E98735}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9D6CB62-1949-402A-95EB-007710E98735}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9D6CB62-1949-402A-95EB-007710E98735}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
