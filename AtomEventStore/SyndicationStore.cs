@@ -30,6 +30,8 @@ namespace Grean.AtomEventStore
                 item.Id = changesetId.ToString();
                 item.Title = new TextSyndicationContent(
                     "Changeset " + (Guid)changesetId);
+                item.PublishDate = DateTimeOffset.Now;
+                item.LastUpdatedTime = item.PublishDate;
                 item.Authors.Add(new SyndicationPerson { Name = "Grean" });
                 item.Content = XmlSyndicationContent.CreateXmlContent(@event);
                 this.entryWriter.Create(item);
