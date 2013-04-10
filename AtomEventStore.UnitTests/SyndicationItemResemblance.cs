@@ -38,12 +38,8 @@ namespace Grean.AtomEventStore.UnitTests
 
         private static bool IsCorrectId(string candidate)
         {
-            Guid dummy;
-            return candidate != null
-                && candidate.StartsWith("urn:uuid:")
-                && Guid.TryParse(
-                    candidate.Substring("urn:uuid:".Length),
-                    out dummy);
+            UuidIri dummy;
+            return UuidIri.TryParse(candidate, out dummy);
         }
 
         private static bool HasCorrectAuthors(
