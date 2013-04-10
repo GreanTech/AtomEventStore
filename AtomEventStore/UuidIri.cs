@@ -23,5 +23,10 @@ namespace Grean.AtomEventStore
         {
             return uuidIri.id;
         }
+
+        public static implicit operator UuidIri(Guid guid)
+        {
+            return new UuidIri(guid);
+        }
     }
 }
