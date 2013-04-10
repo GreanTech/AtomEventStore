@@ -18,5 +18,10 @@ namespace Grean.AtomEventStore
         {
             return "urn:uuid:" + this.id;
         }
+
+        public static implicit operator Guid(UuidIri uuidIri)
+        {
+            return uuidIri.id;
+        }
     }
 }
