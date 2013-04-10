@@ -27,5 +27,14 @@ namespace Grean.AtomEventStore.UnitTests
             Guid actual = sut;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void GuidCorrectlyConvertsToSut(
+            UuidIri sut)
+        {
+            Guid expected = sut;
+            UuidIri actual = expected;
+            Assert.Equal<Guid>(expected, actual);
+        }
     }
 }
