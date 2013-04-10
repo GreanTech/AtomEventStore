@@ -113,5 +113,14 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.False(couldParse, "TryParse should fail.");
             Assert.Equal(default(UuidIri), actual);
         }
+
+        [Fact]
+        public void NewIdReturnsUniqueId()
+        {
+            var x = UuidIri.NewId();
+            var y = UuidIri.NewId();
+
+            Assert.NotEqual(x, y);
+        }
     }
 }

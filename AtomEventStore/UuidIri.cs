@@ -44,5 +44,10 @@ namespace Grean.AtomEventStore
             uuidIri = default(UuidIri);
             return false;
         }
+
+        public static UuidIri NewId()
+        {
+            return new UuidIri(Guid.NewGuid());
+        }
     }
 }
