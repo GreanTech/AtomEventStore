@@ -25,6 +25,7 @@ namespace Grean.AtomEventStore
             return Task.Factory.StartNew(() =>
             {
                 var item = new SyndicationItem();
+                item.Id = "urn:uuid:" + Guid.NewGuid();
                 item.Content = XmlSyndicationContent.CreateXmlContent(@event);
                 this.entryWriter.Create(item);
 
