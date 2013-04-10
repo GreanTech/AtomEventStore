@@ -25,6 +25,8 @@ namespace Grean.AtomEventStore.UnitTests
             var other = obj as SyndicationItem;
             if (other != null)
                 return IsCorrectId(other.Id)
+                    && HasCorrectTitle(other)
+                    && this.HasCorrectDates(other)
                     && HasCorrectAuthors(other.Authors)
                     && this.contentComparer.Equals(
                         this.item.Content, other.Content);
@@ -46,6 +48,23 @@ namespace Grean.AtomEventStore.UnitTests
             IEnumerable<SyndicationPerson> candidate)
         {
             return candidate.Any(p => !string.IsNullOrWhiteSpace(p.Name));
+        }
+
+        private static bool HasCorrectTitle(SyndicationItem candidate)
+        {
+            UuidIri id;
+            UuidIri.TryParse(candidate.Id, out id);
+
+            var expectedTitle = "Changeset " + (Guid)id;
+            return candidate.Title != null
+                && candidate.Title.Text == expectedTitle;
+        }
+
+        private bool HasCorrectDates(SyndicationItem other)
+        {
+            return this.item.PublishDate <= other.PublishDate
+                && other.PublishDate <= DateTimeOffset.Now
+                && other.PublishDate == other.LastUpdatedTime;
         }
 
         private class SyndicationContentComparer : 
