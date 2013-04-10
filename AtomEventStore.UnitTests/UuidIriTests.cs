@@ -101,5 +101,15 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.False(couldParse, "TryParse should fail.");
             Assert.Equal(default(UuidIri), actual);
         }
+
+        [Theory, AutoAtomData]
+        public void TryParseNullReturnsCorrectResult()
+        {
+            UuidIri actual;
+            bool couldParse = UuidIri.TryParse(null, out actual);
+
+            Assert.False(couldParse, "TryParse should fail.");
+            Assert.Equal(default(UuidIri), actual);
+        }
     }
 }
