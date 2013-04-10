@@ -71,6 +71,7 @@
     <Compile Include="SyndicationEnvy.cs" />
     <Compile Include="SyndicationItemResemblance.cs" />
     <Compile Include="TestEvent.cs" />
+    <Compile Include="UuidIriTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
