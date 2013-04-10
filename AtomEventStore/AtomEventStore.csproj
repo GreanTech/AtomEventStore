@@ -40,10 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AtomEntryFileWriter.cs" />
     <Compile Include="SyndicationStore.cs" />
     <Compile Include="ISyndicationFeedWriter.cs" />
     <Compile Include="ISyndicationItemWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UuidIri.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

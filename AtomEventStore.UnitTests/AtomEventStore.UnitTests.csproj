@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AtomEntryFileWriterTests.cs" />
     <Compile Include="MockEnvy.cs" />
     <Compile Include="SpySequence.cs" />
     <Compile Include="SyndicationStoreTests.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="SyndicationEnvy.cs" />
     <Compile Include="SyndicationItemResemblance.cs" />
     <Compile Include="TestEvent.cs" />
+    <Compile Include="UuidIriTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

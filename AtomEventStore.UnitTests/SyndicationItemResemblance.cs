@@ -24,14 +24,28 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var other = obj as SyndicationItem;
             if (other != null)
-                return this.contentComparer.Equals(
-                    this.item.Content, other.Content);
+                return IsCorrectId(other.Id)
+                    && HasCorrectAuthors(other.Authors)
+                    && this.contentComparer.Equals(
+                        this.item.Content, other.Content);
             return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
             return 0;
+        }
+
+        private static bool IsCorrectId(string candidate)
+        {
+            UuidIri dummy;
+            return UuidIri.TryParse(candidate, out dummy);
+        }
+
+        private static bool HasCorrectAuthors(
+            IEnumerable<SyndicationPerson> candidate)
+        {
+            return candidate.Any(p => !string.IsNullOrWhiteSpace(p.Name));
         }
 
         private class SyndicationContentComparer : 

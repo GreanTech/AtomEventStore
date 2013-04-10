@@ -7,5 +7,8 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class TestEvent
     {
+        public int Number { get; set; }
+
+        public string Text { get; set; }
     }
 }
