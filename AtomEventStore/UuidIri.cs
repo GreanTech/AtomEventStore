@@ -7,6 +7,7 @@ namespace Grean.AtomEventStore
 {
     public struct UuidIri
     {
+        private const string prefix = "urn:uuid:";
         private readonly Guid id;
 
         public UuidIri(Guid id)
@@ -16,7 +17,7 @@ namespace Grean.AtomEventStore
 
         public override string ToString()
         {
-            return "urn:uuid:" + this.id;
+            return prefix + this.id;
         }
 
         public static implicit operator Guid(UuidIri uuidIri)
@@ -32,8 +33,8 @@ namespace Grean.AtomEventStore
         public static bool TryParse(string candidate, out UuidIri uuidIri)
         {
             Guid parsedId;
-            if (candidate.StartsWith("urn:uuid:") &&
-                Guid.TryParse(candidate.Substring("urn:uuid:".Length), out parsedId))
+            if (candidate.StartsWith(prefix) &&
+                Guid.TryParse(candidate.Substring(prefix.Length), out parsedId))
             {
                 uuidIri = parsedId;
                 return true;
