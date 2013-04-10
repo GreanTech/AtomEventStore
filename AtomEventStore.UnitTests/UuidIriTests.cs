@@ -78,9 +78,11 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void TryParseIncorrectlyPrefixedStringReturnsCorrectResult(
+            string incorrectPrefix,
             Guid guid)
         {
-            var inccorectlyPrefixed = "this.is:not:right" + guid;
+            Assert.NotEqual("urn:uuid:", incorrectPrefix);
+            var inccorectlyPrefixed = incorrectPrefix + guid;
 
             UuidIri actual;
             bool couldParse = UuidIri.TryParse(inccorectlyPrefixed, out actual);
