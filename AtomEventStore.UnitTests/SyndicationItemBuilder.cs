@@ -12,8 +12,9 @@ namespace Grean.AtomEventStore.UnitTests
         private readonly SyndicationContent content;
 
         public SyndicationItemBuilder()
+            : this(
+                SyndicationContent.CreatePlaintextContent(""))
         {
-            this.content = SyndicationContent.CreatePlaintextContent("");
         }
 
         private SyndicationItemBuilder(SyndicationContent content)
