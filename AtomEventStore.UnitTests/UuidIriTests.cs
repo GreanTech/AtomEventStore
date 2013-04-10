@@ -36,5 +36,31 @@ namespace Grean.AtomEventStore.UnitTests
             UuidIri actual = expected;
             Assert.Equal<Guid>(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void TwoSutsWithIdenticalIdAreEqual(Guid guid)
+        {
+            UuidIri sut = guid;
+            UuidIri other = guid;
+
+            var actual = sut.Equals(other);
+
+            Assert.True(actual, "Equals");
+        }
+
+        [Theory, AutoAtomData]
+        public void TwoSutsWithDifferentIdsAreNotEquals(
+            Guid x,
+            Guid y)
+        {
+            Assert.NotEqual(x, y);
+
+            UuidIri sut = x;
+            UuidIri other = y;
+
+            var actual = sut.Equals(other);
+
+            Assert.False(actual, "Equals");
+        }
     }
 }
