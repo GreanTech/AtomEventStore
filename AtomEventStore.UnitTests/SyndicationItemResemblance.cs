@@ -25,6 +25,7 @@ namespace Grean.AtomEventStore.UnitTests
             var other = obj as SyndicationItem;
             if (other != null)
                 return IsCorrectId(other.Id)
+                    && HasCorrectAuthors(other.Authors)
                     && this.contentComparer.Equals(
                         this.item.Content, other.Content);
             return base.Equals(obj);
@@ -43,6 +44,12 @@ namespace Grean.AtomEventStore.UnitTests
                 && Guid.TryParse(
                     candidate.Substring("urn:uuid:".Length),
                     out dummy);
+        }
+
+        private static bool HasCorrectAuthors(
+            IEnumerable<SyndicationPerson> candidate)
+        {
+            return candidate.Any(p => !string.IsNullOrWhiteSpace(p.Name));
         }
 
         private class SyndicationContentComparer : 

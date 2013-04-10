@@ -26,6 +26,7 @@ namespace Grean.AtomEventStore
             {
                 var item = new SyndicationItem();
                 item.Id = "urn:uuid:" + Guid.NewGuid();
+                item.Authors.Add(new SyndicationPerson { Name = "Grean" });
                 item.Content = XmlSyndicationContent.CreateXmlContent(@event);
                 this.entryWriter.Create(item);
 
