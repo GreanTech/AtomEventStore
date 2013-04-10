@@ -62,5 +62,44 @@ namespace Grean.AtomEventStore.UnitTests
 
             Assert.False(actual, "Equals");
         }
+
+        [Theory, AutoAtomData]
+        public void TryParseCorrectlyFormattedStringReturnsCorrectResult(
+            UuidIri expected)
+        {
+            var correctlyFormatted = expected.ToString();
+
+            UuidIri actual;
+            bool couldParse = UuidIri.TryParse(correctlyFormatted, out actual);
+
+            Assert.True(couldParse, "TryParse should succeed.");
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void TryParseIncorrectlyPrefixedStringReturnsCorrectResult(
+            Guid guid)
+        {
+            var inccorectlyPrefixed = "this.is:not:right" + guid;
+
+            UuidIri actual;
+            bool couldParse = UuidIri.TryParse(inccorectlyPrefixed, out actual);
+
+            Assert.False(couldParse, "TryParse should fail.");
+            Assert.Equal(default(UuidIri), actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void TryParseStringWithIncorrectIdReturnsCorrectResult(
+            DateTimeOffset notAGuid)
+        {
+            var incorrectlyIdd = "urn:uuid:" + notAGuid.ToString();
+
+            UuidIri actual;
+            bool couldParse = UuidIri.TryParse(incorrectlyIdd, out actual);
+
+            Assert.False(couldParse, "TryParse should fail.");
+            Assert.Equal(default(UuidIri), actual);
+        }
     }
 }

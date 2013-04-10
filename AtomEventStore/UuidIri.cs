@@ -28,5 +28,24 @@ namespace Grean.AtomEventStore
         {
             return new UuidIri(guid);
         }
+
+        public static bool TryParse(string candidate, out UuidIri uuidIri)
+        {
+            if (!candidate.StartsWith("urn:uuid:"))
+            {
+                uuidIri = default(UuidIri);
+                return false;
+            }
+
+            Guid parsedId;
+            if (!Guid.TryParse(candidate.Substring("urn:uuid:".Length), out parsedId))
+            {
+                uuidIri = default(UuidIri);
+                return false;
+            }
+
+            uuidIri = parsedId;
+            return true;
+        }
     }
 }
