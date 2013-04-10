@@ -24,8 +24,12 @@ namespace Grean.AtomEventStore
         {
             return Task.Factory.StartNew(() =>
             {
+                var changesetId = UuidIri.NewId();
+
                 var item = new SyndicationItem();
-                item.Id = UuidIri.NewId().ToString();
+                item.Id = changesetId.ToString();
+                item.Title = new TextSyndicationContent(
+                    "Changeset " + (Guid)changesetId);
                 item.Authors.Add(new SyndicationPerson { Name = "Grean" });
                 item.Content = XmlSyndicationContent.CreateXmlContent(@event);
                 this.entryWriter.Create(item);
