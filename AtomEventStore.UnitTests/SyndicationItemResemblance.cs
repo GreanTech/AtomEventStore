@@ -25,7 +25,7 @@ namespace Grean.AtomEventStore.UnitTests
             if (other != null)
                 return IsCorrectId(other.Id)
                     && HasCorrectTitle(other)
-                    && HasCorrectLinks(other)
+                    && this.HasCorrectLinks(other)
                     && this.HasCorrectDates(other)
                     && HasCorrectAuthors(other.Authors)
                     && this.contentComparer.Equals(
@@ -59,17 +59,41 @@ namespace Grean.AtomEventStore.UnitTests
                 && candidate.Title.Text == expectedTitle;
         }
 
-        private static bool HasCorrectLinks(SyndicationItem candidate)
+        private bool HasCorrectLinks(SyndicationItem candidate)
         {
             var changesetId = UuidIri.Parse(candidate.Id);
-            var expectedUri =
-                new Uri(((Guid)changesetId).ToString(), UriKind.Relative);
-            Func<SyndicationLink, bool> isCorrectSelfLink = l =>
-                l.RelationshipType == "self" &&
-                l.Uri == expectedUri;
+            var expectedSelfUri = new Uri(
+                ((Guid)changesetId).ToString(),
+                UriKind.Relative);
 
-            return candidate != null
-                && candidate.Links.Count(isCorrectSelfLink) == 1;
+            var expected = new HashSet<SyndicationLink>(
+                this.Links,
+                new SyndicationLinkComparer(expectedSelfUri));
+            return expected.SetEquals(candidate.Links);
+        }
+
+        private class SyndicationLinkComparer :
+            IEqualityComparer<SyndicationLink>
+        {
+            private readonly Uri expectedSelfUri;
+
+            public SyndicationLinkComparer(Uri expectedSelfUri)
+            {
+                this.expectedSelfUri = expectedSelfUri;
+            }
+
+            public bool Equals(SyndicationLink x, SyndicationLink y)
+            {
+                if (y.RelationshipType == "self")
+                    return y.Uri == this.expectedSelfUri;
+                return object.Equals(x.RelationshipType, y.RelationshipType)
+                    && object.Equals(x.Uri, y.Uri);
+            }
+
+            public int GetHashCode(SyndicationLink obj)
+            {
+                return 0;
+            }
         }
 
         private bool HasCorrectDates(SyndicationItem other)
