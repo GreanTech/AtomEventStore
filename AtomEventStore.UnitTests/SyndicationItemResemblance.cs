@@ -26,6 +26,7 @@ namespace Grean.AtomEventStore.UnitTests
             if (other != null)
                 return IsCorrectId(other.Id)
                     && HasCorrectTitle(other)
+                    && HasCorrectLinks(other)
                     && this.HasCorrectDates(other)
                     && HasCorrectAuthors(other.Authors)
                     && this.contentComparer.Equals(
@@ -58,6 +59,20 @@ namespace Grean.AtomEventStore.UnitTests
             var expectedTitle = "Changeset " + (Guid)id;
             return candidate.Title != null
                 && candidate.Title.Text == expectedTitle;
+        }
+
+        private static bool HasCorrectLinks(SyndicationItem candidate)
+        {
+            UuidIri changesetId;
+            UuidIri.TryParse(candidate.Id, out changesetId);
+            var expectedUri =
+                new Uri(((Guid)changesetId).ToString(), UriKind.Relative);
+            Func<SyndicationLink, bool> isCorrectSelfLink = l =>
+                l.RelationshipType == "self" &&
+                l.Uri == expectedUri;
+
+            return candidate != null
+                && candidate.Links.Count(isCorrectSelfLink) == 1;
         }
 
         private bool HasCorrectDates(SyndicationItem other)

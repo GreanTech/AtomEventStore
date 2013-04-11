@@ -30,6 +30,12 @@ namespace Grean.AtomEventStore
                 item.Id = changesetId.ToString();
                 item.Title = new TextSyndicationContent(
                     "Changeset " + (Guid)changesetId);
+                item.Links.Add(
+                    new SyndicationLink
+                    {
+                        RelationshipType = "self",
+                        Uri = new Uri(((Guid)changesetId).ToString(), UriKind.Relative)
+                    });
                 item.PublishDate = DateTimeOffset.Now;
                 item.LastUpdatedTime = item.PublishDate;
                 item.Authors.Add(new SyndicationPerson { Name = "Grean" });

@@ -10,6 +10,7 @@ using Moq;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
+using System.ServiceModel.Syndication;
 
 namespace Grean.AtomEventStore.UnitTests
 {
