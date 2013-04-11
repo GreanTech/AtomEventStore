@@ -30,7 +30,7 @@ namespace Grean.AtomEventStore.UnitTests
                 .Build()
                 .ToResemblance();
 
-            var expectedFeedItem = expectedEntry.ToResemblance();
+            var expectedFeedItem = expectedEntry.Clone().ToResemblance();
             var itemSelfLink = expectedFeedItem.Links
                 .Single(l => l.RelationshipType == "self");
             itemSelfLink.RelationshipType = "via";
