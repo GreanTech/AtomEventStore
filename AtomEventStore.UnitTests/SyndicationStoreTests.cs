@@ -10,6 +10,7 @@ using Moq;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
+using System.ServiceModel.Syndication;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -23,15 +24,22 @@ namespace Grean.AtomEventStore.UnitTests
             string id,
             TestEvent @event)
         {
-            var sequence = new SpySequence();
+            // Fixture setup
             var expectedEntry = new SyndicationItemBuilder()
                 .WithXmlContent(@event)
                 .Build()
                 .ToResemblance();
+
             var expectedHead = new SyndicationFeedBuilder()
                 .WithFeedId(id)
+                .WithItem(expectedEntry
+                    .Clone()
+                    .ChangeLinkRelationShipTypes(from: "self", to: "via")
+                    .ToResemblance())
                 .Build()
                 .ToResemblance();
+
+            var sequence = new SpySequence();
             entryWriterMock
                 .Setup(w => w.Create(expectedEntry))
                 .InSequence(sequence)
@@ -41,13 +49,17 @@ namespace Grean.AtomEventStore.UnitTests
                 .InSequence(sequence)
                 .Verifiable();
 
+            // Exercise system
             sut.Append(id, @event).Wait();
 
+            // Verify outcome
             entryWriterMock.Verify();
             headWriterMock.Verify();
             Assert.True(
                 sequence.IsOrdered,
                 "Mocks were invoked out of expected order.");
+
+            // Teardown
         }
     }
 }

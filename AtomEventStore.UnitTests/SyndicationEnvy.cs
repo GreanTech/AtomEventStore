@@ -20,5 +20,16 @@ namespace Grean.AtomEventStore.UnitTests
         {
             return new SyndicationFeedResemblance(syndicationFeed);
         }
+
+        public static SyndicationItem ChangeLinkRelationShipTypes(
+            this SyndicationItem syndicationItem,
+            string from,
+            string to)
+        {
+            var newItem = syndicationItem.Clone();
+            foreach (var l in newItem.Links.Where(l => l.RelationshipType == from))
+                l.RelationshipType = to;
+            return newItem;
+        }
     }
 }

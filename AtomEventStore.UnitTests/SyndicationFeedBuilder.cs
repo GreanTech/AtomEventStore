@@ -9,25 +9,38 @@ namespace Grean.AtomEventStore.UnitTests
     public class SyndicationFeedBuilder
     {
         private readonly string feedId;
+        private readonly IEnumerable<SyndicationItem> items;
 
         public SyndicationFeedBuilder()
-            : this(Guid.NewGuid().ToString())
+            : this(
+                Guid.NewGuid().ToString(),
+                Enumerable.Empty<SyndicationItem>())
         {
         }
 
-        private SyndicationFeedBuilder(string feedId)
+        private SyndicationFeedBuilder(
+            string feedId,
+            IEnumerable<SyndicationItem> items)
         {
             this.feedId = feedId;
+            this.items = items;
         }
 
-        public SyndicationFeedBuilder WithFeedId(string feedId)
+        public SyndicationFeedBuilder WithFeedId(string newFeedId)
         {
-            return new SyndicationFeedBuilder(feedId);
+            return new SyndicationFeedBuilder(newFeedId, this.items);
+        }
+
+        public SyndicationFeedBuilder WithItem(SyndicationItem newItem)
+        {
+            return new SyndicationFeedBuilder(
+                this.feedId,
+                this.items.Concat(new[] { newItem }));
         }
 
         public SyndicationFeed Build()
         {
-            var feed = new SyndicationFeed();
+            var feed = new SyndicationFeed(this.items.ToList());
             feed.Id = this.feedId;
             feed.Links.Add(
                 new SyndicationLink
