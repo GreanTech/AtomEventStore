@@ -37,6 +37,17 @@ namespace Grean.AtomEventStore
                 this.entryWriter.Create(item);
 
                 var feed = new SyndicationFeed();
+                feed.Id = id;
+                feed.Title = new TextSyndicationContent(
+                    "Head of event stream " + id);
+                feed.Links.Add(
+                    new SyndicationLink
+                    {
+                        RelationshipType = "self",
+                        Uri = new Uri(id, UriKind.Relative)
+                    });
+                feed.LastUpdatedTime = DateTimeOffset.Now;
+                feed.Authors.Add(new SyndicationPerson { Name = "Grean" });
                 this.headWriter.CreateOrUpdate(feed);
             });
         }

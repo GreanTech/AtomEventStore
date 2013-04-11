@@ -29,6 +29,7 @@ namespace Grean.AtomEventStore.UnitTests
                 .Build()
                 .ToResemblance();
             var expectedHead = new SyndicationFeedBuilder()
+                .WithFeedId(id)
                 .Build()
                 .ToResemblance();
             entryWriterMock
