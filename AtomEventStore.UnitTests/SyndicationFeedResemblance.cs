@@ -22,7 +22,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var other = obj as SyndicationFeed;
             if (other != null)
-                return HasCorrectAuthors(other.Authors);
+                return object.Equals(this.feed.Id, other.Id)
+                    && HasCorrectAuthors(other.Authors);
             return base.Equals(obj);
         }
 

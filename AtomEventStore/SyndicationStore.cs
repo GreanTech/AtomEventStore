@@ -37,6 +37,7 @@ namespace Grean.AtomEventStore
                 this.entryWriter.Create(item);
 
                 var feed = new SyndicationFeed();
+                feed.Id = id;
                 feed.Authors.Add(new SyndicationPerson { Name = "Grean" });
                 this.headWriter.CreateOrUpdate(feed);
             });
