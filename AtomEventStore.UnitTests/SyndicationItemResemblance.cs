@@ -12,12 +12,11 @@ namespace Grean.AtomEventStore.UnitTests
     public class SyndicationItemResemblance : SyndicationItem
     {
         private readonly SyndicationContentComparer contentComparer;
-        private readonly SyndicationItem item;
 
         public SyndicationItemResemblance(SyndicationItem item)
+            : base(item)
         {
             this.contentComparer = new SyndicationContentComparer();
-            this.item = item;
         }
 
         public override bool Equals(object obj)
@@ -30,7 +29,7 @@ namespace Grean.AtomEventStore.UnitTests
                     && this.HasCorrectDates(other)
                     && HasCorrectAuthors(other.Authors)
                     && this.contentComparer.Equals(
-                        this.item.Content, other.Content);
+                        this.Content, other.Content);
             return base.Equals(obj);
         }
 
@@ -75,12 +74,12 @@ namespace Grean.AtomEventStore.UnitTests
 
         private bool HasCorrectDates(SyndicationItem other)
         {
-            return this.item.PublishDate <= other.PublishDate
+            return this.PublishDate <= other.PublishDate
                 && other.PublishDate <= DateTimeOffset.Now
                 && other.PublishDate == other.LastUpdatedTime;
         }
 
-        private class SyndicationContentComparer : 
+        private class SyndicationContentComparer :
             IEqualityComparer<SyndicationContent>
         {
             public bool Equals(SyndicationContent x, SyndicationContent y)

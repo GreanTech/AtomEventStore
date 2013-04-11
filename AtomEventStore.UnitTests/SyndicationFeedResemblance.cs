@@ -11,18 +11,16 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class SyndicationFeedResemblance : SyndicationFeed
     {
-        private readonly SyndicationFeed feed;
-
         public SyndicationFeedResemblance(SyndicationFeed feed)
+            : base(feed, true)
         {
-            this.feed = feed;
         }
 
         public override bool Equals(object obj)
         {
             var other = obj as SyndicationFeed;
             if (other != null)
-                return object.Equals(this.feed.Id, other.Id)
+                return object.Equals(this.Id, other.Id)
                     && this.HasCorrectLinks(other.Links)
                     && this.HasCorrectDate(other.LastUpdatedTime)
                     && this.HasCorrectTitle(other.Title)
@@ -38,7 +36,7 @@ namespace Grean.AtomEventStore.UnitTests
         private bool HasCorrectLinks(IEnumerable<SyndicationLink> candidates)
         {
             var expected = new HashSet<SyndicationLink>(
-                this.feed.Links,
+                this.Links,
                 new SyndicationLinkComparer());
             return expected.SetEquals(candidates);
         }
@@ -62,13 +60,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             return candidate != null
                 && object.Equals(
-                    "Head of event stream " + this.feed.Id,
+                    "Head of event stream " + this.Id,
                     candidate.Text);
         }
 
         private bool HasCorrectDate(DateTimeOffset candidate)
         {
-            return this.feed.LastUpdatedTime <= candidate
+            return this.LastUpdatedTime <= candidate
                 && candidate <= DateTimeOffset.Now;
         }
 

@@ -27,7 +27,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         public SyndicationFeed Build()
         {
-            var feed = new SyndicationFeed();
+            var feed = new SyndicationFeed(new List<SyndicationItem>());
             feed.Id = this.feedId;
             feed.Links.Add(
                 new SyndicationLink
