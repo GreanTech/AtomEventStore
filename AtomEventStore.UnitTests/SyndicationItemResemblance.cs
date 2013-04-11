@@ -53,8 +53,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         private static bool HasCorrectTitle(SyndicationItem candidate)
         {
-            UuidIri id;
-            UuidIri.TryParse(candidate.Id, out id);
+            var id = UuidIri.Parse(candidate.Id);
 
             var expectedTitle = "Changeset " + (Guid)id;
             return candidate.Title != null
@@ -63,8 +62,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         private static bool HasCorrectLinks(SyndicationItem candidate)
         {
-            UuidIri changesetId;
-            UuidIri.TryParse(candidate.Id, out changesetId);
+            var changesetId = UuidIri.Parse(candidate.Id);
             var expectedUri =
                 new Uri(((Guid)changesetId).ToString(), UriKind.Relative);
             Func<SyndicationLink, bool> isCorrectSelfLink = l =>
