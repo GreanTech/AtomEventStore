@@ -38,6 +38,12 @@ namespace Grean.AtomEventStore
 
                 var feed = new SyndicationFeed();
                 feed.Id = id;
+                feed.Links.Add(
+                    new SyndicationLink
+                    {
+                        RelationshipType = "self",
+                        Uri = new Uri(id, UriKind.Relative)
+                    });
                 feed.Authors.Add(new SyndicationPerson { Name = "Grean" });
                 this.headWriter.CreateOrUpdate(feed);
             });

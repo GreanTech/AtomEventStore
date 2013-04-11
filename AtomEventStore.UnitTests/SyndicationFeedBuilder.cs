@@ -27,7 +27,16 @@ namespace Grean.AtomEventStore.UnitTests
 
         public SyndicationFeed Build()
         {
-            return new SyndicationFeed { Id = this.feedId };
+            var feed = new SyndicationFeed();
+            feed.Id = this.feedId;
+            feed.Links.Add(
+                new SyndicationLink
+                {
+                    RelationshipType = "self",
+                    Uri = new Uri(this.feedId, UriKind.Relative)
+                });
+
+            return feed;
         }
     }
 }

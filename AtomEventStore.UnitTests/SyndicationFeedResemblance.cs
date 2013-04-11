@@ -23,6 +23,7 @@ namespace Grean.AtomEventStore.UnitTests
             var other = obj as SyndicationFeed;
             if (other != null)
                 return object.Equals(this.feed.Id, other.Id)
+                    && this.HasCorrectLinks(other.Links)
                     && HasCorrectAuthors(other.Authors);
             return base.Equals(obj);
         }
@@ -30,6 +31,29 @@ namespace Grean.AtomEventStore.UnitTests
         public override int GetHashCode()
         {
             return 0;
+        }
+
+        private bool HasCorrectLinks(IEnumerable<SyndicationLink> candidates)
+        {
+            var expected = new HashSet<SyndicationLink>(
+                this.feed.Links,
+                new SyndicationLinkComparer());
+            return expected.SetEquals(candidates);
+        }
+
+        private class SyndicationLinkComparer :
+            IEqualityComparer<SyndicationLink>
+        {
+            public bool Equals(SyndicationLink x, SyndicationLink y)
+            {
+                return object.Equals(x.RelationshipType, y.RelationshipType)
+                    && object.Equals(x.Uri, y.Uri);
+            }
+
+            public int GetHashCode(SyndicationLink obj)
+            {
+                return 0;
+            }
         }
 
         private static bool HasCorrectAuthors(
