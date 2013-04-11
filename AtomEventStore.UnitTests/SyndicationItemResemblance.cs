@@ -38,6 +38,11 @@ namespace Grean.AtomEventStore.UnitTests
             return 0;
         }
 
+        public override SyndicationItem Clone()
+        {
+            return new SyndicationItemResemblance(this);
+        }
+
         private static bool IsCorrectId(string candidate)
         {
             UuidIri dummy;
@@ -84,7 +89,9 @@ namespace Grean.AtomEventStore.UnitTests
 
             public bool Equals(SyndicationLink x, SyndicationLink y)
             {
-                if (y.RelationshipType == "self")
+                if (x.RelationshipType == "self" && y.RelationshipType == "self")
+                    return y.Uri == this.expectedSelfUri;
+                if (x.RelationshipType == "via" && y.RelationshipType == "via")
                     return y.Uri == this.expectedSelfUri;
                 return object.Equals(x.RelationshipType, y.RelationshipType)
                     && object.Equals(x.Uri, y.Uri);

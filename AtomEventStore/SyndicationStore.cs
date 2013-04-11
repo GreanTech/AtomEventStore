@@ -25,6 +25,8 @@ namespace Grean.AtomEventStore
             return Task.Factory.StartNew(() =>
             {
                 var changesetId = UuidIri.NewId();
+                var changesetAddress =
+                    new Uri(((Guid)changesetId).ToString(), UriKind.Relative);
 
                 var item = new SyndicationItem();
                 item.Id = changesetId.ToString();
@@ -34,7 +36,7 @@ namespace Grean.AtomEventStore
                     new SyndicationLink
                     {
                         RelationshipType = "self",
-                        Uri = new Uri(((Guid)changesetId).ToString(), UriKind.Relative)
+                        Uri = changesetAddress
                     });
                 item.PublishDate = DateTimeOffset.Now;
                 item.LastUpdatedTime = item.PublishDate;
@@ -42,7 +44,16 @@ namespace Grean.AtomEventStore
                 item.Content = XmlSyndicationContent.CreateXmlContent(@event);
                 this.entryWriter.Create(item);
 
-                var feed = new SyndicationFeed();
+                var feedItem = item.Clone();
+                feedItem.Links.Clear();
+                feedItem.Links.Add(
+                    new SyndicationLink
+                    {
+                        RelationshipType = "via",
+                        Uri = changesetAddress
+                    });
+
+                var feed = new SyndicationFeed(new[] { feedItem });
                 feed.Id = id;
                 feed.Title = new TextSyndicationContent(
                     "Head of event stream " + id);

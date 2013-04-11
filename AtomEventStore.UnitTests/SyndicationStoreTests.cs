@@ -24,15 +24,23 @@ namespace Grean.AtomEventStore.UnitTests
             string id,
             TestEvent @event)
         {
-            var sequence = new SpySequence();
+            // Fixture setup
             var expectedEntry = new SyndicationItemBuilder()
                 .WithXmlContent(@event)
                 .Build()
                 .ToResemblance();
+
+            var expectedFeedItem = expectedEntry.ToResemblance();
+            var itemSelfLink = expectedFeedItem.Links
+                .Single(l => l.RelationshipType == "self");
+            itemSelfLink.RelationshipType = "via";
             var expectedHead = new SyndicationFeedBuilder()
                 .WithFeedId(id)
+                .WithItem(expectedFeedItem)
                 .Build()
                 .ToResemblance();
+
+            var sequence = new SpySequence();
             entryWriterMock
                 .Setup(w => w.Create(expectedEntry))
                 .InSequence(sequence)
@@ -42,13 +50,17 @@ namespace Grean.AtomEventStore.UnitTests
                 .InSequence(sequence)
                 .Verifiable();
 
+            // Exercise system
             sut.Append(id, @event).Wait();
 
+            // Verify outcome
             entryWriterMock.Verify();
             headWriterMock.Verify();
             Assert.True(
                 sequence.IsOrdered,
                 "Mocks were invoked out of expected order.");
+
+            // Teardown
         }
     }
 }

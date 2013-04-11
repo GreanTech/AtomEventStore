@@ -24,7 +24,8 @@ namespace Grean.AtomEventStore.UnitTests
                     && this.HasCorrectLinks(other.Links)
                     && this.HasCorrectDate(other.LastUpdatedTime)
                     && this.HasCorrectTitle(other.Title)
-                    && HasCorrectAuthors(other.Authors);
+                    && HasCorrectAuthors(other.Authors)
+                    && this.HasCorrectItems(other.Items);
             return base.Equals(obj);
         }
 
@@ -46,8 +47,10 @@ namespace Grean.AtomEventStore.UnitTests
         {
             public bool Equals(SyndicationLink x, SyndicationLink y)
             {
-                return object.Equals(x.RelationshipType, y.RelationshipType)
-                    && object.Equals(x.Uri, y.Uri);
+                return (x.RelationshipType == "via"
+                    && y.RelationshipType == "via")
+                    || (object.Equals(x.RelationshipType, y.RelationshipType)
+                    && object.Equals(x.Uri, y.Uri));
             }
 
             public int GetHashCode(SyndicationLink obj)
@@ -74,6 +77,11 @@ namespace Grean.AtomEventStore.UnitTests
             IEnumerable<SyndicationPerson> candidate)
         {
             return candidate.Any(p => !string.IsNullOrWhiteSpace(p.Name));
+        }
+
+        private bool HasCorrectItems(IEnumerable<SyndicationItem> candidates)
+        {
+            return this.Items.SequenceEqual(candidates);
         }
     }
 }
