@@ -24,6 +24,7 @@ namespace Grean.AtomEventStore.UnitTests
             if (other != null)
                 return object.Equals(this.feed.Id, other.Id)
                     && this.HasCorrectLinks(other.Links)
+                    && this.HasCorrectTitle(other.Title)
                     && HasCorrectAuthors(other.Authors);
             return base.Equals(obj);
         }
@@ -54,6 +55,14 @@ namespace Grean.AtomEventStore.UnitTests
             {
                 return 0;
             }
+        }
+
+        private bool HasCorrectTitle(TextSyndicationContent candidate)
+        {
+            return candidate != null
+                && object.Equals(
+                    "Head of event stream " + this.feed.Id,
+                    candidate.Text);
         }
 
         private static bool HasCorrectAuthors(

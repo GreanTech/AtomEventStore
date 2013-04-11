@@ -38,6 +38,8 @@ namespace Grean.AtomEventStore
 
                 var feed = new SyndicationFeed();
                 feed.Id = id;
+                feed.Title = new TextSyndicationContent(
+                    "Head of event stream " + id);
                 feed.Links.Add(
                     new SyndicationLink
                     {
