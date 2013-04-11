@@ -35,6 +35,7 @@ namespace Grean.AtomEventStore.UnitTests
                     RelationshipType = "self",
                     Uri = new Uri(this.feedId, UriKind.Relative)
                 });
+            feed.LastUpdatedTime = DateTimeOffset.Now;
 
             return feed;
         }

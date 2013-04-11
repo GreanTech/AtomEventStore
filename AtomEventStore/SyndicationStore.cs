@@ -46,6 +46,7 @@ namespace Grean.AtomEventStore
                         RelationshipType = "self",
                         Uri = new Uri(id, UriKind.Relative)
                     });
+                feed.LastUpdatedTime = DateTimeOffset.Now;
                 feed.Authors.Add(new SyndicationPerson { Name = "Grean" });
                 this.headWriter.CreateOrUpdate(feed);
             });

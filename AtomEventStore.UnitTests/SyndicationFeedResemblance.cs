@@ -24,6 +24,7 @@ namespace Grean.AtomEventStore.UnitTests
             if (other != null)
                 return object.Equals(this.feed.Id, other.Id)
                     && this.HasCorrectLinks(other.Links)
+                    && this.HasCorrectDate(other.LastUpdatedTime)
                     && this.HasCorrectTitle(other.Title)
                     && HasCorrectAuthors(other.Authors);
             return base.Equals(obj);
@@ -63,6 +64,12 @@ namespace Grean.AtomEventStore.UnitTests
                 && object.Equals(
                     "Head of event stream " + this.feed.Id,
                     candidate.Text);
+        }
+
+        private bool HasCorrectDate(DateTimeOffset candidate)
+        {
+            return this.feed.LastUpdatedTime <= candidate
+                && candidate <= DateTimeOffset.Now;
         }
 
         private static bool HasCorrectAuthors(
