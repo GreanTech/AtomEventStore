@@ -30,13 +30,12 @@ namespace Grean.AtomEventStore.UnitTests
                 .Build()
                 .ToResemblance();
 
-            var expectedFeedItem = expectedEntry
-                .Clone()
-                .ChangeLinkRelationShipTypes(from: "self", to: "via")
-                .ToResemblance();
             var expectedHead = new SyndicationFeedBuilder()
                 .WithFeedId(id)
-                .WithItem(expectedFeedItem)
+                .WithItem(expectedEntry
+                    .Clone()
+                    .ChangeLinkRelationShipTypes(from: "self", to: "via")
+                    .ToResemblance())
                 .Build()
                 .ToResemblance();
 
