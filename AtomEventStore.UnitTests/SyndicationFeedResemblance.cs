@@ -22,13 +22,19 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var other = obj as SyndicationFeed;
             if (other != null)
-                return true;
+                return HasCorrectAuthors(other.Authors);
             return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
             return 0;
+        }
+
+        private static bool HasCorrectAuthors(
+            IEnumerable<SyndicationPerson> candidate)
+        {
+            return candidate.Any(p => !string.IsNullOrWhiteSpace(p.Name));
         }
     }
 }
