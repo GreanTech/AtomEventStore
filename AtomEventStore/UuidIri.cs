@@ -45,6 +45,22 @@ namespace Grean.AtomEventStore
             return false;
         }
 
+        public static UuidIri Parse(string candidate)
+        {
+            if (candidate == null)
+                throw new ArgumentNullException("candidate");
+
+            UuidIri parsedUuid;
+            var couldParse = UuidIri.TryParse(candidate, out parsedUuid);
+            if (!couldParse)
+                throw new ArgumentException(
+                    string.Format(
+                        "The candidate string is not a correctly formatted UUID IRI. The valid format is: \"urn:uuid:<Guid value>\". Example: \"urn:uuid:7eddb2e3-369b-4f3d-8697-520bc5de8ed4\". The actual candidate string was: \"{0}\"",
+                        candidate),
+                    "candidate");
+            return parsedUuid;
+        }
+
         public static UuidIri NewId()
         {
             return new UuidIri(Guid.NewGuid());
