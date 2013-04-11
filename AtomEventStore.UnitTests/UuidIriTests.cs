@@ -64,54 +64,59 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void TryParseCorrectlyFormattedStringReturnsCorrectResult(
+        public void ParseCorrectlyFormattedStringReturnsCorrectResult(
             UuidIri expected)
         {
             var correctlyFormatted = expected.ToString();
 
-            UuidIri actual;
-            bool couldParse = UuidIri.TryParse(correctlyFormatted, out actual);
+            UuidIri actualFromTry;
+            bool couldParse = UuidIri.TryParse(correctlyFormatted, out actualFromTry);
+            UuidIri actual = UuidIri.Parse(correctlyFormatted);
 
             Assert.True(couldParse, "TryParse should succeed.");
+            Assert.Equal(expected, actualFromTry);
             Assert.Equal(expected, actual);
         }
 
         [Theory, AutoAtomData]
-        public void TryParseIncorrectlyPrefixedStringReturnsCorrectResult(
+        public void ParseIncorrectlyPrefixedStringReturnsCorrectResult(
             string incorrectPrefix,
             Guid guid)
         {
             Assert.NotEqual("urn:uuid:", incorrectPrefix);
             var inccorectlyPrefixed = incorrectPrefix + guid;
 
-            UuidIri actual;
-            bool couldParse = UuidIri.TryParse(inccorectlyPrefixed, out actual);
+            UuidIri actualFromTry;
+            bool couldParse = UuidIri.TryParse(inccorectlyPrefixed, out actualFromTry);
+            Assert.Throws<ArgumentException>(() => UuidIri.Parse(inccorectlyPrefixed));
 
             Assert.False(couldParse, "TryParse should fail.");
-            Assert.Equal(default(UuidIri), actual);
+            Assert.Equal(default(UuidIri), actualFromTry);
         }
 
         [Theory, AutoAtomData]
-        public void TryParseStringWithIncorrectIdReturnsCorrectResult(
+        public void ParseStringWithIncorrectIdReturnsCorrectResult(
             DateTimeOffset notAGuid)
         {
             var incorrectlyIdd = "urn:uuid:" + notAGuid.ToString();
 
-            UuidIri actual;
-            bool couldParse = UuidIri.TryParse(incorrectlyIdd, out actual);
+            UuidIri actualFromTry;
+            bool couldParse = UuidIri.TryParse(incorrectlyIdd, out actualFromTry);
+            Assert.Throws<ArgumentException>(() => UuidIri.Parse(incorrectlyIdd));
 
             Assert.False(couldParse, "TryParse should fail.");
-            Assert.Equal(default(UuidIri), actual);
+            Assert.Equal(default(UuidIri), actualFromTry);
         }
 
         [Theory, AutoAtomData]
-        public void TryParseNullReturnsCorrectResult()
+        public void ParseNullReturnsCorrectResult()
         {
-            UuidIri actual;
-            bool couldParse = UuidIri.TryParse(null, out actual);
+            UuidIri actualFromTry;
+            bool couldParse = UuidIri.TryParse(null, out actualFromTry);
+            Assert.Throws<ArgumentNullException>(() => UuidIri.Parse(null));
 
             Assert.False(couldParse, "TryParse should fail.");
-            Assert.Equal(default(UuidIri), actual);
+            Assert.Equal(default(UuidIri), actualFromTry);
         }
 
         [Fact]
