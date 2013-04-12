@@ -11,10 +11,10 @@ using System.IO;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class AtomEntryFileWriterTests
+    public class AtomFileWriterTests
     {
         [Theory, AutoAtomData]
-        public void SutIsSyndicationItemWriter(AtomEntryFileWriter sut)
+        public void SutIsSyndicationItemWriter(AtomFileWriter sut)
         {
             Assert.IsAssignableFrom<ISyndicationItemWriter>(sut);
         }
@@ -22,7 +22,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void DirectoryIsCorrect(
             [Frozen]DirectoryInfo expected,
-            AtomEntryFileWriter sut)
+            AtomFileWriter sut)
         {
             DirectoryInfo actual = sut.Directory;
             Assert.Equal(expected, actual);

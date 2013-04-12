@@ -7,11 +7,11 @@ using System.Text;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEntryFileWriter : ISyndicationItemWriter
+    public class AtomFileWriter : ISyndicationItemWriter
     {
         private readonly DirectoryInfo directory;
 
-        public AtomEntryFileWriter(DirectoryInfo directory)
+        public AtomFileWriter(DirectoryInfo directory)
         {
             this.directory = directory;
         }

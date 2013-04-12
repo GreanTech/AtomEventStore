@@ -59,7 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtomEntryFileWriterTests.cs" />
+    <Compile Include="AtomFileWriterTests.cs" />
     <Compile Include="AtomTestConventions.cs" />
     <Compile Include="MockEnvy.cs" />
     <Compile Include="SpySequence.cs" />
