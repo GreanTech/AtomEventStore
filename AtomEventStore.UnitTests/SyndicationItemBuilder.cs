@@ -44,6 +44,14 @@ namespace Grean.AtomEventStore.UnitTests
             return new SyndicationItemBuilder(this.publishDate, sc, this.links);
         }
 
+        public SyndicationItemBuilder WithLink(SyndicationLink newLink)
+        {
+            return new SyndicationItemBuilder(
+                this.publishDate,
+                this.content,
+                this.links.Concat(new[] { newLink }));
+        }
+
         public SyndicationItem Build()
         {
             var item = new SyndicationItem();

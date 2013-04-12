@@ -9,13 +9,16 @@ namespace Grean.AtomEventStore
 {
     public class SyndicationStore
     {
+        private readonly ISyndicationFeedReader headReader;
         private readonly ISyndicationItemWriter entryWriter;
         private readonly ISyndicationFeedWriter headWriter;
 
         public SyndicationStore(
+            ISyndicationFeedReader headReader,
             ISyndicationItemWriter entryWriter,
             ISyndicationFeedWriter headWriter)
         {
+            this.headReader = headReader;
             this.entryWriter = entryWriter;
             this.headWriter = headWriter;
         }
@@ -29,6 +32,21 @@ namespace Grean.AtomEventStore
                     new Uri(((Guid)changesetId).ToString(), UriKind.Relative);
 
                 var item = CreateItem(@event, changesetId, changesetAddress);
+
+                var head = this.headReader.Read(id);
+                var headEntry = head.Items.FirstOrDefault();
+                if (headEntry != null)
+                {
+                    var headEntryLink = 
+                        headEntry.Links.Single(l => l.RelationshipType == "via");
+                    item.Links.Add(
+                        new SyndicationLink
+                        { 
+                            RelationshipType = "previous",
+                            Uri = headEntryLink.Uri
+                        });
+                }
+
                 this.entryWriter.Create(item);
 
                 this.CreateOrUpdateHead(id, changesetAddress, item);
@@ -63,13 +81,8 @@ namespace Grean.AtomEventStore
             SyndicationItem item)
         {
             var feedItem = item.Clone();
-            feedItem.Links.Clear();
-            feedItem.Links.Add(
-                new SyndicationLink
-                {
-                    RelationshipType = "via",
-                    Uri = changesetAddress
-                });
+            foreach (var l in feedItem.Links.Where(l => l.RelationshipType == "self"))
+                l.RelationshipType = "via";
 
             var feed = new SyndicationFeed(new[] { feedItem });
             feed.Id = id;
