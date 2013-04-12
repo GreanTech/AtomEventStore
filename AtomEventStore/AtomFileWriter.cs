@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomFileWriter : ISyndicationItemWriter
+    public class AtomFileWriter : ISyndicationItemWriter, ISyndicationFeedWriter
     {
         private readonly DirectoryInfo directory;
 
@@ -17,6 +17,10 @@ namespace Grean.AtomEventStore
         }
 
         public void Create(SyndicationItem item)
+        {
+        }
+
+        public void CreateOrUpdate(SyndicationFeed feed)
         {
         }
 
