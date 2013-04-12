@@ -26,6 +26,12 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void SutIsSyndicationFeedReader(AtomFileAccess sut)
+        {
+            Assert.IsAssignableFrom<ISyndicationFeedReader>(sut);
+        }
+
+        [Theory, AutoAtomData]
         public void DirectoryIsCorrect(
             [Frozen]DirectoryInfo expected,
             AtomFileAccess sut)

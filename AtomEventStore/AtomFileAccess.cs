@@ -8,13 +8,27 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomFileAccess : ISyndicationItemWriter, ISyndicationFeedWriter
+    public class AtomFileAccess :
+        ISyndicationItemWriter,
+        ISyndicationFeedWriter,
+        ISyndicationFeedReader
     {
         private readonly DirectoryInfo directory;
 
         public AtomFileAccess(DirectoryInfo directory)
         {
             this.directory = directory;
+        }
+
+        public SyndicationFeed Read(string id)
+        {
+            var fileName = this.CreateFileName(id);
+            
+            if (File.Exists(fileName))
+                using (var r = XmlReader.Create(fileName))
+                    return SyndicationFeed.Load(r);
+
+            return new SyndicationFeed();
         }
 
         public void Create(SyndicationItem item)
@@ -39,9 +53,12 @@ namespace Grean.AtomEventStore
         private string CreateFileName(IEnumerable<SyndicationLink> links)
         {
             var selfLink = links.Single(l => l.RelationshipType == "self");
-            return Path.Combine(
-                this.directory.ToString(),
-                selfLink.Uri.ToString());
+            return this.CreateFileName(selfLink.Uri.ToString());
+        }
+
+        private string CreateFileName(string id)
+        {
+            return Path.Combine(this.directory.ToString(), id);
         }
     }
 }
