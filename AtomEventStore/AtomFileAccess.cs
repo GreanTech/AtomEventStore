@@ -8,11 +8,11 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomFileWriter : ISyndicationItemWriter, ISyndicationFeedWriter
+    public class AtomFileAccess : ISyndicationItemWriter, ISyndicationFeedWriter
     {
         private readonly DirectoryInfo directory;
 
-        public AtomFileWriter(DirectoryInfo directory)
+        public AtomFileAccess(DirectoryInfo directory)
         {
             this.directory = directory;
         }
