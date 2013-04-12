@@ -40,7 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtomFileWriter.cs" />
+    <Compile Include="AtomFileAccess.cs" />
+    <Compile Include="ISyndicationFeedReader.cs" />
     <Compile Include="SyndicationStore.cs" />
     <Compile Include="ISyndicationFeedWriter.cs" />
     <Compile Include="ISyndicationItemWriter.cs" />
