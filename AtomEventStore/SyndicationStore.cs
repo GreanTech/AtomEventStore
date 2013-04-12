@@ -32,23 +32,9 @@ namespace Grean.AtomEventStore
                     new Uri(((Guid)changesetId).ToString(), UriKind.Relative);
 
                 var item = CreateItem(@event, changesetId, changesetAddress);
-
-                var head = this.headReader.Read(id);
-                var headEntry = head.Items.FirstOrDefault();
-                if (headEntry != null)
-                {
-                    var headEntryLink = 
-                        headEntry.Links.Single(l => l.RelationshipType == "via");
-                    item.Links.Add(
-                        new SyndicationLink
-                        { 
-                            RelationshipType = "previous",
-                            Uri = headEntryLink.Uri
-                        });
-                }
+                this.AddPreviousLinkTo(item, id);
 
                 this.entryWriter.Create(item);
-
                 this.CreateOrUpdateHead(id, changesetAddress, item);
             });
         }
@@ -73,6 +59,23 @@ namespace Grean.AtomEventStore
             item.Authors.Add(new SyndicationPerson { Name = "Grean" });
             item.Content = XmlSyndicationContent.CreateXmlContent(@event);
             return item;
+        }
+
+        private void AddPreviousLinkTo(SyndicationItem item, string id)
+        {
+            var head = this.headReader.Read(id);
+            var headEntry = head.Items.FirstOrDefault();
+            if (headEntry != null)
+            {
+                var headEntryLink =
+                    headEntry.Links.Single(l => l.RelationshipType == "via");
+                item.Links.Add(
+                    new SyndicationLink
+                    {
+                        RelationshipType = "previous",
+                        Uri = headEntryLink.Uri
+                    });
+            }
         }
 
         private void CreateOrUpdateHead(
