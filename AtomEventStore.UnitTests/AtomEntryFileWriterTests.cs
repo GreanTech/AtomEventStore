@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Xunit.Extensions;
 using Grean.AtomEventStore;
 using Xunit;
+using Ploeh.AutoFixture.Xunit;
+using System.IO;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -15,6 +17,15 @@ namespace Grean.AtomEventStore.UnitTests
         public void SutIsSyndicationItemWriter(AtomEntryFileWriter sut)
         {
             Assert.IsAssignableFrom<ISyndicationItemWriter>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void DirectoryIsCorrect(
+            [Frozen]DirectoryInfo expected,
+            AtomEntryFileWriter sut)
+        {
+            DirectoryInfo actual = sut.Directory;
+            Assert.Equal(expected, actual);
         }
     }
 }
