@@ -26,7 +26,7 @@ namespace Grean.AtomEventStore
             this.headWriter = headWriter;
         }
 
-        public Task Append(string id, object @event)
+        public Task Append(object @event)
         {
             return Task.Factory.StartNew(() =>
             {

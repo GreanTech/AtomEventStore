@@ -50,7 +50,7 @@ namespace Grean.AtomEventStore.UnitTests
                 .Verifiable();
 
             // Exercise system
-            sut.Append(id, @event).Wait();
+            sut.Append(@event).Wait();
 
             // Verify outcome
             entryWriterMock.Verify();
@@ -113,7 +113,7 @@ namespace Grean.AtomEventStore.UnitTests
                 .InSequence(sequence)
                 .Verifiable();
             // Exercise system
-            sut.Append(id, newEvent).Wait();
+            sut.Append(newEvent).Wait();
 
             // Verify outcome
             entryWriterMock.Verify();
