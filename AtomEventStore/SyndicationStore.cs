@@ -9,15 +9,18 @@ namespace Grean.AtomEventStore
 {
     public class SyndicationStore
     {
+        private readonly string id;
         private readonly ISyndicationFeedReader headReader;
         private readonly ISyndicationItemWriter entryWriter;
         private readonly ISyndicationFeedWriter headWriter;
 
         public SyndicationStore(
+            string id,
             ISyndicationFeedReader headReader,
             ISyndicationItemWriter entryWriter,
             ISyndicationFeedWriter headWriter)
         {
+            this.id = id;
             this.headReader = headReader;
             this.entryWriter = entryWriter;
             this.headWriter = headWriter;
@@ -100,6 +103,11 @@ namespace Grean.AtomEventStore
             feed.LastUpdatedTime = DateTimeOffset.Now;
             feed.Authors.Add(new SyndicationPerson { Name = "Grean" });
             this.headWriter.CreateOrUpdate(feed);
+        }
+
+        public string Id
+        {
+            get { return this.id; }
         }
     }
 }

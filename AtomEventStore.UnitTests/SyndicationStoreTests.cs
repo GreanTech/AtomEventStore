@@ -124,5 +124,12 @@ namespace Grean.AtomEventStore.UnitTests
 
             // Teardown
         }
+
+        [Theory, AutoAtomData]
+        public void IdIsCorrect([Frozen]string expected, SyndicationStore sut)
+        {
+            string actual = sut.Id;
+            Assert.Equal(expected, actual);
+        }
     }
 }
