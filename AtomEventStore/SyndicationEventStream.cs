@@ -7,23 +7,26 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class SyndicationStore
+    public class SyndicationEventStream
     {
+        private readonly string id;
         private readonly ISyndicationFeedReader headReader;
         private readonly ISyndicationItemWriter entryWriter;
         private readonly ISyndicationFeedWriter headWriter;
 
-        public SyndicationStore(
+        public SyndicationEventStream(
+            string id,
             ISyndicationFeedReader headReader,
             ISyndicationItemWriter entryWriter,
             ISyndicationFeedWriter headWriter)
         {
+            this.id = id;
             this.headReader = headReader;
             this.entryWriter = entryWriter;
             this.headWriter = headWriter;
         }
 
-        public Task Append(string id, object @event)
+        public Task Append(object @event)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -32,10 +35,10 @@ namespace Grean.AtomEventStore
                     new Uri(((Guid)changesetId).ToString(), UriKind.Relative);
 
                 var item = CreateItem(@event, changesetId, changesetAddress);
-                this.AddPreviousLinkTo(item, id);
+                this.AddPreviousLinkTo(item);
 
                 this.entryWriter.Create(item);
-                this.CreateOrUpdateHead(id, changesetAddress, item);
+                this.CreateOrUpdateHead(changesetAddress, item);
             });
         }
 
@@ -61,9 +64,9 @@ namespace Grean.AtomEventStore
             return item;
         }
 
-        private void AddPreviousLinkTo(SyndicationItem item, string id)
+        private void AddPreviousLinkTo(SyndicationItem item)
         {
-            var head = this.headReader.Read(id);
+            var head = this.headReader.Read(this.id);
             var headEntry = head.Items.FirstOrDefault();
             if (headEntry != null)
             {
@@ -79,7 +82,6 @@ namespace Grean.AtomEventStore
         }
 
         private void CreateOrUpdateHead(
-            string id,
             Uri changesetAddress,
             SyndicationItem item)
         {
@@ -88,18 +90,23 @@ namespace Grean.AtomEventStore
                 l.RelationshipType = "via";
 
             var feed = new SyndicationFeed(new[] { feedItem });
-            feed.Id = id;
+            feed.Id = this.id;
             feed.Title = new TextSyndicationContent(
-                "Head of event stream " + id);
+                "Head of event stream " + this.id);
             feed.Links.Add(
                 new SyndicationLink
                 {
                     RelationshipType = "self",
-                    Uri = new Uri(id, UriKind.Relative)
+                    Uri = new Uri(this.id, UriKind.Relative)
                 });
             feed.LastUpdatedTime = DateTimeOffset.Now;
             feed.Authors.Add(new SyndicationPerson { Name = "Grean" });
             this.headWriter.CreateOrUpdate(feed);
+        }
+
+        public string Id
+        {
+            get { return this.id; }
         }
     }
 }

@@ -14,14 +14,14 @@ using System.ServiceModel.Syndication;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class SyndicationStoreTests
+    public class SyndicationEventStreamTests
     {
         [Theory, AutoAtomData]
         public void AppendFirstEventSavesCorrectDocuments(
+            [Frozen]string id,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
-            SyndicationStore sut,
-            string id,
+            SyndicationEventStream sut,
             TestEvent @event)
         {
             // Fixture setup
@@ -50,7 +50,7 @@ namespace Grean.AtomEventStore.UnitTests
                 .Verifiable();
 
             // Exercise system
-            sut.Append(id, @event).Wait();
+            sut.Append(@event).Wait();
 
             // Verify outcome
             entryWriterMock.Verify();
@@ -64,11 +64,11 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendLaterEventSavesCorrectDocuments(
+            [Frozen]string id,
             [Frozen]Mock<ISyndicationFeedReader> headReaderStub,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
-            SyndicationStore sut,
-            string id,
+            SyndicationEventStream sut,
             TestEvent previousEvent,
             TestEvent newEvent)
         {
@@ -113,7 +113,7 @@ namespace Grean.AtomEventStore.UnitTests
                 .InSequence(sequence)
                 .Verifiable();
             // Exercise system
-            sut.Append(id, newEvent).Wait();
+            sut.Append(newEvent).Wait();
 
             // Verify outcome
             entryWriterMock.Verify();
@@ -123,6 +123,13 @@ namespace Grean.AtomEventStore.UnitTests
                 "Mocks were invoked out of expected order.");
 
             // Teardown
+        }
+
+        [Theory, AutoAtomData]
+        public void IdIsCorrect([Frozen]string expected, SyndicationEventStream sut)
+        {
+            string actual = sut.Id;
+            Assert.Equal(expected, actual);
         }
     }
 }
