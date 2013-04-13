@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class SyndicationStore
+    public class SyndicationEventStream
     {
         private readonly string id;
         private readonly ISyndicationFeedReader headReader;
         private readonly ISyndicationItemWriter entryWriter;
         private readonly ISyndicationFeedWriter headWriter;
 
-        public SyndicationStore(
+        public SyndicationEventStream(
             string id,
             ISyndicationFeedReader headReader,
             ISyndicationItemWriter entryWriter,

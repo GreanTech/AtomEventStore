@@ -14,14 +14,14 @@ using System.ServiceModel.Syndication;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class SyndicationStoreTests
+    public class SyndicationEventStreamTests
     {
         [Theory, AutoAtomData]
         public void AppendFirstEventSavesCorrectDocuments(
             [Frozen]string id,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
-            SyndicationStore sut,
+            SyndicationEventStream sut,
             TestEvent @event)
         {
             // Fixture setup
@@ -68,7 +68,7 @@ namespace Grean.AtomEventStore.UnitTests
             [Frozen]Mock<ISyndicationFeedReader> headReaderStub,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
-            SyndicationStore sut,
+            SyndicationEventStream sut,
             TestEvent previousEvent,
             TestEvent newEvent)
         {
@@ -126,7 +126,7 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void IdIsCorrect([Frozen]string expected, SyndicationStore sut)
+        public void IdIsCorrect([Frozen]string expected, SyndicationEventStream sut)
         {
             string actual = sut.Id;
             Assert.Equal(expected, actual);
