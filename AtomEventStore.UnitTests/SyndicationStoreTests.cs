@@ -18,10 +18,10 @@ namespace Grean.AtomEventStore.UnitTests
     {
         [Theory, AutoAtomData]
         public void AppendFirstEventSavesCorrectDocuments(
+            [Frozen]string id,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
             SyndicationStore sut,
-            string id,
             TestEvent @event)
         {
             // Fixture setup
@@ -64,11 +64,11 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendLaterEventSavesCorrectDocuments(
+            [Frozen]string id,
             [Frozen]Mock<ISyndicationFeedReader> headReaderStub,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
             SyndicationStore sut,
-            string id,
             TestEvent previousEvent,
             TestEvent newEvent)
         {
