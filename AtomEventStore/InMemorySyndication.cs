@@ -10,7 +10,7 @@ namespace Grean.AtomEventStore
     {
         public SyndicationFeed Read(string id)
         {
-            throw new NotImplementedException();
+            return new SyndicationFeed();
         }
     }
 }
