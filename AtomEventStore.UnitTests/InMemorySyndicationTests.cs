@@ -25,5 +25,11 @@ namespace Grean.AtomEventStore.UnitTests
             var actual = sut.Read(id);
             Assert.Empty(actual.Items);
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsSyndicationFeedWriter(InMemorySyndication sut)
+        {
+            Assert.IsAssignableFrom<ISyndicationFeedWriter>(sut);
+        }
     }
 }
