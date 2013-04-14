@@ -97,5 +97,28 @@ namespace Grean.AtomEventStore.UnitTests
             itemY.Links.AddId(idY);
             Assert.DoesNotThrow(() => sut.Create(itemY));
         }
+
+        [Theory, AutoAtomData]
+        public void ReadItemCanRetrieveCorrectItem(
+            InMemorySyndication sut,
+            SyndicationItem expected,
+            string idOfExpected,
+            SyndicationItem other,
+            string idOfOther)
+        {
+            // Fixture setup
+            expected.Links.AddId(idOfExpected);
+            sut.Create(expected);
+
+            other.Links.AddId(idOfOther);
+            sut.Create(other);
+
+            // Exercise system
+            SyndicationItem actual = sut.ReadItem(idOfExpected);
+
+            // Verify outcome
+            Assert.Equal(expected, actual);
+            // Teardown
+        }
     }
 }

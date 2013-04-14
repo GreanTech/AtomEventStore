@@ -12,12 +12,12 @@ namespace Grean.AtomEventStore
         ISyndicationItemWriter
     {
         private readonly Dictionary<string, SyndicationFeed> feeds;
-        private readonly List<string> itemIds;
+        private readonly Dictionary<string, SyndicationItem> items;
 
         public InMemorySyndication()
         {
             this.feeds = new Dictionary<string, SyndicationFeed>();
-            this.itemIds = new List<string>();
+            this.items = new Dictionary<string, SyndicationItem>();
         }
 
         public SyndicationFeed ReadFeed(string id)
@@ -44,14 +44,19 @@ namespace Grean.AtomEventStore
         public void Create(SyndicationItem item)
         {
             var itemId = GetId(item.Links);
-            if (this.itemIds.Contains(itemId))
+            if (this.items.ContainsKey(itemId))
                 throw new ArgumentException(
                     string.Format(
                         "A SyndicationItem with the ID \"{0}\" was already created.",
                         itemId),
                     "item");
 
-            this.itemIds.Add(itemId);
+            this.items.Add(itemId, item);
+        }
+
+        public SyndicationItem ReadItem(string id)
+        {
+            return this.items[id];
         }
     }
 }
