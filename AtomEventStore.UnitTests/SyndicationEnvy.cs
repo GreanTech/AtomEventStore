@@ -31,5 +31,17 @@ namespace Grean.AtomEventStore.UnitTests
                 l.RelationshipType = to;
             return newItem;
         }
+
+        public static void AddId(
+            this ICollection<SyndicationLink> links,
+            string id)
+        {
+            links.Add(
+                new SyndicationLink
+                {
+                    RelationshipType = "self",
+                    Uri = new Uri(id, UriKind.Relative)
+                });
+        }
     }
 }

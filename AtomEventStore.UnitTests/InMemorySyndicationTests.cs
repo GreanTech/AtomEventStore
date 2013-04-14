@@ -39,14 +39,27 @@ namespace Grean.AtomEventStore.UnitTests
             SyndicationFeed expected,
             string id)
         {
-            expected.Links.Add(
-                new SyndicationLink
-                {
-                    RelationshipType = "self",
-                    Uri = new Uri(id, UriKind.Relative)
-                });
+            expected.Links.AddId(id);
 
             sut.CreateOrUpdate(expected);
+            var actual = sut.Read(id);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void ReadReturnsCorrectFeed(
+            InMemorySyndication sut,
+            SyndicationFeed expected,
+            string id,
+            SyndicationFeed otherFeed,
+            string otherId)
+        {
+            expected.Links.AddId(id);
+            sut.CreateOrUpdate(expected);
+            otherFeed.Links.AddId(otherId);
+            sut.CreateOrUpdate(otherFeed);
+
             var actual = sut.Read(id);
 
             Assert.Equal(expected, actual);

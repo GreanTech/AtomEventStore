@@ -10,16 +10,32 @@ namespace Grean.AtomEventStore
         ISyndicationFeedReader,
         ISyndicationFeedWriter
     {
-        private SyndicationFeed feed;
+        private readonly Dictionary<string, SyndicationFeed> feeds;
+
+        public InMemorySyndication()
+        {
+            this.feeds = new Dictionary<string, SyndicationFeed>();
+        }
 
         public SyndicationFeed Read(string id)
         {
-            return this.feed ?? new SyndicationFeed();
+            SyndicationFeed feed;
+            if (this.feeds.TryGetValue(id, out feed))
+                return feed;
+
+            return new SyndicationFeed();
         }
 
         public void CreateOrUpdate(SyndicationFeed feed)
         {
-            this.feed = feed;
+            var feedId = GetId(feed);
+            this.feeds[feedId] = feed;
+        }
+
+        private static string GetId(SyndicationFeed feed)
+        {
+            var selfLink = feed.Links.Single(l => l.RelationshipType == "self");
+            return selfLink.Uri.ToString();
         }
     }
 }
