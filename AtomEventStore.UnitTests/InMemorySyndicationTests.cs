@@ -74,11 +74,28 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void CreateSameItemTwiceThrows(
             InMemorySyndication sut,
-            SyndicationItem item)
+            SyndicationItem item,
+            string id)
         {
+            item.Links.AddId(id);
             sut.Create(item);
 
             Assert.Throws<ArgumentException>(() => sut.Create(item));
+        }
+
+        [Theory, AutoAtomData]
+        public void CreateTwoDifferentItemsDoesNotThrow(
+            InMemorySyndication sut,
+            SyndicationItem itemX,
+            string idX,
+            SyndicationItem itemY,
+            string idY)
+        {
+            itemX.Links.AddId(idX);
+            sut.Create(itemX);
+
+            itemY.Links.AddId(idY);
+            Assert.DoesNotThrow(() => sut.Create(itemY));
         }
     }
 }

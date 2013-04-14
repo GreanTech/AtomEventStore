@@ -6,17 +6,18 @@ using System.Text;
 
 namespace Grean.AtomEventStore
 {
-    public class InMemorySyndication : 
+    public class InMemorySyndication :
         ISyndicationFeedReader,
         ISyndicationFeedWriter,
         ISyndicationItemWriter
     {
         private readonly Dictionary<string, SyndicationFeed> feeds;
-        private bool itemAlreadyWritten;
+        private readonly List<string> itemIds;
 
         public InMemorySyndication()
         {
             this.feeds = new Dictionary<string, SyndicationFeed>();
+            this.itemIds = new List<string>();
         }
 
         public SyndicationFeed Read(string id)
@@ -30,22 +31,27 @@ namespace Grean.AtomEventStore
 
         public void CreateOrUpdate(SyndicationFeed feed)
         {
-            var feedId = GetId(feed);
+            var feedId = GetId(feed.Links);
             this.feeds[feedId] = feed;
         }
 
-        private static string GetId(SyndicationFeed feed)
+        private static string GetId(IEnumerable<SyndicationLink> links)
         {
-            var selfLink = feed.Links.Single(l => l.RelationshipType == "self");
+            var selfLink = links.Single(l => l.RelationshipType == "self");
             return selfLink.Uri.ToString();
         }
 
         public void Create(SyndicationItem item)
         {
-            if (this.itemAlreadyWritten)
-                throw new ArgumentException();
+            var itemId = GetId(item.Links);
+            if (this.itemIds.Contains(itemId))
+                throw new ArgumentException(
+                    string.Format(
+                        "A SyndicationItem with the ID \"{0}\" was already created.",
+                        itemId),
+                    "item");
 
-            this.itemAlreadyWritten = true;
+            this.itemIds.Add(itemId);
         }
     }
 }
