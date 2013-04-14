@@ -8,6 +8,6 @@ namespace Grean.AtomEventStore
 {
     public interface ISyndicationFeedReader
     {
-        SyndicationFeed Read(string id);
+        SyndicationFeed ReadFeed(string id);
     }
 }

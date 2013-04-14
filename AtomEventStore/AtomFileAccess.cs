@@ -20,7 +20,7 @@ namespace Grean.AtomEventStore
             this.directory = directory;
         }
 
-        public SyndicationFeed Read(string id)
+        public SyndicationFeed ReadFeed(string id)
         {
             var fileName = this.CreateFileName(id);
             

@@ -66,7 +66,7 @@ namespace Grean.AtomEventStore
 
         private void AddPreviousLinkTo(SyndicationItem item)
         {
-            var head = this.headReader.Read(this.id);
+            var head = this.headReader.ReadFeed(this.id);
             var headEntry = head.Items.FirstOrDefault();
             if (headEntry != null)
             {

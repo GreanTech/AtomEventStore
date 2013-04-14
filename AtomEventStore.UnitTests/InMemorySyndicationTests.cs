@@ -23,7 +23,7 @@ namespace Grean.AtomEventStore.UnitTests
             InMemorySyndication sut,
             string id)
         {
-            var actual = sut.Read(id);
+            var actual = sut.ReadFeed(id);
             Assert.Empty(actual.Items);
         }
 
@@ -42,7 +42,7 @@ namespace Grean.AtomEventStore.UnitTests
             expected.Links.AddId(id);
 
             sut.CreateOrUpdate(expected);
-            var actual = sut.Read(id);
+            var actual = sut.ReadFeed(id);
 
             Assert.Equal(expected, actual);
         }
@@ -60,7 +60,7 @@ namespace Grean.AtomEventStore.UnitTests
             otherFeed.Links.AddId(otherId);
             sut.CreateOrUpdate(otherFeed);
 
-            var actual = sut.Read(id);
+            var actual = sut.ReadFeed(id);
 
             Assert.Equal(expected, actual);
         }

@@ -20,7 +20,7 @@ namespace Grean.AtomEventStore
             this.itemIds = new List<string>();
         }
 
-        public SyndicationFeed Read(string id)
+        public SyndicationFeed ReadFeed(string id)
         {
             SyndicationFeed feed;
             if (this.feeds.TryGetValue(id, out feed))
