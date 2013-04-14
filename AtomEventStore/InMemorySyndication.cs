@@ -8,7 +8,8 @@ namespace Grean.AtomEventStore
 {
     public class InMemorySyndication : 
         ISyndicationFeedReader,
-        ISyndicationFeedWriter
+        ISyndicationFeedWriter,
+        ISyndicationItemWriter
     {
         private readonly Dictionary<string, SyndicationFeed> feeds;
 
@@ -36,6 +37,10 @@ namespace Grean.AtomEventStore
         {
             var selfLink = feed.Links.Single(l => l.RelationshipType == "self");
             return selfLink.Uri.ToString();
+        }
+
+        public void Create(SyndicationItem item)
+        {
         }
     }
 }
