@@ -70,5 +70,15 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.IsAssignableFrom<ISyndicationItemWriter>(sut);
         }
+
+        [Theory, AutoAtomData]
+        public void CreateSameItemTwiceThrows(
+            InMemorySyndication sut,
+            SyndicationItem item)
+        {
+            sut.Create(item);
+
+            Assert.Throws<ArgumentException>(() => sut.Create(item));
+        }
     }
 }

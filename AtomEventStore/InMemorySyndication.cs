@@ -12,6 +12,7 @@ namespace Grean.AtomEventStore
         ISyndicationItemWriter
     {
         private readonly Dictionary<string, SyndicationFeed> feeds;
+        private bool itemAlreadyWritten;
 
         public InMemorySyndication()
         {
@@ -41,6 +42,10 @@ namespace Grean.AtomEventStore
 
         public void Create(SyndicationItem item)
         {
+            if (this.itemAlreadyWritten)
+                throw new ArgumentException();
+
+            this.itemAlreadyWritten = true;
         }
     }
 }
