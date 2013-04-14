@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AtomFileAccess.cs" />
+    <Compile Include="InMemorySyndication.cs" />
     <Compile Include="ISyndicationFeedReader.cs" />
     <Compile Include="SyndicationEventStream.cs" />
     <Compile Include="ISyndicationFeedWriter.cs" />
