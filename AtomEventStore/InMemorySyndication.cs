@@ -44,13 +44,6 @@ namespace Grean.AtomEventStore
         public void Create(SyndicationItem item)
         {
             var itemId = GetId(item.Links);
-            if (this.items.ContainsKey(itemId))
-                throw new ArgumentException(
-                    string.Format(
-                        "A SyndicationItem with the ID \"{0}\" was already created.",
-                        itemId),
-                    "item");
-
             this.items.Add(itemId, item);
         }
 
