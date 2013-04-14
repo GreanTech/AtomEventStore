@@ -10,14 +10,16 @@ namespace Grean.AtomEventStore
         ISyndicationFeedReader,
         ISyndicationFeedWriter
     {
+        private SyndicationFeed feed;
+
         public SyndicationFeed Read(string id)
         {
-            return new SyndicationFeed();
+            return this.feed ?? new SyndicationFeed();
         }
 
         public void CreateOrUpdate(SyndicationFeed feed)
         {
-            throw new NotImplementedException();
+            this.feed = feed;
         }
     }
 }

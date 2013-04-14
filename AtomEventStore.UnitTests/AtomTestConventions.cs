@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading.Tasks;
 using Ploeh.AutoFixture;
@@ -14,6 +15,7 @@ namespace Grean.AtomEventStore.UnitTests
         public AtomTestConventions()
             : base(
                 new WorkingDirectoryCustomization(),
+                new SyndicationCustomization(),
                 new AutoMoqCustomization())
         {
         }
@@ -24,6 +26,15 @@ namespace Grean.AtomEventStore.UnitTests
             {
                 fixture.Register(
                     () => new DirectoryInfo(Environment.CurrentDirectory));
+            }
+        }
+
+        private class SyndicationCustomization : ICustomization
+        {
+            public void Customize(IFixture fixture)
+            {
+                fixture.Customize<SyndicationItem>(
+                    c => c.Without(x => x.SourceFeed));
             }
         }
     }
