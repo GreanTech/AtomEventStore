@@ -60,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AtomFileAccessTests.cs" />
+    <Compile Include="AutoAtomFakeDataAttribute.cs" />
+    <Compile Include="FakeTestConventions.cs" />
     <Compile Include="MoqTestConventions.cs" />
     <Compile Include="InMemorySyndicationTests.cs" />
     <Compile Include="MockEnvy.cs" />

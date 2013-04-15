@@ -137,5 +137,12 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.IsAssignableFrom<IEnumerable<TestEvent>>(sut);
         }
+
+        [Theory, AutoAtomFakeData]
+        public void SutIsInitiallyEmpty(SyndicationEventStream<TestEvent> sut)
+        {
+            Assert.Empty(sut);
+            Assert.False(sut.Any(), "Event stream should be empty.");
+        }
     }
 }

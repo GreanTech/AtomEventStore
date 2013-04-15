@@ -111,12 +111,12 @@ namespace Grean.AtomEventStore
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            yield break;
         }
     }
 }
