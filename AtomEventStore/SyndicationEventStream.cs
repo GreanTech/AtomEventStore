@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class SyndicationEventStream
+    public class SyndicationEventStream<T>
     {
         private readonly string id;
         private readonly ISyndicationFeedReader headReader;
@@ -26,7 +26,7 @@ namespace Grean.AtomEventStore
             this.headWriter = headWriter;
         }
 
-        public Task Append(object @event)
+        public Task Append(T @event)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -43,7 +43,7 @@ namespace Grean.AtomEventStore
         }
 
         private static SyndicationItem CreateItem(
-            object @event,
+            T @event,
             UuidIri changesetId,
             Uri changesetAddress)
         {

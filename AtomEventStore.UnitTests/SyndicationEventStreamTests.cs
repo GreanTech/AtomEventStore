@@ -21,7 +21,7 @@ namespace Grean.AtomEventStore.UnitTests
             [Frozen]string id,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
-            SyndicationEventStream sut,
+            SyndicationEventStream<TestEvent> sut,
             TestEvent @event)
         {
             // Fixture setup
@@ -68,7 +68,7 @@ namespace Grean.AtomEventStore.UnitTests
             [Frozen]Mock<ISyndicationFeedReader> headReaderStub,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
             [Frozen]Mock<ISyndicationFeedWriter> headWriterMock,
-            SyndicationEventStream sut,
+            SyndicationEventStream<TestEvent> sut,
             TestEvent previousEvent,
             TestEvent newEvent)
         {
@@ -126,7 +126,7 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void IdIsCorrect([Frozen]string expected, SyndicationEventStream sut)
+        public void IdIsCorrect([Frozen]string expected, SyndicationEventStream<TestEvent> sut)
         {
             string actual = sut.Id;
             Assert.Equal(expected, actual);
