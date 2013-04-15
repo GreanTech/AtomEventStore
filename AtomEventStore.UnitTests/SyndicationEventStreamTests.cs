@@ -144,5 +144,17 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Empty(sut);
             Assert.False(sut.Any(), "Event stream should be empty.");
         }
+
+        [Theory, AutoAtomFakeData]
+        public void AfterAppendSutYieldsAppendedEvent(
+            SyndicationEventStream<TestEvent> sut,
+            TestEvent expected)
+        {
+            sut.Append(expected).Wait();
+            Assert.Equal(expected, sut.Single());
+            Assert.Equal(
+                expected, 
+                ((System.Collections.IEnumerable)sut).OfType<object>().Single());
+        }
     }
 }

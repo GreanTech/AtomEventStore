@@ -111,12 +111,16 @@ namespace Grean.AtomEventStore
 
         public IEnumerator<T> GetEnumerator()
         {
-            yield break;
+            return this.headReader.ReadFeed(this.id).Items
+                .Select(i => i.Content)
+                .OfType<XmlSyndicationContent>()
+                .Select(x => x.ReadContent<T>())
+                .GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            yield break;
+            return this.GetEnumerator();
         }
     }
 }

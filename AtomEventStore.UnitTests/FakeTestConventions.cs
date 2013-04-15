@@ -19,18 +19,10 @@ namespace Grean.AtomEventStore.UnitTests
         {
             public void Customize(IFixture fixture)
             {
-                fixture.Customizations.Add(
-                    new TypeRelay(
-                        typeof(ISyndicationFeedReader),
-                        typeof(InMemorySyndication)));
-                fixture.Customizations.Add(
-                    new TypeRelay(
-                        typeof(ISyndicationFeedWriter),
-                        typeof(InMemorySyndication)));
-                fixture.Customizations.Add(
-                    new TypeRelay(
-                        typeof(ISyndicationItemWriter),
-                        typeof(InMemorySyndication)));
+                var fake = fixture.Create<InMemorySyndication>();
+                fixture.Inject<ISyndicationFeedReader>(fake);
+                fixture.Inject<ISyndicationFeedWriter>(fake);
+                fixture.Inject<ISyndicationItemWriter>(fake);
             }
         }
     }
