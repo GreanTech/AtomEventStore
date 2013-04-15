@@ -11,6 +11,7 @@ namespace Grean.AtomEventStore
     public class AtomFileAccess :
         ISyndicationItemWriter,
         ISyndicationFeedWriter,
+        ISyndicationItemReader,
         ISyndicationFeedReader
     {
         private readonly DirectoryInfo directory;
@@ -43,6 +44,13 @@ namespace Grean.AtomEventStore
             var fileName = this.CreateFileName(feed.Links);
             using (var w = XmlWriter.Create(fileName))
                 feed.SaveAsAtom10(w);
+        }
+
+        public SyndicationItem ReadItem(string id)
+        {
+            var fileName = this.CreateFileName(id);
+            using (var r = XmlReader.Create(fileName))
+                return SyndicationItem.Load(r);
         }
 
         public DirectoryInfo Directory
