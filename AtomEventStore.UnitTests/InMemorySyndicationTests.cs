@@ -120,5 +120,11 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected, actual);
             // Teardown
         }
+
+        [Theory, AutoAtomMoqData]
+        public void SutIsSyndicationItemReader(InMemorySyndication sut)
+        {
+            Assert.IsAssignableFrom<ISyndicationItemReader>(sut);
+        }
     }
 }
