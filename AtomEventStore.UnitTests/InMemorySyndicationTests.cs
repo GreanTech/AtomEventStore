@@ -12,13 +12,13 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class InMemorySyndicationTests
     {
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutIsSyndicationFeedReader(InMemorySyndication sut)
         {
             Assert.IsAssignableFrom<ISyndicationFeedReader>(sut);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ReadFeedFromEmptySutReturnsCorrectResult(
             InMemorySyndication sut,
             string id)
@@ -27,13 +27,13 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Empty(actual.Items);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutIsSyndicationFeedWriter(InMemorySyndication sut)
         {
             Assert.IsAssignableFrom<ISyndicationFeedWriter>(sut);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void CreateOrUpdateStoresFeedForReading(
             InMemorySyndication sut,
             SyndicationFeed expected,
@@ -47,7 +47,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ReadReturnsCorrectFeed(
             InMemorySyndication sut,
             SyndicationFeed expected,
@@ -65,13 +65,13 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutIsSyndicationItemWriter(InMemorySyndication sut)
         {
             Assert.IsAssignableFrom<ISyndicationItemWriter>(sut);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void CreateSameItemTwiceThrows(
             InMemorySyndication sut,
             SyndicationItem item,
@@ -83,7 +83,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Throws<ArgumentException>(() => sut.Create(item));
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void CreateTwoDifferentItemsDoesNotThrow(
             InMemorySyndication sut,
             SyndicationItem itemX,
@@ -98,7 +98,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.DoesNotThrow(() => sut.Create(itemY));
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ReadItemCanRetrieveCorrectItem(
             InMemorySyndication sut,
             SyndicationItem expected,
@@ -119,6 +119,12 @@ namespace Grean.AtomEventStore.UnitTests
             // Verify outcome
             Assert.Equal(expected, actual);
             // Teardown
+        }
+
+        [Theory, AutoAtomMoqData]
+        public void SutIsSyndicationItemReader(InMemorySyndication sut)
+        {
+            Assert.IsAssignableFrom<ISyndicationItemReader>(sut);
         }
     }
 }

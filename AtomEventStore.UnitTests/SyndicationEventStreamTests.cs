@@ -16,7 +16,7 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class SyndicationEventStreamTests
     {
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void AppendFirstEventSavesCorrectDocuments(
             [Frozen]string id,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
@@ -62,7 +62,7 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void AppendLaterEventSavesCorrectDocuments(
             [Frozen]string id,
             [Frozen]Mock<ISyndicationFeedReader> headReaderStub,
@@ -125,11 +125,47 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void IdIsCorrect([Frozen]string expected, SyndicationEventStream<TestEvent> sut)
         {
             string actual = sut.Id;
             Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomMoqData]
+        public void SutIsEnumerable(SyndicationEventStream<TestEvent> sut)
+        {
+            Assert.IsAssignableFrom<IEnumerable<TestEvent>>(sut);
+        }
+
+        [Theory, AutoAtomFakeData]
+        public void SutIsInitiallyEmpty(SyndicationEventStream<TestEvent> sut)
+        {
+            Assert.Empty(sut);
+            Assert.False(sut.Any(), "Event stream should be empty.");
+        }
+
+        [Theory, AutoAtomFakeData]
+        public void AfterAppendSutYieldsAppendedEvent(
+            SyndicationEventStream<TestEvent> sut,
+            TestEvent expected)
+        {
+            sut.Append(expected).Wait();
+            Assert.Equal(expected, sut.Single());
+            Assert.Equal(
+                expected, 
+                ((System.Collections.IEnumerable)sut).OfType<object>().Single());
+        }
+
+        [Theory, AutoAtomFakeData]
+        public void SutYieldsAllAppendedEvents(
+            SyndicationEventStream<TestEvent> sut,
+            List<TestEvent> events)
+        {
+            events.ForEach(e => sut.Append(e).Wait());
+            Assert.True(
+                events.AsEnumerable().Reverse().SequenceEqual(sut),
+                "Events should be yielded in a LIFO order.");
         }
     }
 }

@@ -9,7 +9,8 @@ namespace Grean.AtomEventStore
     public class InMemorySyndication :
         ISyndicationFeedReader,
         ISyndicationFeedWriter,
-        ISyndicationItemWriter
+        ISyndicationItemWriter,
+        ISyndicationItemReader
     {
         private readonly Dictionary<string, SyndicationFeed> feeds;
         private readonly Dictionary<string, SyndicationItem> items;

@@ -10,9 +10,9 @@ using Ploeh.AutoFixture.AutoMoq;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class AtomTestConventions : CompositeCustomization
+    public class MoqTestConventions : CompositeCustomization
     {
-        public AtomTestConventions()
+        public MoqTestConventions()
             : base(
                 new WorkingDirectoryCustomization(),
                 new SyndicationCustomization(),
