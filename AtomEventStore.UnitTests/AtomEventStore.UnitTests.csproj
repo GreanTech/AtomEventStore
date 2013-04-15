@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="AtomFileAccessTests.cs" />
     <Compile Include="AtomTestConventions.cs" />
+    <Compile Include="InMemorySyndicationTests.cs" />
     <Compile Include="MockEnvy.cs" />
     <Compile Include="SpySequence.cs" />
     <Compile Include="SyndicationEventStreamTests.cs" />

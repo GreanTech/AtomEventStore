@@ -80,7 +80,7 @@ namespace Grean.AtomEventStore.UnitTests
                     .Build()
                     .ChangeLinkRelationShipTypes(from: "self", to: "via"))
                 .Build();
-            headReaderStub.Setup(r => r.Read(id)).Returns(existingHead);
+            headReaderStub.Setup(r => r.ReadFeed(id)).Returns(existingHead);
 
             var existingHeadLink = existingHead.Items.Single()
                 .Links.Single(l => l.RelationshipType == "via");
