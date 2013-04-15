@@ -131,5 +131,11 @@ namespace Grean.AtomEventStore.UnitTests
             string actual = sut.Id;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsEnumerable(SyndicationEventStream<TestEvent> sut)
+        {
+            Assert.IsAssignableFrom<IEnumerable<TestEvent>>(sut);
+        }
     }
 }

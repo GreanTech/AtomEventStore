@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class SyndicationEventStream<T>
+    public class SyndicationEventStream<T> : IEnumerable<T>
     {
         private readonly string id;
         private readonly ISyndicationFeedReader headReader;
@@ -107,6 +107,16 @@ namespace Grean.AtomEventStore
         public string Id
         {
             get { return this.id; }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
     }
 }
