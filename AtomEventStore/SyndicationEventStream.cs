@@ -11,17 +11,20 @@ namespace Grean.AtomEventStore
     {
         private readonly string id;
         private readonly ISyndicationFeedReader headReader;
+        private readonly ISyndicationItemReader entryReader;
         private readonly ISyndicationItemWriter entryWriter;
         private readonly ISyndicationFeedWriter headWriter;
 
         public SyndicationEventStream(
             string id,
             ISyndicationFeedReader headReader,
+            ISyndicationItemReader entryReader,
             ISyndicationItemWriter entryWriter,
             ISyndicationFeedWriter headWriter)
         {
             this.id = id;
             this.headReader = headReader;
+            this.entryReader = entryReader;
             this.entryWriter = entryWriter;
             this.headWriter = headWriter;
         }
@@ -111,16 +114,29 @@ namespace Grean.AtomEventStore
 
         public IEnumerator<T> GetEnumerator()
         {
-            return this.headReader.ReadFeed(this.id).Items
-                .Select(i => i.Content)
-                .OfType<XmlSyndicationContent>()
-                .Select(x => x.ReadContent<T>())
-                .GetEnumerator();
+            var item = this.headReader.ReadFeed(this.id).Items.SingleOrDefault();
+            while (item != null)
+            {
+                var content = (XmlSyndicationContent)item.Content;
+                yield return content.ReadContent<T>();
+                item = this.GetPrevious(item);
+            }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        private SyndicationItem GetPrevious(SyndicationItem current)
+        {
+            var previousLink = current.Links.SingleOrDefault(
+                l => l.RelationshipType == "previous");
+            if (previousLink == null)
+                return null;
+
+            var previousId = previousLink.Uri.ToString();
+            return this.entryReader.ReadItem(previousId);
         }
     }
 }

@@ -156,5 +156,16 @@ namespace Grean.AtomEventStore.UnitTests
                 expected, 
                 ((System.Collections.IEnumerable)sut).OfType<object>().Single());
         }
+
+        [Theory, AutoAtomFakeData]
+        public void SutYieldsAllAppendedEvents(
+            SyndicationEventStream<TestEvent> sut,
+            List<TestEvent> events)
+        {
+            events.ForEach(e => sut.Append(e).Wait());
+            Assert.True(
+                events.AsEnumerable().Reverse().SequenceEqual(sut),
+                "Events should be yielded in a LIFO order.");
+        }
     }
 }

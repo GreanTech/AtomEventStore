@@ -22,6 +22,7 @@ namespace Grean.AtomEventStore.UnitTests
                 var fake = fixture.Create<InMemorySyndication>();
                 fixture.Inject<ISyndicationFeedReader>(fake);
                 fixture.Inject<ISyndicationFeedWriter>(fake);
+                fixture.Inject<ISyndicationItemReader>(fake);
                 fixture.Inject<ISyndicationItemWriter>(fake);
             }
         }
