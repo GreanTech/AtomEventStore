@@ -12,14 +12,14 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class UuidIriTests
     {
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ToStringReturnsCorrectResult([Frozen]Guid g, UuidIri sut)
         {
             var actual = sut.ToString();
             Assert.Equal("urn:uuid:" + g, actual);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutCorrectlyConvertsToGuid(
             [Frozen]Guid expected,
             UuidIri sut)
@@ -28,7 +28,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void GuidCorrectlyConvertsToSut(
             UuidIri sut)
         {
@@ -37,7 +37,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal<Guid>(expected, actual);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void TwoSutsWithIdenticalIdAreEqual(Guid guid)
         {
             UuidIri sut = guid;
@@ -48,7 +48,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.True(actual, "Equals");
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void TwoSutsWithDifferentIdsAreNotEquals(
             Guid x,
             Guid y)
@@ -63,7 +63,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.False(actual, "Equals");
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ParseCorrectlyFormattedStringReturnsCorrectResult(
             UuidIri expected)
         {
@@ -78,7 +78,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ParseIncorrectlyPrefixedStringReturnsCorrectResult(
             string incorrectPrefix,
             Guid guid)
@@ -94,7 +94,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(default(UuidIri), actualFromTry);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ParseStringWithIncorrectIdReturnsCorrectResult(
             DateTimeOffset notAGuid)
         {
@@ -108,7 +108,7 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(default(UuidIri), actualFromTry);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void ParseNullReturnsCorrectResult()
         {
             UuidIri actualFromTry;

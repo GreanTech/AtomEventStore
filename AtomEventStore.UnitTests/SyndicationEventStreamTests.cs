@@ -16,7 +16,7 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class SyndicationEventStreamTests
     {
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void AppendFirstEventSavesCorrectDocuments(
             [Frozen]string id,
             [Frozen]Mock<ISyndicationItemWriter> entryWriterMock,
@@ -62,7 +62,7 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void AppendLaterEventSavesCorrectDocuments(
             [Frozen]string id,
             [Frozen]Mock<ISyndicationFeedReader> headReaderStub,
@@ -125,14 +125,14 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void IdIsCorrect([Frozen]string expected, SyndicationEventStream<TestEvent> sut)
         {
             string actual = sut.Id;
             Assert.Equal(expected, actual);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutIsEnumerable(SyndicationEventStream<TestEvent> sut)
         {
             Assert.IsAssignableFrom<IEnumerable<TestEvent>>(sut);

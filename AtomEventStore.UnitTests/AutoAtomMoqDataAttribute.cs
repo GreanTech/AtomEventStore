@@ -8,10 +8,10 @@ using Ploeh.AutoFixture.Xunit;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class AutoAtomDataAttribute : AutoDataAttribute
+    public class AutoAtomMoqDataAttribute : AutoDataAttribute
     {
-        public AutoAtomDataAttribute()
-            : base(new Fixture().Customize(new AtomTestConventions()))
+        public AutoAtomMoqDataAttribute()
+            : base(new Fixture().Customize(new MoqTestConventions()))
         {
         }
     }

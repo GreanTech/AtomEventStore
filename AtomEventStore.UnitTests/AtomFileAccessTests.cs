@@ -13,25 +13,25 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class AtomFileAccessTests
     {
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutIsSyndicationItemWriter(AtomFileAccess sut)
         {
             Assert.IsAssignableFrom<ISyndicationItemWriter>(sut);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutIsSyndicationFeedWriter(AtomFileAccess sut)
         {
             Assert.IsAssignableFrom<ISyndicationFeedWriter>(sut);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void SutIsSyndicationFeedReader(AtomFileAccess sut)
         {
             Assert.IsAssignableFrom<ISyndicationFeedReader>(sut);
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoAtomMoqData]
         public void DirectoryIsCorrect(
             [Frozen]DirectoryInfo expected,
             AtomFileAccess sut)
