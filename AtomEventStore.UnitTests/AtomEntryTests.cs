@@ -92,5 +92,18 @@ namespace Grean.AtomEventStore.UnitTests
                     (s, d) => object.Equals(newUpdated, d.Updated));
             expected.ShouldEqual(actual);
         }
+
+        [Theory, AutoAtomData]
+        public void WithAuthorReturnsCorrectResult(
+            AtomEntry sut,
+            AtomAuthor newAuthor)
+        {
+            AtomEntry actual = sut.WithAuthor(newAuthor);
+
+            var expected = sut.AsSource().OfLikeness<AtomEntry>()
+                .With(x => x.Author).EqualsWhen(
+                    (s, d) => object.Equals(newAuthor, d.Author));
+            expected.ShouldEqual(actual);
+        }
     }
 }

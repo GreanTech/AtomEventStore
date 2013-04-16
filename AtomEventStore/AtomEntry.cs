@@ -81,5 +81,16 @@ namespace Grean.AtomEventStore
                 this.author,
                 this.content);
         }
+
+        public AtomEntry WithAuthor(AtomAuthor newAuthor)
+        {
+            return new AtomEntry(
+                this.id,
+                this.title,
+                this.published,
+                this.updated,
+                newAuthor,
+                this.content);
+        }
     }
 }
