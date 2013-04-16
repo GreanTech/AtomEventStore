@@ -40,7 +40,10 @@ namespace Grean.AtomEventStore.UnitTests
 
         public SyndicationItemBuilder WithXmlContent(object content)
         {
-            var sc = XmlSyndicationContent.CreateXmlContent(content);
+            var sc = new XmlSyndicationContent(
+                "application/xml",
+                content,
+                new XmlSerializer(content.GetType()));
             return new SyndicationItemBuilder(this.publishDate, sc, this.links);
         }
 
