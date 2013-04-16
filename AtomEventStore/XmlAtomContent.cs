@@ -18,5 +18,10 @@ namespace Grean.AtomEventStore
         {
             get { return this.item; }
         }
+
+        public XmlAtomContent WithItem(object newItem)
+        {
+            return new XmlAtomContent(newItem);
+        }
     }
 }
