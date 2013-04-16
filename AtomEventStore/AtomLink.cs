@@ -25,5 +25,10 @@ namespace Grean.AtomEventStore
         {
             get { return this.href; }
         }
+
+        public AtomLink WithRel(string newRel)
+        {
+            return new AtomLink(newRel, this.href);
+        }
     }
 }
