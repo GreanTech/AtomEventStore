@@ -12,19 +12,22 @@ namespace Grean.AtomEventStore
         private readonly DateTimeOffset published;
         private readonly DateTimeOffset updated;
         private readonly AtomAuthor author;
+        private readonly XmlAtomContent content;
 
         public AtomEntry(
             UuidIri id,
             string title, 
             DateTimeOffset published,
             DateTimeOffset updated,
-            AtomAuthor author)
+            AtomAuthor author,
+            XmlAtomContent content)
         {
             this.id = id;
             this.title = title;
             this.published = published;
             this.updated = updated;
             this.author = author;
+            this.content = content;
         }
         
         public UuidIri Id
@@ -50,6 +53,11 @@ namespace Grean.AtomEventStore
         public AtomAuthor Author
         {
             get { return this.author; }
+        }
+
+        public XmlAtomContent Content
+        {
+            get { return this.content; }
         }
     }
 }

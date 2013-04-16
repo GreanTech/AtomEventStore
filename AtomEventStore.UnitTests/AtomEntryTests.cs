@@ -56,5 +56,14 @@ namespace Grean.AtomEventStore.UnitTests
             AtomAuthor actual = sut.Author;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void ContentIsCorrect(
+            [Frozen]XmlAtomContent expected,
+            AtomEntry sut)
+        {
+            XmlAtomContent actual = sut.Content;
+            Assert.Equal(expected, actual);
+        }
     }
 }
