@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AtomAuthor.cs" />
     <Compile Include="AtomEntry.cs" />
+    <Compile Include="AtomFeed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UuidIri.cs" />
     <Compile Include="XmlAtomContent.cs" />
