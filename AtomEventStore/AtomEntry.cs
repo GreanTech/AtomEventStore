@@ -70,5 +70,16 @@ namespace Grean.AtomEventStore
                 this.author,
                 this.content);
         }
+
+        public AtomEntry WithUpdated(DateTimeOffset newUpdated)
+        {
+            return new AtomEntry(
+                this.id,
+                this.title,
+                this.published,
+                newUpdated,
+                this.author,
+                this.content);
+        }
     }
 }
