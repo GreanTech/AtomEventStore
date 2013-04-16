@@ -34,5 +34,40 @@ namespace Grean.AtomEventStore.UnitTests
                     (s, d) => object.Equals(newName, s.Name));
             expected.ShouldEqual(actual);
         }
+
+        [Theory, AutoAtomData]
+        public void SutEqualsIdenticalOther(AtomAuthor sut)
+        {
+            var other = sut.WithName(sut.Name);
+            var actual = sut.Equals(other);
+            Assert.True(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutIsNotEqualToAnonymousObject(
+            AtomAuthor sut,
+            object anonymous)
+        {
+            var actual = sut.Equals(anonymous);
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutIsNotEqualToDifferentOther(
+            AtomAuthor sut,
+            AtomAuthor other)
+        {
+            var actual = sut.Equals(other);
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void GetHashCodeReturnsCorrectResult([Modest]AtomAuthor sut)
+        {
+            var actual = sut.GetHashCode();
+
+            var expected = sut.Name.GetHashCode();
+            Assert.Equal(expected, actual);
+        }
     }
 }

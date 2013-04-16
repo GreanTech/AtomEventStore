@@ -23,5 +23,19 @@ namespace Grean.AtomEventStore
         {
             return new AtomAuthor(newName);
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as AtomAuthor;
+            if (other != null)
+                return object.Equals(this.name, other.name);
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.name.GetHashCode();
+        }
     }
 }
