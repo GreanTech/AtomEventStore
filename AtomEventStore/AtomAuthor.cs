@@ -18,5 +18,10 @@ namespace Grean.AtomEventStore
         {
             get { return this.name; }
         }
+
+        public AtomAuthor WithName(string newName)
+        {
+            return new AtomAuthor(newName);
+        }
     }
 }
