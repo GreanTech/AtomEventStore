@@ -49,5 +49,12 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.NotEqual(sut.Published, sut.Updated);
         }
+
+        [Theory, AutoAtomData]
+        public void AuthorIsCorrect([Frozen]AtomAuthor expected, AtomEntry sut)
+        {
+            AtomAuthor actual = sut.Author;
+            Assert.Equal(expected, actual);
+        }
     }
 }
