@@ -13,6 +13,7 @@ namespace Grean.AtomEventStore
         private readonly DateTimeOffset updated;
         private readonly AtomAuthor author;
         private readonly XmlAtomContent content;
+        private readonly IEnumerable<AtomLink> links;
 
         public AtomEntry(
             UuidIri id,
@@ -20,7 +21,8 @@ namespace Grean.AtomEventStore
             DateTimeOffset published,
             DateTimeOffset updated,
             AtomAuthor author,
-            XmlAtomContent content)
+            XmlAtomContent content,
+            IEnumerable<AtomLink> links)
         {
             this.id = id;
             this.title = title;
@@ -28,6 +30,7 @@ namespace Grean.AtomEventStore
             this.updated = updated;
             this.author = author;
             this.content = content;
+            this.links = links;
         }
         
         public UuidIri Id
@@ -60,6 +63,11 @@ namespace Grean.AtomEventStore
             get { return this.content; }
         }
 
+        public IEnumerable<AtomLink> Links
+        {
+            get { return this.links; }
+        }
+
         public AtomEntry WithTitle(string newTitle)
         {
             return new AtomEntry(
@@ -68,7 +76,8 @@ namespace Grean.AtomEventStore
                 this.published,
                 this.updated,
                 this.author,
-                this.content);
+                this.content,
+                this.links);
         }
 
         public AtomEntry WithUpdated(DateTimeOffset newUpdated)
@@ -79,7 +88,8 @@ namespace Grean.AtomEventStore
                 this.published,
                 newUpdated,
                 this.author,
-                this.content);
+                this.content,
+                this.links);
         }
 
         public AtomEntry WithAuthor(AtomAuthor newAuthor)
@@ -90,7 +100,8 @@ namespace Grean.AtomEventStore
                 this.published,
                 this.updated,
                 newAuthor,
-                this.content);
+                this.content,
+                this.links);
         }
 
         public AtomEntry WithContent(XmlAtomContent newContent)
@@ -101,7 +112,8 @@ namespace Grean.AtomEventStore
                 this.published,
                 this.updated,
                 this.author,
-                newContent);
+                newContent,
+                this.links);
         }
     }
 }
