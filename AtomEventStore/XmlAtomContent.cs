@@ -23,5 +23,19 @@ namespace Grean.AtomEventStore
         {
             return new XmlAtomContent(newItem);
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as XmlAtomContent;
+            if (other != null)
+                return object.Equals(this.item, other.item);
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.item.GetHashCode();
+        }
     }
 }
