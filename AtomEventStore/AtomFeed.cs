@@ -9,11 +9,13 @@ namespace Grean.AtomEventStore
     {
         private readonly UuidIri id;
         private readonly string title;
+        private readonly DateTimeOffset updated;
 
-        public AtomFeed(UuidIri id, string title)
+        public AtomFeed(UuidIri id, string title, DateTimeOffset updated)
         {
             this.id = id;
             this.title = title;
+            this.updated = updated;
         }
 
         public UuidIri Id
@@ -24,6 +26,11 @@ namespace Grean.AtomEventStore
         public string Title
         {
             get { return this.title; }
+        }
+
+        public DateTimeOffset Updated
+        {
+            get { return this.updated; }
         }
     }
 }
