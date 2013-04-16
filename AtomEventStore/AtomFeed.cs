@@ -93,6 +93,17 @@ namespace Grean.AtomEventStore
                 this.links);
         }
 
+        public AtomFeed WithEntries(IEnumerable<AtomEntry> newEntries)
+        {
+            return new AtomFeed(
+                this.id,
+                this.title,
+                this.updated,
+                this.author,
+                newEntries,
+                this.links);
+        }
+
         public AtomFeed WithLinks(IEnumerable<AtomLink> newLinks)
         {
             return new AtomFeed(

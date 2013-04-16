@@ -103,6 +103,19 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void WithEntriesReturnsCorrectResult(
+            AtomFeed sut,
+            IEnumerable<AtomEntry> newEntries)
+        {
+            AtomFeed actual = sut.WithEntries(newEntries);
+
+            var expected = sut.AsSource().OfLikeness<AtomFeed>()
+                .With(x => x.Entries).EqualsWhen(
+                    (s, d) => newEntries.SequenceEqual(d.Entries));
+            expected.ShouldEqual(actual);
+        }
+
+        [Theory, AutoAtomData]
         public void WithLinksReturnsCorrectResult(
             AtomFeed sut,
             IEnumerable<AtomLink> newLinks)
