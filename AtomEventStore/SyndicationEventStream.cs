@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Grean.AtomEventStore
 {
@@ -63,7 +64,10 @@ namespace Grean.AtomEventStore
             item.PublishDate = DateTimeOffset.Now;
             item.LastUpdatedTime = item.PublishDate;
             item.Authors.Add(new SyndicationPerson { Name = "Grean" });
-            item.Content = XmlSyndicationContent.CreateXmlContent(@event);
+            item.Content = new XmlSyndicationContent(
+                "application/xml",
+                @event,
+                new XmlSerializer(typeof(T)));
             return item;
         }
 
@@ -118,7 +122,7 @@ namespace Grean.AtomEventStore
             while (item != null)
             {
                 var content = (XmlSyndicationContent)item.Content;
-                yield return content.ReadContent<T>();
+                yield return content.ReadContent<T>(new XmlSerializer(typeof(T)));
                 item = this.GetPrevious(item);
             }
         }
