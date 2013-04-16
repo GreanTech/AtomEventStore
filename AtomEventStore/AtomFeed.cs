@@ -12,19 +12,22 @@ namespace Grean.AtomEventStore
         private readonly DateTimeOffset updated;
         private readonly AtomAuthor author;
         private readonly IEnumerable<AtomEntry> entries;
+        private readonly IEnumerable<AtomLink> links;
 
         public AtomFeed(
             UuidIri id,
             string title, 
             DateTimeOffset updated,
             AtomAuthor author,
-            IEnumerable<AtomEntry> entries)
+            IEnumerable<AtomEntry> entries,
+            IEnumerable<AtomLink> links)
         {
             this.id = id;
             this.title = title;
             this.updated = updated;
             this.author = author;
             this.entries = entries;
+            this.links = links;
         }
 
         public UuidIri Id
@@ -50,6 +53,11 @@ namespace Grean.AtomEventStore
         public IEnumerable<AtomEntry> Entries
         {
             get { return this.entries; }
+        }
+
+        public IEnumerable<AtomLink> Links
+        {
+            get { return this.links; }
         }
     }
 }

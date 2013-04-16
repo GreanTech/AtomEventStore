@@ -52,5 +52,14 @@ namespace Grean.AtomEventStore.UnitTests
             IEnumerable<AtomEntry> actual = sut.Entries;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void LinksIsCorrect(
+            [Frozen]IEnumerable<AtomLink> expected,
+            AtomFeed sut)
+        {
+            IEnumerable<AtomLink> actual = sut.Links;
+            Assert.Equal(expected, actual);
+        }
     }
 }
