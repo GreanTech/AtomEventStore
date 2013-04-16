@@ -34,5 +34,14 @@ namespace Grean.AtomEventStore.UnitTests
             DateTimeOffset actual = sut.Updated;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void AuthorIsCorrect(
+            [Frozen]AtomAuthor expected,
+            AtomFeed sut)
+        {
+            AtomAuthor actual = sut.Author;
+            Assert.Equal(expected, actual);
+        }
     }
 }
