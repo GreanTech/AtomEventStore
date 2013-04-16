@@ -42,6 +42,9 @@
     <Reference Include="Ploeh.AutoFixture.Xunit">
       <HintPath>..\packages\AutoFixture.Xunit.3.0.7\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
     </Reference>
+    <Reference Include="Ploeh.SemanticComparison">
+      <HintPath>..\packages\SemanticComparison.3.0.7\lib\net40\Ploeh.SemanticComparison.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
