@@ -52,5 +52,47 @@ namespace Grean.AtomEventStore.UnitTests
                     (s, d) => object.Equals(newHref, d.Href));
             expected.ShouldEqual(actual);
         }
+
+        [Theory]
+        [InlineData(true, "ploeh", "ploeh", "fnaah", "fnaah")]
+        [InlineData(false, "ndøh", "ploeh", "fnaah", "fnaah")]
+        [InlineData(true, "ndøh", "ndøh", "fnaah", "fnaah")]
+        [InlineData(true, "sgryt", "sgryt", "fnaah", "fnaah")]
+        [InlineData(false, "sgryt", "sgryt", "pippo", "fnaah")]
+        [InlineData(true, "sgryt", "sgryt", "pippo", "pippo")]
+        public void EqualsReturnsCorrectResult(
+            bool expected, 
+            string sutRel,
+            string otherRel,
+            string sutHref,
+            string otherHref)
+        {
+            var sut = new AtomLink(sutRel, new Uri(sutHref, UriKind.Relative));
+            var other = new AtomLink(otherRel, new Uri(otherHref, UriKind.Relative));
+
+            var actual = sut.Equals(other);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutDoesNotEqualAnonymousOther(
+            AtomLink sut,
+            object anonymous)
+        {
+            var actual = sut.Equals(anonymous);
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void GetHashCodeReturnsCorrectResult(AtomLink sut)
+        {
+            var actual = sut.GetHashCode();
+
+            var expected =
+                sut.Rel.GetHashCode() ^
+                sut.Href.GetHashCode();
+            Assert.Equal(expected, actual);
+        }
     }
 }

@@ -35,5 +35,22 @@ namespace Grean.AtomEventStore
         {
             return new AtomLink(this.rel, newHref);
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as AtomLink;
+            if (other != null)
+                return object.Equals(this.rel, other.rel)
+                    && object.Equals(this.href, other.href);
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                this.Rel.GetHashCode() ^
+                this.Href.GetHashCode();
+        }
     }
 }
