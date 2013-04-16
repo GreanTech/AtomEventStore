@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AtomAuthorTests.cs" />
     <Compile Include="AtomEntryTests.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
