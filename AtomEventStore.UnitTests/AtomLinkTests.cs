@@ -39,5 +39,18 @@ namespace Grean.AtomEventStore.UnitTests
                     (s, d) => object.Equals(newRel, d.Rel));
             expected.ShouldEqual(actual);
         }
+
+        [Theory, AutoAtomData]
+        public void WithHrefReturnsCorrectResult(
+            AtomLink sut,
+            Uri newHref)
+        {
+            AtomLink actual = sut.WithHref(newHref);
+
+            var expected = sut.AsSource().OfLikeness<AtomLink>()
+                .With(x => x.Href).EqualsWhen(
+                    (s, d) => object.Equals(newHref, d.Href));
+            expected.ShouldEqual(actual);
+        }
     }
 }
