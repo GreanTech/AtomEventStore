@@ -7,6 +7,7 @@ using Ploeh.AutoFixture.Xunit;
 using Xunit;
 using Xunit.Extensions;
 using Grean.AtomEventStore;
+using Ploeh.SemanticComparison.Fluent;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -60,6 +61,19 @@ namespace Grean.AtomEventStore.UnitTests
         {
             IEnumerable<AtomLink> actual = sut.Links;
             Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void WithTitleReturnsCorrectResult(
+            AtomFeed sut,
+            string newTitle)
+        {
+            AtomFeed actual = sut.WithTitle(newTitle);
+
+            var expected = sut.AsSource().OfLikeness<AtomFeed>()
+                .With(x => x.Title).EqualsWhen(
+                    (s, d) => object.Equals(newTitle, d.Title));
+            expected.ShouldEqual(actual);
         }
     }
 }
