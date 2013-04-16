@@ -70,5 +70,16 @@ namespace Grean.AtomEventStore
                 this.entries,
                 this.links);
         }
+
+        public AtomFeed WithUpdated(DateTimeOffset newUpdated)
+        {
+            return new AtomFeed(
+                this.id,
+                this.title,
+                newUpdated,
+                this.author,
+                this.entries,
+                this.links);
+        }
     }
 }
