@@ -18,5 +18,12 @@ namespace Grean.AtomEventStore.UnitTests
             string actual = sut.Rel;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void HrefIsCorrect([Frozen]Uri expected, AtomLink sut)
+        {
+            Uri actual = sut.Href;
+            Assert.Equal(expected, actual);
+        }
     }
 }
