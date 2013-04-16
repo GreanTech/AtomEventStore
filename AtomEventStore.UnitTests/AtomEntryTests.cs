@@ -34,5 +34,20 @@ namespace Grean.AtomEventStore.UnitTests
             DateTimeOffset actual = sut.Published;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void UpdatedReturnsCorrectResult(
+            [Frozen]DateTimeOffset expected,
+            AtomEntry sut)
+        {
+            DateTimeOffset actual = sut.Updated;
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void PublishedAndUpdatedCanBeDifferent(AtomEntry sut)
+        {
+            Assert.NotEqual(sut.Published, sut.Updated);
+        }
     }
 }
