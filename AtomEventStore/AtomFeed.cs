@@ -8,15 +8,22 @@ namespace Grean.AtomEventStore
     public class AtomFeed
     {
         private readonly UuidIri id;
+        private readonly string title;
 
-        public AtomFeed(UuidIri id)
+        public AtomFeed(UuidIri id, string title)
         {
             this.id = id;
+            this.title = title;
         }
 
         public UuidIri Id
         {
             get { return this.id; }
+        }
+
+        public string Title
+        {
+            get { return this.title; }
         }
     }
 }

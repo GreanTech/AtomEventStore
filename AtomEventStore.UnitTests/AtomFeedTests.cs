@@ -18,5 +18,12 @@ namespace Grean.AtomEventStore.UnitTests
             UuidIri actual = sut.Id;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void TitleIsCorrect([Frozen]string expected, AtomFeed sut)
+        {
+            string actual = sut.Title;
+            Assert.Equal(expected, actual);
+        }
     }
 }
