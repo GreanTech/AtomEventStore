@@ -59,5 +59,16 @@ namespace Grean.AtomEventStore
         {
             get { return this.content; }
         }
+
+        public AtomEntry WithTitle(string newTitle)
+        {
+            return new AtomEntry(
+                this.id,
+                newTitle,
+                this.published,
+                this.updated,
+                this.author,
+                this.content);
+        }
     }
 }
