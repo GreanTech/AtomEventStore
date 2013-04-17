@@ -32,6 +32,33 @@ namespace Grean.AtomEventStore.UnitTests
                 new XNodeEqualityComparer());
         }
 
+        [Theory, AutoAtomData]
+        public void ToXmlStringWithSettingsReturnsCorrectResult(
+            TestXmlWritable writable)
+        {
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true
+            };
+
+            var actual = writable.ToXmlString(settings);
+
+            var sb = new StringBuilder();
+            using (var w = XmlWriter.Create(sb, settings))
+            {
+                writable.WriteTo(w);
+                w.Flush();
+            }
+            var expected = XDocument.Parse(sb.ToString());
+            Assert.Equal(
+                expected,
+                XDocument.Parse(actual),
+                new XNodeEqualityComparer());
+            Assert.False(
+                actual.StartsWith("<?"),
+                "XML declaration not expected due to XmlWriterSettings");
+        }
+
         public class TestXmlWritable : IXmlWritable
         {
             public readonly string documentName;

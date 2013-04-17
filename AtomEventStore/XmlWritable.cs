@@ -11,8 +11,15 @@ namespace Grean.AtomEventStore
     {
         public static string ToXmlString(this IXmlWritable xmlWritable)
         {
+            return xmlWritable.ToXmlString(new XmlWriterSettings());
+        }
+
+        public static string ToXmlString(
+            this IXmlWritable xmlWritable, 
+            XmlWriterSettings settings)
+        {
             var sb = new StringBuilder();
-            using (var w = XmlWriter.Create(sb))
+            using (var w = XmlWriter.Create(sb, settings))
             {
                 xmlWritable.WriteTo(w);
                 w.Flush();
