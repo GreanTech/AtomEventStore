@@ -200,5 +200,11 @@ namespace Grean.AtomEventStore.UnitTests
                     .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
             }
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsXmlWritable(AtomFeed sut)
+        {
+            Assert.IsAssignableFrom<IXmlWritable>(sut);
+        }
     }
 }
