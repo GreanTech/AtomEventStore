@@ -39,9 +39,9 @@ namespace Grean.AtomEventStore
             return this.name.GetHashCode();
         }
 
-        internal void WriteTo(XmlWriter xmlWriter)
+        public void WriteTo(XmlWriter xmlWriter)
         {
-            xmlWriter.WriteStartElement("author");
+            xmlWriter.WriteStartElement("author", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteElementString("name", this.name);
             xmlWriter.WriteEndElement();
         }
