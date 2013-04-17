@@ -165,30 +165,24 @@ namespace Grean.AtomEventStore.UnitTests
                 // Verify outcome
                 w.Flush();
 
-                XNamespace atomNs = "http://www.w3.org/2005/Atom";
-                XNamespace testNs = "urn:grean:atom-event-store:unit-tests";
                 var expected = XDocument.Parse(
-                    new XDocument(
-                        new XElement(atomNs + "entry",
-                            new XElement(atomNs + "id", sut.Id.ToString()),
-                            new XElement(atomNs + "title",
-                                new XAttribute("type", "text"),
-                                sut.Title),
-                            new XElement(atomNs + "published", sut.Published.ToString("o")),
-                            new XElement(atomNs + "updated", sut.Updated.ToString("o")),
-                            new XElement(atomNs + "author",
-                                new XElement(atomNs + "name", sut.Author.Name)),
-                            new XElement(atomNs + "link",
-                                new XAttribute("href", links[0].Href),
-                                new XAttribute("rel", links[0].Rel)),
-                            new XElement(atomNs + "link",
-                                new XAttribute("href", links[1].Href),
-                                new XAttribute("rel", links[1].Rel)),
-                            new XElement(atomNs + "content",
-                                new XAttribute("type", "application/xml"),
-                                new XElement(testNs + "test-event-x",
-                                    new XElement(testNs + "number", tex.Number),
-                                    new XElement(testNs + "text", tex.Text))))).ToString());
+                    "<entry xmlns=\"http://www.w3.org/2005/Atom\">" +
+                    "  <id>" + sut.Id.ToString() + "</id>" +
+                    "  <title type=\"text\">" + sut.Title + "</title>" +
+                    "  <published>" + sut.Published.ToString("o") + "</published>" +
+                    "  <updated>" + sut.Updated.ToString("o") + "</updated>" +
+                    "  <author>" +
+                    "    <name>" + sut.Author.Name + "</name>" +
+                    "  </author>" +
+                    "  <link href=\"" + links[0].Href.ToString() + "\" rel=\"" + links[0].Rel + "\" />" +
+                    "  <link href=\"" + links[1].Href.ToString() + "\" rel=\"" + links[1].Rel + "\" />" +
+                    "  <content type=\"application/xml\">" +
+                    "    <test-event-x xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                    "      <number>" + tex.Number + "</number>" +
+                    "      <text>" + tex.Text + "</text>" +
+                    "    </test-event-x>" +
+                    "  </content>" +
+                    "</entry>");
                 
                 var actual = XDocument.Parse(sb.ToString());
                 Assert.Equal(expected, actual, new XNodeEqualityComparer());
