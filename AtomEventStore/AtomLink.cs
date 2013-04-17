@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace Grean.AtomEventStore
 {
@@ -51,6 +52,14 @@ namespace Grean.AtomEventStore
             return
                 this.Rel.GetHashCode() ^
                 this.Href.GetHashCode();
+        }
+
+        internal void WriteTo(XmlWriter xmlWriter)
+        {
+            xmlWriter.WriteStartElement("link");
+            xmlWriter.WriteAttributeString("href", this.href.ToString());
+            xmlWriter.WriteAttributeString("rel", this.rel);
+            xmlWriter.WriteEndElement();
         }
     }
 }

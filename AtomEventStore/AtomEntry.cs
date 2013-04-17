@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace Grean.AtomEventStore
 {
@@ -126,6 +127,36 @@ namespace Grean.AtomEventStore
                 this.author,
                 this.content,
                 newLinks);
+        }
+
+        public void WriteTo(XmlWriter xmlWriter)
+        {
+            xmlWriter.WriteStartElement("entry", "http://www.w3.org/2005/Atom");
+
+            xmlWriter.WriteElementString("id", this.id.ToString());
+
+            xmlWriter.WriteStartElement("title");
+            xmlWriter.WriteAttributeString("type", "text");
+            xmlWriter.WriteString(this.title);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteElementString("published", this.published.ToString("o"));
+
+            xmlWriter.WriteElementString("updated", this.updated.ToString("o"));
+
+            this.author.WriteTo(xmlWriter);
+
+            this.WriteLinksTo(xmlWriter);
+
+            this.content.WriteTo(xmlWriter);
+
+            xmlWriter.WriteEndElement();
+        }
+
+        private void WriteLinksTo(XmlWriter xmlWriter)
+        {
+            foreach (var l in this.links)
+                l.WriteTo(xmlWriter);
         }
     }
 }

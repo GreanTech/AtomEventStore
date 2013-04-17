@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace Grean.AtomEventStore
 {
@@ -36,6 +37,13 @@ namespace Grean.AtomEventStore
         public override int GetHashCode()
         {
             return this.name.GetHashCode();
+        }
+
+        internal void WriteTo(XmlWriter xmlWriter)
+        {
+            xmlWriter.WriteStartElement("author");
+            xmlWriter.WriteElementString("name", this.name);
+            xmlWriter.WriteEndElement();
         }
     }
 }

@@ -66,6 +66,7 @@
     <Compile Include="AtomLinkTests.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestEventX.cs" />
     <Compile Include="UuidIriTests.cs" />
     <Compile Include="XmlAtomContentTests.cs" />
   </ItemGroup>
