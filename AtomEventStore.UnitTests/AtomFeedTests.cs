@@ -8,6 +8,9 @@ using Xunit;
 using Xunit.Extensions;
 using Grean.AtomEventStore;
 using Ploeh.SemanticComparison.Fluent;
+using Ploeh.AutoFixture;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -126,6 +129,76 @@ namespace Grean.AtomEventStore.UnitTests
                 .With(x => x.Links).EqualsWhen(
                     (s, d) => newLinks.SequenceEqual(d.Links));
             expected.ShouldEqual(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void WriteToXmlWriterWritesCorrectXml(
+            AtomFeed feed,
+            Generator<TestEventX> eventGenerator)
+        {
+            // Fixture setup
+            var sb = new StringBuilder();
+            using (var w = XmlWriter.Create(sb))
+            {
+                var entries = feed.Entries.Zip(
+                    eventGenerator,
+                    (entry, @event) => entry.WithContent(
+                        entry.Content.WithItem(@event))).ToList();
+                var sut = feed.WithEntries(entries);
+
+                // Exercise system
+                sut.WriteTo(w);
+
+                // Verify outcome
+                w.Flush();
+
+                var expectedLinks = string.Concat(sut.Links.Select(ToXml));
+                var expectedEntries = string.Concat(entries.Select(ToXml));
+
+                var expected = XDocument.Parse(
+                    "<feed xmlns=\"http://www.w3.org/2005/Atom\">" +
+                    "  <id>" + sut.Id.ToString() + "</id>" +
+                    "  <title type=\"text\">" + sut.Title + "</title>" +
+                    "  <updated>" + sut.Updated.ToString("o") + "</updated>" +
+                    "  <author>" +
+                    "    <name>" + sut.Author.Name + "</name>" +
+                    "  </author>" +
+                    expectedLinks +
+                    expectedEntries +
+                    "</feed>");
+
+                var actual = XDocument.Parse(sb.ToString());
+                Assert.Equal(expected, actual, new XNodeEqualityComparer());
+            }
+            // Teardown
+        }
+
+        private static string ToXml(AtomLink link)
+        {
+            var sb = new StringBuilder();
+            using (var w = XmlWriter.Create(
+                sb,
+                new XmlWriterSettings { OmitXmlDeclaration = true }))
+            {
+                link.WriteTo(w);
+                w.Flush();
+                return sb.ToString()
+                    .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
+            }
+        }
+
+        private static string ToXml(AtomEntry entry)
+        {
+            var sb = new StringBuilder();
+            using (var w = XmlWriter.Create(
+                sb,
+                new XmlWriterSettings { OmitXmlDeclaration = true }))
+            {
+                entry.WriteTo(w);
+                w.Flush();
+                return sb.ToString()
+                    .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
+            }
         }
     }
 }

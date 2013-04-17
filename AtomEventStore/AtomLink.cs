@@ -54,9 +54,9 @@ namespace Grean.AtomEventStore
                 this.Href.GetHashCode();
         }
 
-        internal void WriteTo(XmlWriter xmlWriter)
+        public void WriteTo(XmlWriter xmlWriter)
         {
-            xmlWriter.WriteStartElement("link");
+            xmlWriter.WriteStartElement("link", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("href", this.href.ToString());
             xmlWriter.WriteAttributeString("rel", this.rel);
             xmlWriter.WriteEndElement();
