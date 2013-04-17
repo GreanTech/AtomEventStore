@@ -175,30 +175,16 @@ namespace Grean.AtomEventStore.UnitTests
 
         private static string ToXml(AtomLink link)
         {
-            var sb = new StringBuilder();
-            using (var w = XmlWriter.Create(
-                sb,
-                new XmlWriterSettings { OmitXmlDeclaration = true }))
-            {
-                link.WriteTo(w);
-                w.Flush();
-                return sb.ToString()
-                    .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
-            }
+            return link
+                .ToXmlString(new XmlWriterSettings { OmitXmlDeclaration = true })
+                .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
 
         private static string ToXml(AtomEntry entry)
         {
-            var sb = new StringBuilder();
-            using (var w = XmlWriter.Create(
-                sb,
-                new XmlWriterSettings { OmitXmlDeclaration = true }))
-            {
-                entry.WriteTo(w);
-                w.Flush();
-                return sb.ToString()
-                    .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
-            }
+            return entry
+                .ToXmlString(new XmlWriterSettings { OmitXmlDeclaration = true })
+                .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
 
         [Theory, AutoAtomData]
