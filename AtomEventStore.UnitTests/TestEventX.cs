@@ -25,5 +25,21 @@ namespace Grean.AtomEventStore.UnitTests
         {
             get { return this.text; }
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as TestEventX;
+            if (other != null)
+                return object.Equals(this.number, other.number)
+                    && object.Equals(this.text, other.text);
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                this.number.GetHashCode() ^
+                this.text.GetHashCode();
+        }
     }
 }

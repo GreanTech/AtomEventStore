@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
@@ -157,6 +158,44 @@ namespace Grean.AtomEventStore
         {
             foreach (var l in this.links)
                 l.WriteTo(xmlWriter);
+        }
+
+        public static AtomEntry ReadFrom(XmlReader xmlReader)
+        {
+            var navigator = new XPathDocument(xmlReader).CreateNavigator();
+
+            var resolver = new XmlNamespaceManager(new NameTable());
+            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+
+            var id = navigator
+                .Select("/atom:entry/atom:id", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var title = navigator
+                .Select("/atom:entry/atom:title[@type = 'text']", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var published = navigator
+                .Select("/atom:entry/atom:published", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var updated = navigator
+                .Select("/atom:entry/atom:updated", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var author = navigator
+                .Select("/atom:entry/atom:author", resolver).Cast<XPathNavigator>()
+                .Single().ReadSubtree();
+            var content = navigator
+                .Select("/atom:entry/atom:content[@type = 'application/xml']", resolver).Cast<XPathNavigator>()
+                .Single().ReadSubtree();
+            var links = navigator
+                .Select("/atom:entry/atom:link", resolver).Cast<XPathNavigator>();
+
+            return new AtomEntry(
+                UuidIri.Parse(id),
+                title,
+                DateTimeOffset.Parse(published),
+                DateTimeOffset.Parse(updated),
+                AtomAuthor.ReadFrom(author),
+                XmlAtomContent.ReadFrom(content),
+                links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
         }
     }
 }

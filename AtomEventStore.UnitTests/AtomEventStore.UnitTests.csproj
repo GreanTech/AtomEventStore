@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AtomAuthorTests.cs" />
+    <Compile Include="AtomEntryComparer.cs" />
     <Compile Include="AtomEntryTests.cs" />
     <Compile Include="AtomFeedTests.cs" />
     <Compile Include="AtomLinkTests.cs" />

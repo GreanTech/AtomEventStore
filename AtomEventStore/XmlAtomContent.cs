@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
@@ -67,6 +69,46 @@ namespace Grean.AtomEventStore
                 var value = p.GetValue(this.item).ToString();
                 xmlWriter.WriteElementString(localName, value);
             }
+        }
+
+        internal static XmlAtomContent ReadFrom(XmlReader xmlReader)
+        {
+            var elementName = "test-event-x";
+            var xmlNamespace = "urn:grean:atom-event-store:unit-tests";
+
+            var itemType = Type.GetType(
+                "TestEventX, Grean.AtomEventStore.UnitTests",
+                an => Assembly.Load(an),
+                ResolveType);
+            var ctor = (from c in itemType.GetConstructors()
+                        let args = c.GetParameters()
+                        orderby args.Length
+                        select c).First();
+
+            var navigator = new XPathDocument(xmlReader).CreateNavigator();
+
+            var resolver = new XmlNamespaceManager(new NameTable());
+            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+            resolver.AddNamespace("xn", xmlNamespace);
+
+            var arguments = ctor.GetParameters()
+                .Select(p => navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single().ValueAs(p.ParameterType))
+                .ToArray();
+            var item = ctor.Invoke(arguments);
+
+            return new XmlAtomContent(item);
+        }
+
+        private static Type ResolveType(
+            Assembly assembly, 
+            string typeName, 
+            bool ignoreCase)
+        {
+            if (assembly == null)
+                return null;
+            return assembly.GetExportedTypes()
+                .Where(t => t.Name == typeName)
+                .Single();
         }
 
         private static string Urnify(string text)
