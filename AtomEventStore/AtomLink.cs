@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomLink
+    public class AtomLink : IXmlWritable
     {
         private readonly string rel;
         private readonly Uri href;
