@@ -96,5 +96,11 @@ namespace Grean.AtomEventStore.UnitTests
             }
             // Teardown
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsXmlWritable(AtomAuthor sut)
+        {
+            Assert.IsAssignableFrom<IXmlWritable>(sut);
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomAuthor
+    public class AtomAuthor : IXmlWritable
     {
         private readonly string name;
 
