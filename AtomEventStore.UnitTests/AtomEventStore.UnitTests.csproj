@@ -63,6 +63,7 @@
     <Compile Include="AtomAuthorTests.cs" />
     <Compile Include="AtomEntryComparer.cs" />
     <Compile Include="AtomEntryTests.cs" />
+    <Compile Include="AtomFeedComparer.cs" />
     <Compile Include="AtomFeedTests.cs" />
     <Compile Include="AtomLinkTests.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
@@ -148,6 +149,39 @@ namespace Grean.AtomEventStore
         {
             foreach (var e in this.entries)
                 e.WriteTo(xmlWriter);
+        }
+
+        public static AtomFeed ReadFrom(XmlReader xmlReader)
+        {
+            var navigator = new XPathDocument(xmlReader).CreateNavigator();
+
+            var resolver = new XmlNamespaceManager(new NameTable());
+            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+
+            var id = navigator
+                .Select("/atom:feed/atom:id", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var title = navigator
+                .Select("/atom:feed/atom:title[@type = 'text']", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var updated = navigator
+                .Select("/atom:feed/atom:updated", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var author = navigator
+                .Select("/atom:feed/atom:author", resolver).Cast<XPathNavigator>()
+                .Single().ReadSubtree();
+            var entries = navigator
+                .Select("/atom:feed/atom:entry", resolver).Cast<XPathNavigator>();
+            var links = navigator
+                .Select("/atom:feed/atom:link", resolver).Cast<XPathNavigator>();
+
+            return new AtomFeed(
+                UuidIri.Parse(id),
+                title,
+                DateTimeOffset.Parse(updated),
+                AtomAuthor.ReadFrom(author),
+                entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree())),
+                links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
         }
     }
 }

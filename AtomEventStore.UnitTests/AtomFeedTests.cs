@@ -11,6 +11,7 @@ using Ploeh.SemanticComparison.Fluent;
 using Ploeh.AutoFixture;
 using System.Xml;
 using System.Xml.Linq;
+using System.IO;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -191,6 +192,25 @@ namespace Grean.AtomEventStore.UnitTests
         public void SutIsXmlWritable(AtomFeed sut)
         {
             Assert.IsAssignableFrom<IXmlWritable>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void ReadFromReturnsCorrectResult(
+            AtomFeed feed,
+            Generator<TestEventX> eventGenerator)
+        {
+            var entries = feed.Entries.Zip(
+                eventGenerator,
+                (entry, @event) => entry.WithContent(
+                    entry.Content.WithItem(@event))).ToList();
+            var expected = feed.WithEntries(entries);
+
+            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var r = XmlReader.Create(sr))
+            {
+                AtomFeed actual = AtomFeed.ReadFrom(r);
+                Assert.Equal(expected, actual, new AtomFeedComparer());
+            }
         }
     }
 }
