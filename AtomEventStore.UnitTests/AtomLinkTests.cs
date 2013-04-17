@@ -8,6 +8,8 @@ using Xunit.Extensions;
 using Grean.AtomEventStore;
 using Xunit;
 using Ploeh.SemanticComparison.Fluent;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -93,6 +95,32 @@ namespace Grean.AtomEventStore.UnitTests
                 sut.Rel.GetHashCode() ^
                 sut.Href.GetHashCode();
             Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void WriteToXmlWriterWritesCorrectXml(
+            AtomLink sut)
+        {
+            // Fixture setup
+            var sb = new StringBuilder();
+            using (var w = XmlWriter.Create(sb))
+            {
+                // Exercise system
+                sut.WriteTo(w);
+
+                // Verify outcome
+                w.Flush();
+
+                var expected = XDocument.Parse(
+                    "<link" +
+                    " href=\"" + sut.Href.ToString() + "\"" +
+                    " rel=\"" + sut.Rel + "\"" +
+                    " xmlns=\"http://www.w3.org/2005/Atom\" />");
+
+                var actual = XDocument.Parse(sb.ToString());
+                Assert.Equal(expected, actual, new XNodeEqualityComparer());
+            }
+            // Teardown
         }
     }
 }
