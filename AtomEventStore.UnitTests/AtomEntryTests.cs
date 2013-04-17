@@ -211,5 +211,19 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
         }
+
+        [Theory, AutoAtomData]
+        public void ReadFromXmlWithTestEventYReturnsCorrectResult(
+            AtomEntry seed,
+            TestEventY tey)
+        {
+            var expected = seed.WithContent(seed.Content.WithItem(tey));
+            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var r = XmlReader.Create(sr))
+            {
+                AtomEntry actual = AtomEntry.ReadFrom(r);
+                Assert.Equal(expected, actual, new AtomEntryComparer());
+            }
+        }
     }
 }

@@ -66,30 +66,40 @@ namespace Grean.AtomEventStore
             foreach (var p in this.itemType.GetProperties())
             {
                 var localName = Xmlify(p.Name);
-                var value = p.GetValue(this.item).ToString();
-                xmlWriter.WriteElementString(localName, value);
+                var value = p.GetValue(this.item);
+
+                xmlWriter.WriteStartElement(localName);
+                xmlWriter.WriteValue(value);
+                xmlWriter.WriteEndElement();
             }
         }
 
         internal static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
-            var elementName = "test-event-x";
-            var xmlNamespace = "urn:grean:atom-event-store:unit-tests";
+            var navigator = new XPathDocument(xmlReader).CreateNavigator();
+
+            var resolver = new XmlNamespaceManager(new NameTable());
+            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+
+            var contentElement = navigator.Select("/atom:content/*", resolver).Cast<XPathNavigator>()
+                .Single();
+
+            var elementName = contentElement.LocalName;
+            var xmlNamespace = contentElement.NamespaceURI;
+
+            resolver.AddNamespace("xn", xmlNamespace);
+
+            var typeName = UnXmlify(elementName);
+            var dotNetNamespace = UnUrnify(xmlNamespace);
 
             var itemType = Type.GetType(
-                "TestEventX, Grean.AtomEventStore.UnitTests",
+                typeName + ", " + dotNetNamespace,
                 an => Assembly.Load(an),
                 ResolveType);
             var ctor = (from c in itemType.GetConstructors()
                         let args = c.GetParameters()
                         orderby args.Length
-                        select c).First();
-
-            var navigator = new XPathDocument(xmlReader).CreateNavigator();
-
-            var resolver = new XmlNamespaceManager(new NameTable());
-            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
-            resolver.AddNamespace("xn", xmlNamespace);
+                        select c).First();            
 
             var arguments = ctor.GetParameters()
                 .Select(p => navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single().ValueAs(p.ParameterType))
@@ -116,12 +126,24 @@ namespace Grean.AtomEventStore
             return "urn:" + string.Join(":", text.Split('.').Select(Xmlify));
         }
 
+        private static string UnUrnify(string text)
+        {
+            return string.Join(".", text.Replace("urn:", "").Split(':').Select(UnXmlify));
+        }
+
         private static string Xmlify(string text)
         {
             return text
                 .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
                 .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
                 .ToLower();
+        }
+
+        private static string UnXmlify(string text)
+        {
+            return text.Split('-')
+                .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
+                .Aggregate((x, y) => x + y);
         }
     }
 }
