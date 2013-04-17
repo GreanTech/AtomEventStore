@@ -10,6 +10,7 @@ using Xunit;
 using Ploeh.SemanticComparison.Fluent;
 using System.Xml;
 using System.Xml.Linq;
+using System.IO;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -63,7 +64,7 @@ namespace Grean.AtomEventStore.UnitTests
         [InlineData(false, "sgryt", "sgryt", "pippo", "fnaah")]
         [InlineData(true, "sgryt", "sgryt", "pippo", "pippo")]
         public void EqualsReturnsCorrectResult(
-            bool expected, 
+            bool expected,
             string sutRel,
             string otherRel,
             string sutHref,
@@ -127,6 +128,32 @@ namespace Grean.AtomEventStore.UnitTests
         public void SutIsXmlWritable(AtomLink sut)
         {
             Assert.IsAssignableFrom<IXmlWritable>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void ReadFromReturnsCorrectResult(
+            AtomLink expected)
+        {
+            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var r = XmlReader.Create(sr))
+            {
+                AtomLink actual = AtomLink.ReadFrom(r);
+                Assert.Equal(expected, actual);
+            }
+        }
+
+        [Theory, AutoAtomData]
+        public void ReadFromWhenHrefIsRelativeReturnsCorrectResult(
+            AtomLink seed,
+            string relativeUrl)
+        {
+            var expected = seed.WithHref(new Uri(relativeUrl, UriKind.Relative));
+            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var r = XmlReader.Create(sr))
+            {
+                AtomLink actual = AtomLink.ReadFrom(r);
+                Assert.Equal(expected, actual);
+            }
         }
     }
 }

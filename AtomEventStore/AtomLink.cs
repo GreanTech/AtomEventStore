@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
@@ -60,6 +61,23 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteAttributeString("href", this.href.ToString());
             xmlWriter.WriteAttributeString("rel", this.rel);
             xmlWriter.WriteEndElement();
+        }
+
+        public static AtomLink ReadFrom(XmlReader xmlReader)
+        {
+            var navigator = new XPathDocument(xmlReader).CreateNavigator();
+
+            var resolver = new XmlNamespaceManager(new NameTable());
+            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+
+            var href = navigator
+                .Select("/atom:link/@href", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+            var rel = navigator
+                .Select("/atom:link/@rel", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+
+            return new AtomLink(rel, new Uri(href, UriKind.RelativeOrAbsolute));
         }
     }
 }
