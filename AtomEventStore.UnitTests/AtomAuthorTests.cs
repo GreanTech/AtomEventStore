@@ -10,6 +10,7 @@ using Xunit;
 using Ploeh.SemanticComparison.Fluent;
 using System.Xml;
 using System.Xml.Linq;
+using System.IO;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -101,6 +102,18 @@ namespace Grean.AtomEventStore.UnitTests
         public void SutIsXmlWritable(AtomAuthor sut)
         {
             Assert.IsAssignableFrom<IXmlWritable>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void ReadFromReturnsCorrectResult(
+            AtomAuthor expected)
+        {
+            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var r = XmlReader.Create(sr))
+            {
+                AtomAuthor actual = AtomAuthor.ReadFrom(r);
+                Assert.Equal(expected, actual);
+            }
         }
     }
 }

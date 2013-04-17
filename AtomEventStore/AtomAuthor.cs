@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
@@ -44,6 +45,20 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteStartElement("author", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteElementString("name", this.name);
             xmlWriter.WriteEndElement();
+        }
+
+        public static AtomAuthor ReadFrom(XmlReader xmlReader)
+        {
+            var navigator = new XPathDocument(xmlReader).CreateNavigator();
+
+            var resolver = new XmlNamespaceManager(new NameTable());
+            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+
+            var name = navigator
+                .Select("/atom:author/atom:name", resolver).Cast<XPathNavigator>()
+                .Single().Value;
+
+            return new AtomAuthor(name);
         }
     }
 }
