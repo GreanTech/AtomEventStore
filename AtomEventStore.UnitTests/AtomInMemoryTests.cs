@@ -84,5 +84,23 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Throws<InvalidOperationException>(
                 () => sut.CreateWriterFor(entry));
         }
+
+        [Theory, AutoAtomData]
+        public void ClientCanReadWrittenFeed(
+            AtomInMemory sut,
+            AtomFeed feed,
+            IEnumerable<AtomEntryBuilder<TestEventX>> entries)
+        {
+            var expected = feed.WithEntries(entries.Select(b => b.Build()));
+
+            using (var w = sut.CreateFeedWriterFor(expected))
+                expected.WriteTo(w);
+            using (var r = sut.CreateFeedReaderFor(expected.Id))
+            {
+                var actual = AtomFeed.ReadFrom(r);
+
+                Assert.Equal(expected, actual, new AtomFeedComparer());
+            }
+        }
     }
 }
