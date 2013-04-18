@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AtomAuthor.cs" />
     <Compile Include="AtomEntry.cs" />
+    <Compile Include="AtomEventsInFiles.cs" />
     <Compile Include="AtomFeed.cs" />
     <Compile Include="AtomEventsInMemory.cs" />
     <Compile Include="AtomLink.cs" />
