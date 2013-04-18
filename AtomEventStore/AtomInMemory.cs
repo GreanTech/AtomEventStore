@@ -9,12 +9,12 @@ namespace Grean.AtomEventStore
 {
     public class AtomInMemory
     {
-        private StringBuilder feed;
+        private readonly Dictionary<UuidIri, StringBuilder> feeds;
         private readonly Dictionary<UuidIri, StringBuilder> entries;
 
         public AtomInMemory()
         {
-            this.feed = new StringBuilder();
+            this.feeds = new Dictionary<UuidIri, StringBuilder>();
             this.entries = new Dictionary<UuidIri, StringBuilder>();
         }
 
@@ -42,12 +42,18 @@ namespace Grean.AtomEventStore
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
-            return XmlWriter.Create(this.feed);
+            var id = GetIdFrom(atomFeed.Links);
+            var sb = new StringBuilder();
+            this.feeds[id] = sb;
+            return XmlWriter.Create(sb);
         }
 
         public XmlReader CreateFeedReaderFor(UuidIri id)
         {
-            return XmlReader.Create(new StringReader(this.feed.ToString()));
+            var sr = new StringReader(this.feeds[id].ToString());
+            return XmlReader.Create(
+                sr,
+                new XmlReaderSettings { CloseInput = true });
         }
 
         private static UuidIri GetIdFrom(IEnumerable<AtomLink> links)

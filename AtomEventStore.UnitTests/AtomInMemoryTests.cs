@@ -88,13 +88,56 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void ClientCanReadWrittenFeed(
             AtomInMemory sut,
-            AtomFeed feed,
-            IEnumerable<AtomEntryBuilder<TestEventX>> entries)
+            AtomFeedBuilder<TestEventX> feedBuilder)
         {
-            var expected = feed.WithEntries(entries.Select(b => b.Build()));
+            var expected = feedBuilder.Build();
 
             using (var w = sut.CreateFeedWriterFor(expected))
                 expected.WriteTo(w);
+            using (var r = sut.CreateFeedReaderFor(expected.Id))
+            {
+                var actual = AtomFeed.ReadFrom(r);
+
+                Assert.Equal(expected, actual, new AtomFeedComparer());
+            }
+        }
+
+        [Theory, AutoAtomData]
+        public void ClientCanReadFirstFeed(
+            AtomInMemory sut,
+            AtomFeedBuilder<TestEventX> feedBuilder1,
+            AtomFeedBuilder<TestEventY> feedBuilder2)
+        {
+            var expected = feedBuilder1.Build();
+            var other = feedBuilder2.Build();
+
+            using (var w = sut.CreateFeedWriterFor(expected))
+                expected.WriteTo(w);
+            using (var w = sut.CreateFeedWriterFor(other))
+                other.WriteTo(w);
+
+            using (var r = sut.CreateFeedReaderFor(expected.Id))
+            {
+                var actual = AtomFeed.ReadFrom(r);
+
+                Assert.Equal(expected, actual, new AtomFeedComparer());
+            }
+        }
+
+        [Theory, AutoAtomData]
+        public void ClientCanReadSecondFeed(
+            AtomInMemory sut,
+            AtomFeedBuilder<TestEventX> feedBuilder1,
+            AtomFeedBuilder<TestEventY> feedBuilder2)
+        {
+            var other = feedBuilder1.Build();
+            var expected = feedBuilder2.Build();
+
+            using (var w = sut.CreateFeedWriterFor(other))
+                other.WriteTo(w);
+            using (var w = sut.CreateFeedWriterFor(expected))
+                expected.WriteTo(w);
+
             using (var r = sut.CreateFeedReaderFor(expected.Id))
             {
                 var actual = AtomFeed.ReadFrom(r);
