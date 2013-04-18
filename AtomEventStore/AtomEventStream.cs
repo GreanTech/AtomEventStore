@@ -22,7 +22,7 @@ namespace Grean.AtomEventStore
         public Task AppendAsync(T @event)
         {
             return Task.Factory.StartNew(() =>
-            {                
+            {
                 var now = DateTimeOffset.Now;
 
                 var index = this.ReadIndex();
@@ -54,7 +54,7 @@ namespace Grean.AtomEventStore
 
         private AtomFeed ReadIndex()
         {
-            var indexAddress = 
+            var indexAddress =
                 new Uri(((Guid)this.id).ToString(), UriKind.Relative);
             using (var r = this.storage.CreateFeedReaderFor(indexAddress))
                 return AtomFeed.ReadFrom(r);
@@ -87,7 +87,7 @@ namespace Grean.AtomEventStore
             get { return this.storage; }
         }
 
-        private static AtomLink CreateSelfLinkFrom(UuidIri id)
+        private static AtomLink CreateSelfLinkFrom(Guid id)
         {
             return AtomEventStream.CreateSelfLinkFrom(id);
         }
@@ -95,12 +95,10 @@ namespace Grean.AtomEventStore
 
     public static class AtomEventStream
     {
-        public static AtomLink CreateSelfLinkFrom(UuidIri id)
+        public static AtomLink CreateSelfLinkFrom(Guid id)
         {
             return AtomLink.CreateSelfLink(
-                new Uri(
-                    ((Guid)id).ToString(),
-                    UriKind.Relative));
+                new Uri(id.ToString(), UriKind.Relative));
         }
     }
 }
