@@ -67,6 +67,14 @@ namespace Grean.AtomEventStore
 
         private static AtomLink CreateSelfLinkFrom(UuidIri id)
         {
+            return AtomEventStream.CreateSelfLinkFrom(id);
+        }
+    }
+
+    public static class AtomEventStream
+    {
+        public static AtomLink CreateSelfLinkFrom(UuidIri id)
+        {
             return AtomLink.CreateSelfLink(
                 new Uri(
                     ((Guid)id).ToString(),

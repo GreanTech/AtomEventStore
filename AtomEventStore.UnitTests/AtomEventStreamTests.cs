@@ -31,6 +31,19 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void CreateSelfLinkFromReturnsCorrectResult(
+            UuidIri id)
+        {
+            AtomLink actual = AtomEventStream.CreateSelfLinkFrom(id);
+
+            var expected = AtomLink.CreateSelfLink(
+                new Uri(
+                    ((Guid)id).ToString(),
+                    UriKind.Relative));
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeedAndEntry(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
@@ -52,10 +65,7 @@ namespace Grean.AtomEventStore.UnitTests
                 expectedEvent,
                 new[]
                 {
-                    AtomLink.CreateSelfLink(
-                        new Uri(
-                            ((Guid)writtenEntry.Id).ToString(),
-                            UriKind.Relative))
+                    AtomEventStream.CreateSelfLinkFrom(writtenEntry.Id)
                 },
                 writtenEntry);
 
@@ -77,18 +87,14 @@ namespace Grean.AtomEventStore.UnitTests
                 expectedEvent,
                 new[]
                 {
-                    new AtomLink(
-                        "via",
-                        new Uri(
-                            ((Guid)actual.Entries.Single().Id).ToString(),
-                            UriKind.Relative))
+                    AtomEventStream
+                        .CreateSelfLinkFrom(
+                            actual.Entries.Single().Id)
+                        .ToViaLink()
                 },
                 actual.Entries.Single());
             Assert.Contains(
-                AtomLink.CreateSelfLink(
-                    new Uri(
-                        ((Guid)expectedId).ToString(),
-                        UriKind.Relative)),
+                AtomEventStream.CreateSelfLinkFrom(expectedId),
                 actual.Links);
         }
 
