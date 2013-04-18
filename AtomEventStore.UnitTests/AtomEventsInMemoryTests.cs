@@ -170,5 +170,11 @@ namespace Grean.AtomEventStore.UnitTests
                     actual.Links);
             }
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsAtomEventPersistence(AtomEventsInMemory sut)
+        {
+            Assert.IsAssignableFrom<IAtomEventPersistence>(sut);
+        }
     }
 }

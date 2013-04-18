@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEventsInMemory
+    public class AtomEventsInMemory : IAtomEventPersistence
     {
         private readonly Dictionary<UuidIri, StringBuilder> feeds;
         private readonly Dictionary<UuidIri, StringBuilder> entries;
