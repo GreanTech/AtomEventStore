@@ -22,8 +22,10 @@ namespace Grean.AtomEventStore
         public Task AppendAsync(T @event)
         {
             return Task.Factory.StartNew(() =>
-            {
+            {                
                 var now = DateTimeOffset.Now;
+
+                var index = this.ReadIndex();
 
                 var changesetId = UuidIri.NewId();
                 var entry = new AtomEntry(
@@ -33,7 +35,7 @@ namespace Grean.AtomEventStore
                     now,
                     new AtomAuthor("Grean"),
                     new XmlAtomContent(@event),
-                    new[] { CreateSelfLinkFrom(changesetId) });
+                    CreateLinksForNewEntry(index, changesetId));
 
                 var feed = new AtomFeed(
                     this.id,
@@ -48,6 +50,26 @@ namespace Grean.AtomEventStore
                 using (var w = this.storage.CreateEntryWriterFor(entry))
                     entry.WriteTo(w);
             });
+        }
+
+        private AtomFeed ReadIndex()
+        {
+            var indexAddress = 
+                new Uri(((Guid)this.id).ToString(), UriKind.Relative);
+            using (var r = this.storage.CreateFeedReaderFor(indexAddress))
+                return AtomFeed.ReadFrom(r);
+        }
+
+        private static IEnumerable<AtomLink> CreateLinksForNewEntry(
+            AtomFeed index,
+            UuidIri changesetId)
+        {
+            return (from e in index.Entries
+                    from l in e.Links
+                    where l.IsViaLink
+                    select l.WithRel("previous"))
+                    .Take(1)
+                    .Concat(new[] { CreateSelfLinkFrom(changesetId) });
         }
 
         private static AtomLink ChangeRelFromSelfToVia(AtomLink link)
