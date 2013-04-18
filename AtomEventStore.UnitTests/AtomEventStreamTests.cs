@@ -74,6 +74,38 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
+        [Theory, AutoAtomData]
+        public void AppendAsyncCorrectlyStoresFeedAndEntries(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            TestEventX event1,
+            TestEventX event2)
+        {
+            // Fixture setup
+            var before = DateTimeOffset.Now;
+
+            // Exercise system
+            sut.AppendAsync(event1).Wait();
+            sut.AppendAsync(event2).Wait();
+
+            // Verify outcome
+            var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
+            var writtenEntries = storage.Entries.Select(AtomEntry.Parse);
+
+            var expectedFeed = new AtomFeedLikeness(before, sut.Id, event2);
+            var expectedEntries = new HashSet<object>(
+                new[]
+                {
+                    new AtomEntryLikeness(before, event1, "self"),
+                    new AtomEntryLikeness(before, event2, "self")
+                },
+                new HashFreeEqualityComparer<object>());
+
+            Assert.True(expectedFeed.Equals(writtenFeed));
+            Assert.True(expectedEntries.SetEquals(writtenEntries));
+            // Teardown
+        }
+
         private class AtomFeedLikeness
         {
             private readonly DateTimeOffset minimumTime;
@@ -101,18 +133,13 @@ namespace Grean.AtomEventStore.UnitTests
                     this.expectedEvent,
                     "via");
 
-                Assert.Equal(this.expectedId, actual.Id);
-                Assert.Equal("Head of event stream " + (Guid)this.expectedId, actual.Title);
-                Assert.True(this.minimumTime <= actual.Updated, "Updated should be very recent.");
-                Assert.True(actual.Updated <= DateTimeOffset.Now, "Updated should not be in the future.");
-                Assert.True(
-                    expectedEntry.Equals(actual.Entries.Single()),
-                    "Expected entry must match actual entry.");
-                Assert.Contains(
-                    AtomEventStream.CreateSelfLinkFrom(this.expectedId),
-                    actual.Links);
-
-                return true;
+                return object.Equals(this.expectedId, actual.Id)
+                    && object.Equals("Head of event stream " + (Guid)this.expectedId, actual.Title)
+                    && this.minimumTime <= actual.Updated
+                    && actual.Updated <= DateTimeOffset.Now
+                    && object.Equals(expectedEntry, actual.Entries.Single())
+                    && actual.Links.Contains(
+                        AtomEventStream.CreateSelfLinkFrom(this.expectedId));
             }
 
             public override int GetHashCode()
@@ -143,20 +170,17 @@ namespace Grean.AtomEventStore.UnitTests
                 if (actual == null)
                     return base.Equals(obj);
 
-                Assert.NotEqual(default(UuidIri), actual.Id);
-                Assert.Equal("Changeset " + (Guid)actual.Id, actual.Title);
-                Assert.True(this.minimumTime <= actual.Published, "Published should be very recent.");
-                Assert.True(actual.Published <= DateTimeOffset.Now, "Published should not be in the future.");
-                Assert.True(this.minimumTime <= actual.Updated, "Updated should be very recent.");
-                Assert.True(actual.Updated <= DateTimeOffset.Now, "Updated should not be in the future.");
-                Assert.Contains(
-                    AtomEventStream
-                        .CreateSelfLinkFrom(actual.Id)
-                        .WithRel(this.idRel),
-                    actual.Links);
-                Assert.Equal(this.expectedEvent, actual.Content.Item);
-
-                return true;
+                return !object.Equals(default(UuidIri), actual.Id)
+                    && object.Equals("Changeset " + (Guid)actual.Id, actual.Title)
+                    && this.minimumTime <= actual.Published
+                    && actual.Published <= DateTimeOffset.Now
+                    && this.minimumTime <= actual.Updated
+                    && actual.Updated <= DateTimeOffset.Now
+                    && actual.Links.Contains(
+                        AtomEventStream
+                            .CreateSelfLinkFrom(actual.Id)
+                            .WithRel(this.idRel))
+                    && object.Equals(this.expectedEvent, actual.Content.Item);
             }
 
             public override int GetHashCode()
@@ -164,5 +188,19 @@ namespace Grean.AtomEventStore.UnitTests
                 return 0;
             }
         }
+
+        private class HashFreeEqualityComparer<T> : IEqualityComparer<T>
+        {
+            public bool Equals(T x, T y)
+            {
+                return object.Equals(x, y);
+            }
+
+            public int GetHashCode(T obj)
+            {
+                return 0;
+            }
+        }
+
     }
 }
