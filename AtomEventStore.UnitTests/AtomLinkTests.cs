@@ -229,5 +229,17 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = sut.WithRel("self");
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void ToViaLinkReturnsCorrectResult(
+            AtomLink sut)
+        {
+            Assert.NotEqual("via", sut.Rel);
+
+            AtomLink actual = sut.ToViaLink();
+
+            var expected = sut.WithRel("via");
+            Assert.Equal(expected, actual);
+        }
     }
 }

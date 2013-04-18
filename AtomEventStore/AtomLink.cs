@@ -112,5 +112,10 @@ namespace Grean.AtomEventStore
         {
             get { return this.rel == "via"; }
         }
+
+        public AtomLink ToViaLink()
+        {
+            return this.WithRel("via");
+        }
     }
 }
