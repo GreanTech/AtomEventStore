@@ -184,7 +184,7 @@ namespace Grean.AtomEventStore.UnitTests
                     "    </test-event-x>" +
                     "  </content>" +
                     "</entry>");
-                
+
                 var actual = XDocument.Parse(sb.ToString());
                 Assert.Equal(expected, actual, new XNodeEqualityComparer());
 
@@ -224,6 +224,19 @@ namespace Grean.AtomEventStore.UnitTests
                 AtomEntry actual = AtomEntry.ReadFrom(r);
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
+        }
+
+        [Theory, AutoAtomData]
+        public void AddLinkReturnsCorrectResult(
+            AtomEntry sut,
+            AtomLink newLink)
+        {
+            AtomEntry actual = sut.AddLink(newLink);
+
+            var expected = sut.AsSource().OfLikeness<AtomEntry>()
+                .With(x => x.Links).EqualsWhen(
+                    (s, d) => sut.Links.Concat(new[] { newLink }).SequenceEqual(d.Links));
+            expected.ShouldEqual(actual);
         }
     }
 }

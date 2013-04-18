@@ -19,7 +19,7 @@ namespace Grean.AtomEventStore
 
         public AtomEntry(
             UuidIri id,
-            string title, 
+            string title,
             DateTimeOffset published,
             DateTimeOffset updated,
             AtomAuthor author,
@@ -34,7 +34,7 @@ namespace Grean.AtomEventStore
             this.content = content;
             this.links = links;
         }
-        
+
         public UuidIri Id
         {
             get { return this.id; }
@@ -196,6 +196,11 @@ namespace Grean.AtomEventStore
                 AtomAuthor.ReadFrom(author),
                 XmlAtomContent.ReadFrom(content),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
+        }
+
+        public AtomEntry AddLink(AtomLink newLink)
+        {
+            return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
     }
 }
