@@ -52,9 +52,7 @@ namespace Grean.AtomEventStore
 
         private static AtomLink ChangeRelFromSelfToVia(AtomLink link)
         {
-            if (link.IsSelfLink)
-                return link.WithRel("via");
-            return link;
+            return link.IsSelfLink ? link.ToViaLink() : link;
         }
 
         public UuidIri Id
