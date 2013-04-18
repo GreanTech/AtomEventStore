@@ -18,7 +18,7 @@ namespace Grean.AtomEventStore
             this.entries = new Dictionary<UuidIri, StringBuilder>();
         }
 
-        public XmlWriter CreateWriterFor(AtomEntry atomEntry)
+        public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
         {
             var id = GetIdFrom(atomEntry.Links);
             if (this.entries.ContainsKey(id))
@@ -32,7 +32,7 @@ namespace Grean.AtomEventStore
             return XmlWriter.Create(sb);
         }
 
-        public XmlReader CreateReaderFor(UuidIri id)
+        public XmlReader CreateEntryReaderFor(UuidIri id)
         {
             var sr = new StringReader(this.entries[id].ToString());
             return XmlReader.Create(

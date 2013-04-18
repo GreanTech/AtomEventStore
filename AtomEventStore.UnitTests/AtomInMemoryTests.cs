@@ -18,9 +18,9 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var expected = entry.Build();
 
-            using (var w = sut.CreateWriterFor(expected))
+            using (var w = sut.CreateEntryWriterFor(expected))
                 expected.WriteTo(w);
-            using (var r = sut.CreateReaderFor(expected.Id))
+            using (var r = sut.CreateEntryReaderFor(expected.Id))
             {
                 var actual = AtomEntry.ReadFrom(r);
 
@@ -37,12 +37,12 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = entry1.Build();
             var other = entry2.Build();
 
-            using (var w = sut.CreateWriterFor(expected))
+            using (var w = sut.CreateEntryWriterFor(expected))
                 expected.WriteTo(w);
-            using (var w = sut.CreateWriterFor(other))
+            using (var w = sut.CreateEntryWriterFor(other))
                 other.WriteTo(w);
 
-            using (var r = sut.CreateReaderFor(expected.Id))
+            using (var r = sut.CreateEntryReaderFor(expected.Id))
             {
                 var actual = AtomEntry.ReadFrom(r);
 
@@ -59,12 +59,12 @@ namespace Grean.AtomEventStore.UnitTests
             var other = entry1.Build();
             var expected = entry2.Build();
 
-            using (var w = sut.CreateWriterFor(other))
+            using (var w = sut.CreateEntryWriterFor(other))
                 other.WriteTo(w);
-            using (var w = sut.CreateWriterFor(expected))
+            using (var w = sut.CreateEntryWriterFor(expected))
                 expected.WriteTo(w);
 
-            using (var r = sut.CreateReaderFor(expected.Id))
+            using (var r = sut.CreateEntryReaderFor(expected.Id))
             {
                 var actual = AtomEntry.ReadFrom(r);
 
@@ -78,11 +78,11 @@ namespace Grean.AtomEventStore.UnitTests
             AtomEntryBuilder<TestEventX> entryBuilder)
         {
             var entry = entryBuilder.Build();
-            using (var w = sut.CreateWriterFor(entry))
+            using (var w = sut.CreateEntryWriterFor(entry))
                 entry.WriteTo(w);
 
             Assert.Throws<InvalidOperationException>(
-                () => sut.CreateWriterFor(entry));
+                () => sut.CreateEntryWriterFor(entry));
         }
 
         [Theory, AutoAtomData]
