@@ -91,6 +91,11 @@ namespace Grean.AtomEventStore
             get { return this.rel == "self"; }
         }
 
+        public AtomLink ToSelfLink()
+        {
+            return this.WithRel("self");
+        }
+
         public static AtomLink Parse(string xml)
         {
             using (var sr = new StringReader(xml))

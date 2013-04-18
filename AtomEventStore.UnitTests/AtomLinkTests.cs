@@ -217,5 +217,17 @@ namespace Grean.AtomEventStore.UnitTests
             var actual = sut.IsViaLink;
             Assert.False(actual, "Should not be via link.");
         }
+
+        [Theory, AutoAtomData]
+        public void ToSelfLinkReturnsCorrectResult(
+            AtomLink sut)
+        {
+            Assert.NotEqual("self", sut.Rel);
+
+            AtomLink actual = sut.ToSelfLink();
+
+            var expected = sut.WithRel("self");
+            Assert.Equal(expected, actual);
+        }
     }
 }
