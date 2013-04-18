@@ -9,47 +9,49 @@ namespace Grean.AtomEventStore
 {
     public class AtomEventsInMemory : IAtomEventPersistence
     {
-        private readonly Dictionary<UuidIri, StringBuilder> feeds;
-        private readonly Dictionary<UuidIri, StringBuilder> entries;
+        private readonly Dictionary<Uri, StringBuilder> feeds;
+        private readonly Dictionary<Uri, StringBuilder> entries;
 
         public AtomEventsInMemory()
         {
-            this.feeds = new Dictionary<UuidIri, StringBuilder>();
-            this.entries = new Dictionary<UuidIri, StringBuilder>();
+            this.feeds = new Dictionary<Uri, StringBuilder>();
+            this.entries = new Dictionary<Uri, StringBuilder>();
         }
 
         public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
         {
-            var id = GetIdFrom(atomEntry.Links);
-            if (this.entries.ContainsKey(id))
+            var href = GetHrefFrom(atomEntry.Links);
+            if (this.entries.ContainsKey(href))
                 throw new InvalidOperationException(
                     string.Format(
                         "Will not create a new XmlWriter for the supplied AtomEntry, because a an AtomEntry with the ID {0} was already written.",
-                        id.ToString()));
+                        href.ToString()));
 
             var sb = new StringBuilder();
-            this.entries.Add(id, sb);
+            this.entries.Add(href, sb);
             return XmlWriter.Create(sb);
         }
 
-        public XmlReader CreateEntryReaderFor(UuidIri id)
+        public XmlReader CreateEntryReaderFor(Uri href)
         {
-            return CreateReaderOver(this.entries[id].ToString());
+            return CreateReaderOver(this.entries[href].ToString());
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
-            var id = GetIdFrom(atomFeed.Links);
+            var id = GetHrefFrom(atomFeed.Links);
             var sb = new StringBuilder();
             this.feeds[id] = sb;
             return XmlWriter.Create(sb);
         }
 
-        public XmlReader CreateFeedReaderFor(UuidIri id)
+        public XmlReader CreateFeedReaderFor(Uri href)
         {
-            if (this.feeds.ContainsKey(id))
-                return CreateReaderOver(this.feeds[id].ToString());
+            if (this.feeds.ContainsKey(href))
+                return CreateReaderOver(this.feeds[href].ToString());
             else
+            {
+                UuidIri id = new Guid(href.ToString());
                 return CreateReaderOver(
                     new AtomFeed(
                         id,
@@ -65,12 +67,13 @@ namespace Grean.AtomEventStore
                                     UriKind.Relative))
                         })
                     .ToXmlString());
+            }
         }
 
-        private static UuidIri GetIdFrom(IEnumerable<AtomLink> links)
+        private static Uri GetHrefFrom(IEnumerable<AtomLink> links)
         {
             var selfLink = links.Single(l => l.IsSelfLink);
-            return new Guid(selfLink.Href.ToString());
+            return selfLink.Href;
         }
 
         private static XmlReader CreateReaderOver(string xml)

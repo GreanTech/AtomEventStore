@@ -20,7 +20,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             using (var w = sut.CreateEntryWriterFor(expected))
                 expected.WriteTo(w);
-            using (var r = sut.CreateEntryReaderFor(expected.Id))
+            using (var r = sut.CreateEntryReaderFor(expected.Locate()))
             {
                 var actual = AtomEntry.ReadFrom(r);
 
@@ -42,7 +42,7 @@ namespace Grean.AtomEventStore.UnitTests
             using (var w = sut.CreateEntryWriterFor(other))
                 other.WriteTo(w);
 
-            using (var r = sut.CreateEntryReaderFor(expected.Id))
+            using (var r = sut.CreateEntryReaderFor(expected.Locate()))
             {
                 var actual = AtomEntry.ReadFrom(r);
 
@@ -64,7 +64,7 @@ namespace Grean.AtomEventStore.UnitTests
             using (var w = sut.CreateEntryWriterFor(expected))
                 expected.WriteTo(w);
 
-            using (var r = sut.CreateEntryReaderFor(expected.Id))
+            using (var r = sut.CreateEntryReaderFor(expected.Locate()))
             {
                 var actual = AtomEntry.ReadFrom(r);
 
@@ -94,7 +94,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             using (var w = sut.CreateFeedWriterFor(expected))
                 expected.WriteTo(w);
-            using (var r = sut.CreateFeedReaderFor(expected.Id))
+            using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
                 var actual = AtomFeed.ReadFrom(r);
 
@@ -116,7 +116,7 @@ namespace Grean.AtomEventStore.UnitTests
             using (var w = sut.CreateFeedWriterFor(other))
                 other.WriteTo(w);
 
-            using (var r = sut.CreateFeedReaderFor(expected.Id))
+            using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
                 var actual = AtomFeed.ReadFrom(r);
 
@@ -138,7 +138,7 @@ namespace Grean.AtomEventStore.UnitTests
             using (var w = sut.CreateFeedWriterFor(expected))
                 expected.WriteTo(w);
 
-            using (var r = sut.CreateFeedReaderFor(expected.Id))
+            using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
                 var actual = AtomFeed.ReadFrom(r);
 
@@ -151,9 +151,13 @@ namespace Grean.AtomEventStore.UnitTests
             AtomEventsInMemory sut,
             UuidIri id)
         {
+            var expectedSelfLink = AtomLink.CreateSelfLink(
+                new Uri(
+                    ((Guid)id).ToString(),
+                    UriKind.Relative));
             var before = DateTimeOffset.Now;
 
-            using (var r = sut.CreateFeedReaderFor(id))
+            using (var r = sut.CreateFeedReaderFor(expectedSelfLink.Href))
             {
                 var actual = AtomFeed.ReadFrom(r);
 
@@ -163,10 +167,7 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.True(actual.Updated <= DateTimeOffset.Now, "Updated should not be in the future.");
                 Assert.Empty(actual.Entries);
                 Assert.Contains(
-                    AtomLink.CreateSelfLink(
-                        new Uri(
-                            ((Guid)id).ToString(),
-                            UriKind.Relative)),
+                    expectedSelfLink,
                     actual.Links);
             }
         }
