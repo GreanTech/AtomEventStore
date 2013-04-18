@@ -71,5 +71,18 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
         }
+
+        [Theory, AutoAtomData]
+        public void ClientCannotRepeatedWriteSameEntry(
+            AtomInMemory sut,
+            AtomEntryBuilder<TestEventX> entryBuilder)
+        {
+            var entry = entryBuilder.Build();
+            using (var w = sut.CreateWriterFor(entry))
+                entry.WriteTo(w);
+
+            Assert.Throws<InvalidOperationException>(
+                () => sut.CreateWriterFor(entry));
+        }
     }
 }

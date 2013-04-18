@@ -18,11 +18,15 @@ namespace Grean.AtomEventStore
 
         public XmlWriter CreateWriterFor(AtomEntry atomEntry)
         {
-            var sb = new StringBuilder();
-
             var id = GetIdFrom(atomEntry.Links);
-            this.entries[id] = sb;
+            if (this.entries.ContainsKey(id))
+                throw new InvalidOperationException(
+                    string.Format(
+                        "Will not create a new XmlWriter for the supplied AtomEntry, because a an AtomEntry with the ID {0} was already written.",
+                        id.ToString()));
 
+            var sb = new StringBuilder();            
+            this.entries.Add(id, sb);
             return XmlWriter.Create(sb);
         }
 
