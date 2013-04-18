@@ -66,10 +66,7 @@ namespace Grean.AtomEventStore.UnitTests
             var expectedEntry = new AtomEntryLikeness(
                 before,
                 expectedEvent,
-                new[]
-                {
-                    AtomEventStream.CreateSelfLinkFrom(writtenEntry.Id)
-                });
+                "self");
             Assert.True(
                 expectedEntry.Equals(writtenEntry),
                 "Expected entry must match actual entry.");
@@ -102,13 +99,7 @@ namespace Grean.AtomEventStore.UnitTests
                 var expectedEntry = new AtomEntryLikeness(
                     this.minimumTime,
                     this.expectedEvent,
-                    new[]
-                    {
-                        AtomEventStream
-                            .CreateSelfLinkFrom(
-                                actual.Entries.Single().Id)
-                            .ToViaLink()
-                    });
+                    "via");
 
                 Assert.Equal(this.expectedId, actual.Id);
                 Assert.Equal("Head of event stream " + (Guid)this.expectedId, actual.Title);
@@ -134,16 +125,16 @@ namespace Grean.AtomEventStore.UnitTests
         {
             private readonly DateTimeOffset minimumTime;
             private readonly object expectedEvent;
-            private readonly ISet<AtomLink> expectedLinks;
+            private readonly string idRel;
 
             public AtomEntryLikeness(
                 DateTimeOffset minimumTime,
                 object expectedEvent,
-                IEnumerable<AtomLink> expectedLinks)
+                string idRel)
             {
                 this.minimumTime = minimumTime;
                 this.expectedEvent = expectedEvent;
-                this.expectedLinks = new HashSet<AtomLink>(expectedLinks);
+                this.idRel = idRel;
             }
 
             public override bool Equals(object obj)
@@ -158,9 +149,11 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.True(actual.Published <= DateTimeOffset.Now, "Published should not be in the future.");
                 Assert.True(this.minimumTime <= actual.Updated, "Updated should be very recent.");
                 Assert.True(actual.Updated <= DateTimeOffset.Now, "Updated should not be in the future.");
-                Assert.True(
-                    this.expectedLinks.IsSubsetOf(actual.Links),
-                    "Expected links must be contained in actual links.");
+                Assert.Contains(
+                    AtomEventStream
+                        .CreateSelfLinkFrom(actual.Id)
+                        .WithRel(this.idRel),
+                    actual.Links);
                 Assert.Equal(this.expectedEvent, actual.Content.Item);
 
                 return true;
