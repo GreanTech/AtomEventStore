@@ -155,5 +155,15 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual);
             }
         }
+
+        [Theory, AutoAtomData]
+        public void CreateSelfLinkReturnsCorrectResult(
+            AtomLink link)
+        {
+            AtomLink actual = AtomLink.CreateSelfLink(link.Href);
+
+            var expected = link.WithRel("self");
+            Assert.Equal(expected, actual);
+        }
     }
 }

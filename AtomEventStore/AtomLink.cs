@@ -79,5 +79,10 @@ namespace Grean.AtomEventStore
 
             return new AtomLink(rel, new Uri(href, UriKind.RelativeOrAbsolute));
         }
+
+        public static AtomLink CreateSelfLink(Uri href)
+        {
+            return new AtomLink("self", href);
+        }
     }
 }
