@@ -94,12 +94,28 @@ namespace Grean.AtomEventStore
 
         public IEnumerator<T> GetEnumerator()
         {
-            yield break;
+            var entry = this.ReadIndex().Entries.SingleOrDefault();
+            while (entry != null)
+            {
+                yield return (T)entry.Content.Item;
+                entry = this.GetPrevious(entry);
+            }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            yield break;
+            return this.GetEnumerator();
+        }
+
+        private AtomEntry GetPrevious(AtomEntry current)
+        {
+            var previousLink = current.Links.SingleOrDefault(
+                l => l.Rel == "previous");
+            if (previousLink == null)
+                return null;
+
+            using (var r = this.storage.CreateEntryReaderFor(previousLink.Href))
+                return AtomEntry.ReadFrom(r);
         }
     }
 
