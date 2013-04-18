@@ -139,38 +139,6 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
-        [Theory, AutoAtomData]
-        public void SutIsEnumerable(AtomEventStream<TestEventY> sut)
-        {
-            Assert.IsAssignableFrom<IEnumerable<TestEventY>>(sut);
-        }
-
-        [Theory, AutoAtomData]
-        public void SutIsInitiallyEmpty(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<TestEventX> sut)
-        {
-            Assert.False(sut.Any(), "Intial event stream should be empty.");
-            Assert.Empty(sut);
-        }
-
-        [Theory, AutoAtomData]
-        public void SutYieldsCorrectEvents(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<TestEventX> sut,
-            List<TestEventX> events)
-        {
-            events.ForEach(e => sut.AppendAsync(e).Wait());
-
-            var expected = events.AsEnumerable().Reverse();
-            Assert.True(
-                expected.SequenceEqual(sut),
-                "Events should be yielded in a FILO order");
-            Assert.True(
-                expected.Cast<object>().SequenceEqual(sut.OfType<object>()),
-                "Events should be yielded in a FILO order");
-        }
-
         private class AtomFeedLikeness
         {
             private readonly DateTimeOffset minimumTime;
@@ -267,5 +235,36 @@ namespace Grean.AtomEventStore.UnitTests
             }
         }
 
+        [Theory, AutoAtomData]
+        public void SutIsEnumerable(AtomEventStream<TestEventY> sut)
+        {
+            Assert.IsAssignableFrom<IEnumerable<TestEventY>>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutIsInitiallyEmpty(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<TestEventX> sut)
+        {
+            Assert.False(sut.Any(), "Intial event stream should be empty.");
+            Assert.Empty(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutYieldsCorrectEvents(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<TestEventX> sut,
+            List<TestEventX> events)
+        {
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var expected = events.AsEnumerable().Reverse();
+            Assert.True(
+                expected.SequenceEqual(sut),
+                "Events should be yielded in a FILO order");
+            Assert.True(
+                expected.Cast<object>().SequenceEqual(sut.OfType<object>()),
+                "Events should be yielded in a FILO order");
+        }
     }
 }
