@@ -84,5 +84,10 @@ namespace Grean.AtomEventStore
         {
             return new AtomLink("self", href);
         }
+
+        public bool IsSelfLink
+        {
+            get { return this.rel == "self"; }
+        }
     }
 }

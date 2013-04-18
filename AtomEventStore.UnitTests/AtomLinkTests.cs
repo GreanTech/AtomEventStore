@@ -165,5 +165,22 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = link.WithRel("self");
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void IsSelfLinkReturnsTrueForSelfLink(
+            Uri href)
+        {
+            bool actual = AtomLink.CreateSelfLink(href).IsSelfLink;
+            Assert.True(actual, "Should be self link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void IsSelfLinkReturnsFalsForUnSelfLink(
+            AtomLink sut)
+        {
+            Assert.NotEqual("self", sut.Rel);
+            var actual = sut.IsSelfLink;
+            Assert.False(actual, "Should not be self link.");
+        }
     }
 }
