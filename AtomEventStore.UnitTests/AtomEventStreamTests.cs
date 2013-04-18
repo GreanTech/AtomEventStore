@@ -139,6 +139,19 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
+        [Theory, AutoAtomData]
+        public void SutIsEnumerable(AtomEventStream<TestEventY> sut)
+        {
+            Assert.IsAssignableFrom<IEnumerable<TestEventY>>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutIsInitiallyEmpty(AtomEventStream<TestEventX> sut)
+        {
+            Assert.False(sut.Any(), "Intial event stream should be empty.");
+            Assert.Empty(sut);
+        }
+
         private class AtomFeedLikeness
         {
             private readonly DateTimeOffset minimumTime;

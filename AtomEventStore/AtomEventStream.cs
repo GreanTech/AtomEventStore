@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEventStream<T>
+    public class AtomEventStream<T> : IEnumerable<T>
     {
         private readonly UuidIri id;
         private readonly IAtomEventStorage storage;
@@ -90,6 +90,16 @@ namespace Grean.AtomEventStore
         private static AtomLink CreateSelfLinkFrom(Guid id)
         {
             return AtomEventStream.CreateSelfLinkFrom(id);
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            yield break;
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            yield break;
         }
     }
 
