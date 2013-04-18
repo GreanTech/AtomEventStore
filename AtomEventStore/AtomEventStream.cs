@@ -39,7 +39,7 @@ namespace Grean.AtomEventStore
 
                 var feed = new AtomFeed(
                     this.id,
-                    "Head of event stream " + (Guid)this.id,
+                    "Index of event stream " + (Guid)this.id,
                     now,
                     new AtomAuthor("Grean"),
                     new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) },

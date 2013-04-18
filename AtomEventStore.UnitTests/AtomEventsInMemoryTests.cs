@@ -162,7 +162,7 @@ namespace Grean.AtomEventStore.UnitTests
                 var actual = AtomFeed.ReadFrom(r);
 
                 Assert.Equal(id, actual.Id);
-                Assert.Equal("Head of event stream " + (Guid)id, actual.Title);
+                Assert.Equal("Index of event stream " + (Guid)id, actual.Title);
                 Assert.True(before <= actual.Updated, "Updated should be very recent.");
                 Assert.True(actual.Updated <= DateTimeOffset.Now, "Updated should not be in the future.");
                 Assert.Empty(actual.Entries);

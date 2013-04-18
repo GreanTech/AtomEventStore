@@ -55,7 +55,7 @@ namespace Grean.AtomEventStore
                 return CreateReaderOver(
                     new AtomFeed(
                         id,
-                        "Head of event stream " + (Guid)id,
+                        "Index of event stream " + (Guid)id,
                         DateTimeOffset.Now,
                         new AtomAuthor("Grean"),
                         Enumerable.Empty<AtomEntry>(),

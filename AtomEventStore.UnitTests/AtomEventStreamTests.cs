@@ -167,7 +167,7 @@ namespace Grean.AtomEventStore.UnitTests
                     "via");
 
                 return object.Equals(this.expectedId, actual.Id)
-                    && object.Equals("Head of event stream " + (Guid)this.expectedId, actual.Title)
+                    && object.Equals("Index of event stream " + (Guid)this.expectedId, actual.Title)
                     && this.minimumTime <= actual.Updated
                     && actual.Updated <= DateTimeOffset.Now
                     && object.Equals(expectedEntry, actual.Entries.Single())
