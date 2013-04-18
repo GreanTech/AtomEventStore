@@ -48,7 +48,7 @@
     <Compile Include="IAtomEventPersistence.cs" />
     <Compile Include="IXmlWritable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyndicationEventStream.cs" />
+    <Compile Include="AtomEventStream.cs" />
     <Compile Include="UuidIri.cs" />
     <Compile Include="XmlAtomContent.cs" />
     <Compile Include="XmlWritable.cs" />

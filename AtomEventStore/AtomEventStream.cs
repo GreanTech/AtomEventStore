@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Grean.AtomEventStore
 {
-    public class SyndicationEventStream<T>
+    public class AtomEventStream<T>
     {
         private readonly UuidIri id;
         private readonly IAtomEventPersistence persistence;
 
-        public SyndicationEventStream(
+        public AtomEventStream(
             UuidIri id,
             IAtomEventPersistence persistence)
         {

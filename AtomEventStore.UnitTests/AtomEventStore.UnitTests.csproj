@@ -70,7 +70,7 @@
     <Compile Include="AtomEventsInMemoryTests.cs" />
     <Compile Include="AtomLinkTests.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
-    <Compile Include="SyndicationEventStreamTests.cs" />
+    <Compile Include="AtomEventStreamTests.cs" />
     <Compile Include="TestEventY.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestEventX.cs" />

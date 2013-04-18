@@ -10,12 +10,12 @@ using Xunit;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class SyndicationEventStreamTests
+    public class AtomEventStreamTests
     {
         [Theory, AutoAtomData]
         public void IdIsCorrect(
             [Frozen]UuidIri expected,
-            SyndicationEventStream<TestEventX> sut)
+            AtomEventStream<TestEventX> sut)
         {
             UuidIri actual = sut.Id;
             Assert.Equal(expected, actual);
@@ -24,7 +24,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void PersistenceIsCorrect(
             [Frozen]IAtomEventPersistence expected,
-            SyndicationEventStream<TestEventX> sut)
+            AtomEventStream<TestEventX> sut)
         {
             IAtomEventPersistence actual = sut.Persistence;
             Assert.Equal(expected, actual);
