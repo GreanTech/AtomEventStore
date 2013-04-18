@@ -212,5 +212,18 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
         }
+
+        [Theory, AutoAtomData]
+        public void AddLinkReturnsCorrectResult(
+            AtomFeed sut,
+            AtomLink newLink)
+        {
+            AtomFeed actual = sut.AddLink(newLink);
+
+            var expected = sut.AsSource().OfLikeness<AtomFeed>()
+                .With(x => x.Links).EqualsWhen(
+                    (s, d) => sut.Links.Concat(new[] { newLink }).SequenceEqual(d.Links));
+            expected.ShouldEqual(actual);
+        }
     }
 }

@@ -183,5 +183,10 @@ namespace Grean.AtomEventStore
                 entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree())),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
         }
+
+        public AtomFeed AddLink(AtomLink newLink)
+        {
+            return this.WithLinks(this.links.Concat(new[] { newLink }));
+        }
     }
 }
