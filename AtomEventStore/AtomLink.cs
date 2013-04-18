@@ -97,5 +97,15 @@ namespace Grean.AtomEventStore
             using (var r = XmlReader.Create(sr))
                 return AtomLink.ReadFrom(r);
         }
+
+        public static AtomLink CreateViaLink(Uri href)
+        {
+            return new AtomLink("via", href);
+        }
+
+        public bool IsViaLink
+        {
+            get { return this.rel == "via"; }
+        }
     }
 }

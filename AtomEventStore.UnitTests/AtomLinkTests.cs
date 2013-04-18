@@ -190,5 +190,32 @@ namespace Grean.AtomEventStore.UnitTests
             AtomLink actual = AtomLink.Parse(xml);
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void CreateViaLinkReturnsCorrectResult(
+            AtomLink link)
+        {
+            AtomLink actual = AtomLink.CreateViaLink(link.Href);
+
+            var expected = link.WithRel("via");
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsViaLinkReturnsTrueForViaLink(
+            Uri href)
+        {
+            bool actual = AtomLink.CreateViaLink(href).IsViaLink;
+            Assert.True(actual, "Should be via link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void IsViaLinkReturnsFalsForNonViaLink(
+            AtomLink sut)
+        {
+            Assert.NotEqual("via", sut.Rel);
+            var actual = sut.IsViaLink;
+            Assert.False(actual, "Should not be via link.");
+        }
     }
 }
