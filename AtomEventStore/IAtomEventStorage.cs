@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public interface IAtomEventPersistence
+    public interface IAtomEventStorage
     {
         XmlReader CreateEntryReaderFor(Uri href);
         XmlWriter CreateEntryWriterFor(AtomEntry atomEntry);

@@ -22,11 +22,11 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void PersistenceIsCorrect(
-            [Frozen]IAtomEventPersistence expected,
+        public void StorageIsCorrect(
+            [Frozen]IAtomEventStorage expected,
             AtomEventStream<TestEventX> sut)
         {
-            IAtomEventPersistence actual = sut.Persistence;
+            IAtomEventStorage actual = sut.Storage;
             Assert.Equal(expected, actual);
         }
     }

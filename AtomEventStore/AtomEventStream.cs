@@ -8,14 +8,14 @@ namespace Grean.AtomEventStore
     public class AtomEventStream<T>
     {
         private readonly UuidIri id;
-        private readonly IAtomEventPersistence persistence;
+        private readonly IAtomEventStorage storage;
 
         public AtomEventStream(
             UuidIri id,
-            IAtomEventPersistence persistence)
+            IAtomEventStorage storage)
         {
             this.id = id;
-            this.persistence = persistence;
+            this.storage = storage;
         }
 
         public UuidIri Id
@@ -23,9 +23,9 @@ namespace Grean.AtomEventStore
             get { return this.id; }
         }
 
-        public IAtomEventPersistence Persistence
+        public IAtomEventStorage Storage
         {
-            get { return this.persistence; }
+            get { return this.storage; }
         }
     }
 }

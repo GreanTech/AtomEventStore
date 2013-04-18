@@ -175,7 +175,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutIsAtomEventPersistence(AtomEventsInMemory sut)
         {
-            Assert.IsAssignableFrom<IAtomEventPersistence>(sut);
+            Assert.IsAssignableFrom<IAtomEventStorage>(sut);
         }
     }
 }
