@@ -179,34 +179,51 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void ItemsAreInitiallyEmpty(AtomEventsInMemory sut)
+        public void FeedsAreInitiallyEmpty(AtomEventsInMemory sut)
         {
-            IEnumerable<string> actual = sut.Items;
+            IEnumerable<string> actual = sut.Feeds;
             Assert.Empty(actual);
         }
 
         [Theory, AutoAtomData]
-        public void ItemsReturnWrittenEntriesAndFeeds(
+        public void EntriesAreInitiallyEmpty(AtomEventsInMemory sut)
+        {
+            IEnumerable<string> actual = sut.Entries;
+            Assert.Empty(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void FeedsReturnWrittenFeeds(
             AtomEventsInMemory sut,
-            IEnumerable<AtomFeedBuilder<TestEventY>> feedBuilders,
-            IEnumerable<AtomEntryBuilder<TestEventX>> entryBuilders)
+            IEnumerable<AtomFeedBuilder<TestEventY>> feedBuilders)
         {
             var feeds = feedBuilders.Select(b => b.Build());
             foreach (var f in feeds)
                 using (var w = sut.CreateFeedWriterFor(f))
                     f.WriteTo(w);
 
+            var expected = new HashSet<string>(
+                feeds.Select(w => w.ToXmlString()));
+            Assert.True(
+                expected.SetEquals(sut.Feeds),
+                "Written feeds should be enumerated.");
+        }
+
+        [Theory, AutoAtomData]
+        public void EntriesReturnWrittenEntries(
+            AtomEventsInMemory sut,
+            IEnumerable<AtomEntryBuilder<TestEventX>> entryBuilders)
+        {
             var entries = entryBuilders.Select(b => b.Build());
             foreach (var e in entries)
                 using (var w = sut.CreateEntryWriterFor(e))
                     e.WriteTo(w);
 
             var expected = new HashSet<string>(
-                feeds.Concat<IXmlWritable>(entries)
-                    .Select(w => w.ToXmlString()));
+                entries.Select(w => w.ToXmlString()));
             Assert.True(
-                expected.SetEquals(sut.Items),
-                "Written items should be enumerated.");
+                expected.SetEquals(sut.Entries),
+                "Written entries should be enumerated.");
         }
     }
 }
