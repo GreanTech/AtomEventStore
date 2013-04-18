@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -187,6 +188,13 @@ namespace Grean.AtomEventStore
         public AtomFeed AddLink(AtomLink newLink)
         {
             return this.WithLinks(this.links.Concat(new[] { newLink }));
+        }
+
+        public static AtomFeed Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return AtomFeed.ReadFrom(r);
         }
     }
 }

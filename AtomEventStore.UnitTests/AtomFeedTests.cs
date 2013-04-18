@@ -225,5 +225,16 @@ namespace Grean.AtomEventStore.UnitTests
                     (s, d) => sut.Links.Concat(new[] { newLink }).SequenceEqual(d.Links));
             expected.ShouldEqual(actual);
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundTripToString(AtomFeedBuilder<TestEventY> builder)
+        {
+            var expected = builder.Build();
+            var xml = expected.ToXmlString();
+
+            AtomFeed actual = AtomFeed.Parse(xml);
+
+            Assert.Equal(expected, actual, new AtomFeedComparer());
+        }
     }
 }
