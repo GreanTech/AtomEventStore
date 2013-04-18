@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class TestEventY
+    public class TestEventY : ITestEvent
     {
         private readonly long number;
         private readonly bool isTrue;
@@ -40,6 +40,11 @@ namespace Grean.AtomEventStore.UnitTests
             return
                 this.number.GetHashCode() ^
                 this.isTrue.GetHashCode();
+        }
+
+        public ITestEventVisitor Accept(ITestEventVisitor visitor)
+        {
+            return visitor.Visit(this);
         }
     }
 }

@@ -266,5 +266,19 @@ namespace Grean.AtomEventStore.UnitTests
                 expected.Cast<object>().SequenceEqual(sut.OfType<object>()),
                 "Events should be yielded in a FILO order");
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanAppendAndYieldPolymorphicEvents(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<ITestEvent> sut,
+            TestEventX tex,
+            TestEventY tey)
+        {
+            sut.AppendAsync(tex).Wait();
+            sut.AppendAsync(tey).Wait();
+
+            var expected = new ITestEvent[] { tey, tex };
+            Assert.True(expected.SequenceEqual(sut));
+        }
     }
 }
