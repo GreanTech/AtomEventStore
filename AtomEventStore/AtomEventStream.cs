@@ -27,10 +27,10 @@ namespace Grean.AtomEventStore
 
                 var index = this.ReadIndex();
 
-                var changesetId = UuidIri.NewId();
+                var changesetId = Guid.NewGuid();
                 var entry = new AtomEntry(
                     changesetId,
-                    "Changeset " + (Guid)changesetId,
+                    "Changeset " + changesetId,
                     now,
                     now,
                     new AtomAuthor("Grean"),
@@ -62,7 +62,7 @@ namespace Grean.AtomEventStore
 
         private static IEnumerable<AtomLink> CreateLinksForNewEntry(
             AtomFeed index,
-            UuidIri changesetId)
+            Guid changesetId)
         {
             return (from e in index.Entries
                     from l in e.Links
