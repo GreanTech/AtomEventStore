@@ -83,5 +83,14 @@ namespace Grean.AtomEventStore
                 sr,
                 new XmlReaderSettings { CloseInput = true });
         }
+
+        public IEnumerable<string> Items
+        {
+            get
+            {
+                return this.feeds.Values.Concat(this.entries.Values)
+                    .Select(sb => sb.ToString());
+            }
+        }
     }
 }

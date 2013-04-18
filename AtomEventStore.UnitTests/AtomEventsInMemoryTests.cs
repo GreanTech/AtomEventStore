@@ -177,5 +177,36 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.IsAssignableFrom<IAtomEventStorage>(sut);
         }
+
+        [Theory, AutoAtomData]
+        public void ItemsAreInitiallyEmpty(AtomEventsInMemory sut)
+        {
+            IEnumerable<string> actual = sut.Items;
+            Assert.Empty(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void ItemsReturnWrittenEntriesAndFeeds(
+            AtomEventsInMemory sut,
+            IEnumerable<AtomFeedBuilder<TestEventY>> feedBuilders,
+            IEnumerable<AtomEntryBuilder<TestEventX>> entryBuilders)
+        {
+            var feeds = feedBuilders.Select(b => b.Build());
+            foreach (var f in feeds)
+                using (var w = sut.CreateFeedWriterFor(f))
+                    f.WriteTo(w);
+
+            var entries = entryBuilders.Select(b => b.Build());
+            foreach (var e in entries)
+                using (var w = sut.CreateEntryWriterFor(e))
+                    e.WriteTo(w);
+
+            var expected = new HashSet<string>(
+                feeds.Concat<IXmlWritable>(entries)
+                    .Select(w => w.ToXmlString()));
+            Assert.True(
+                expected.SetEquals(sut.Items),
+                "Written items should be enumerated.");
+        }
     }
 }
