@@ -182,5 +182,13 @@ namespace Grean.AtomEventStore.UnitTests
             var actual = sut.IsSelfLink;
             Assert.False(actual, "Should not be self link.");
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundTripToString(AtomLink expected)
+        {
+            var xml = expected.ToXmlString();
+            AtomLink actual = AtomLink.Parse(xml);
+            Assert.Equal(expected, actual);
+        }
     }
 }

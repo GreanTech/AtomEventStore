@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -88,6 +89,13 @@ namespace Grean.AtomEventStore
         public bool IsSelfLink
         {
             get { return this.rel == "self"; }
+        }
+
+        public static AtomLink Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return AtomLink.ReadFrom(r);
         }
     }
 }
