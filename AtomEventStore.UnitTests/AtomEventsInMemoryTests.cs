@@ -145,5 +145,30 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
         }
+
+        [Theory, AutoAtomData]
+        public void ReadNonPersistedFeedReturnsCorrectFeed(
+            AtomEventsInMemory sut,
+            UuidIri id)
+        {
+            var before = DateTimeOffset.Now;
+
+            using (var r = sut.CreateFeedReaderFor(id))
+            {
+                var actual = AtomFeed.ReadFrom(r);
+
+                Assert.Equal(id, actual.Id);
+                Assert.Equal("Head of event stream " + (Guid)id, actual.Title);
+                Assert.True(before <= actual.Updated, "Updated should be very recent.");
+                Assert.True(actual.Updated <= DateTimeOffset.Now, "Updated should not be in the future.");
+                Assert.Empty(actual.Entries);
+                Assert.Contains(
+                    AtomLink.CreateSelfLink(
+                        new Uri(
+                            ((Guid)id).ToString(),
+                            UriKind.Relative)),
+                    actual.Links);
+            }
+        }
     }
 }

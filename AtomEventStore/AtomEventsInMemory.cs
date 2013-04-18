@@ -27,17 +27,14 @@ namespace Grean.AtomEventStore
                         "Will not create a new XmlWriter for the supplied AtomEntry, because a an AtomEntry with the ID {0} was already written.",
                         id.ToString()));
 
-            var sb = new StringBuilder();            
+            var sb = new StringBuilder();
             this.entries.Add(id, sb);
             return XmlWriter.Create(sb);
         }
 
         public XmlReader CreateEntryReaderFor(UuidIri id)
         {
-            var sr = new StringReader(this.entries[id].ToString());
-            return XmlReader.Create(
-                sr,
-                new XmlReaderSettings { CloseInput = true });
+            return CreateReaderOver(this.entries[id].ToString());
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
@@ -50,16 +47,38 @@ namespace Grean.AtomEventStore
 
         public XmlReader CreateFeedReaderFor(UuidIri id)
         {
-            var sr = new StringReader(this.feeds[id].ToString());
-            return XmlReader.Create(
-                sr,
-                new XmlReaderSettings { CloseInput = true });
+            if (this.feeds.ContainsKey(id))
+                return CreateReaderOver(this.feeds[id].ToString());
+            else
+                return CreateReaderOver(
+                    new AtomFeed(
+                        id,
+                        "Head of event stream " + (Guid)id,
+                        DateTimeOffset.Now,
+                        new AtomAuthor("Grean"),
+                        Enumerable.Empty<AtomEntry>(),
+                        new[]
+                        {
+                            AtomLink.CreateSelfLink(
+                                new Uri(
+                                    ((Guid)id).ToString(),
+                                    UriKind.Relative))
+                        })
+                    .ToXmlString());
         }
 
         private static UuidIri GetIdFrom(IEnumerable<AtomLink> links)
         {
             var selfLink = links.Single(l => l.IsSelfLink);
             return new Guid(selfLink.Href.ToString());
+        }
+
+        private static XmlReader CreateReaderOver(string xml)
+        {
+            var sr = new StringReader(xml);
+            return XmlReader.Create(
+                sr,
+                new XmlReaderSettings { CloseInput = true });
         }
     }
 }
