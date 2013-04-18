@@ -43,6 +43,7 @@
     <Compile Include="AtomAuthor.cs" />
     <Compile Include="AtomEntry.cs" />
     <Compile Include="AtomFeed.cs" />
+    <Compile Include="AtomInMemory.cs" />
     <Compile Include="AtomLink.cs" />
     <Compile Include="IXmlWritable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
