@@ -20,5 +20,14 @@ namespace Grean.AtomEventStore.UnitTests
             UuidIri actual = sut.Id;
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void PersistenceIsCorrect(
+            [Frozen]IAtomEventPersistence expected,
+            SyndicationEventStream<TestEventX> sut)
+        {
+            IAtomEventPersistence actual = sut.Persistence;
+            Assert.Equal(expected, actual);
+        }
     }
 }
