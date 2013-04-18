@@ -64,6 +64,13 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteEndElement();
         }
 
+        public static AtomLink Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return AtomLink.ReadFrom(r);
+        }
+
         public static AtomLink ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
@@ -94,13 +101,6 @@ namespace Grean.AtomEventStore
         public AtomLink ToSelfLink()
         {
             return this.WithRel("self");
-        }
-
-        public static AtomLink Parse(string xml)
-        {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return AtomLink.ReadFrom(r);
         }
 
         public static AtomLink CreateViaLink(Uri href)
