@@ -115,5 +115,13 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual);
             }
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundTripToString(AtomAuthor expected)
+        {
+            var xml = expected.ToXmlString();
+            AtomAuthor actual = AtomAuthor.Parse(xml);
+            Assert.Equal(expected, actual);
+        }
     }
 }

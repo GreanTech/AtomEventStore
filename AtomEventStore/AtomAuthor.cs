@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -59,6 +60,13 @@ namespace Grean.AtomEventStore
                 .Single().Value;
 
             return new AtomAuthor(name);
+        }
+
+        public static AtomAuthor Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return AtomAuthor.ReadFrom(r);
         }
     }
 }
