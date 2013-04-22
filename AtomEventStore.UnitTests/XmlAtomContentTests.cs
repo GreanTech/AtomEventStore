@@ -8,6 +8,8 @@ using Ploeh.AutoFixture.Xunit;
 using Xunit;
 using Xunit.Extensions;
 using Ploeh.SemanticComparison.Fluent;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -68,6 +70,39 @@ namespace Grean.AtomEventStore.UnitTests
 
             var expected = sut.Item.GetHashCode();
             Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void WriteToXmlWriterWritesCorrectXml(
+            XmlAtomContent content,
+            AtomEntry entry,
+            TestEventX tex)
+        {
+            // Fixture setup
+            var sb = new StringBuilder();
+            using (var w = XmlWriter.Create(sb))
+            {
+                var sut = content.WithItem(tex);
+
+                // Exercise system
+                sut.WriteTo(w);
+
+                // Verify outcome
+                w.Flush();
+
+                var expected = XDocument.Parse(
+                    "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
+                    "  <test-event-x xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                    "    <number>" + tex.Number + "</number>" +
+                    "    <text>" + tex.Text + "</text>" +
+                    "  </test-event-x>" +
+                    "</content>");
+
+                var actual = XDocument.Parse(sb.ToString());
+                Assert.Equal(expected, actual, new XNodeEqualityComparer());
+
+                // Teardown
+            }
         }
     }
 }

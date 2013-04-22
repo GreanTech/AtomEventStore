@@ -47,9 +47,9 @@ namespace Grean.AtomEventStore
             return this.item.GetHashCode();
         }
 
-        internal void WriteTo(XmlWriter xmlWriter)
+        public void WriteTo(XmlWriter xmlWriter)
         {
-            xmlWriter.WriteStartElement("content");
+            xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
             xmlWriter.WriteStartElement(this.itemXmlElement, this.itemXmlNamespace);
