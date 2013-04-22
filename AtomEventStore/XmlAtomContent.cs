@@ -20,7 +20,7 @@ namespace Grean.AtomEventStore
         {
             this.item = item;
             this.itemType = item.GetType();
-            this.itemXmlElement = Xmlify(this.itemType.Name);
+            this.itemXmlElement = Xmlify(this.itemType);
             this.itemXmlNamespace = Urnify(this.itemType.Namespace);
         }
 
@@ -70,9 +70,51 @@ namespace Grean.AtomEventStore
                 var value = p.GetValue(this.item);
 
                 xmlWriter.WriteStartElement(localName);
-                xmlWriter.WriteValue(value);
+                WriteValue(xmlWriter, value);
                 xmlWriter.WriteEndElement();
             }
+        }
+
+        private static void WriteValue(XmlWriter xmlWriter, object value)
+        {
+            if (value is Guid)
+            {
+                xmlWriter.WriteValue(((UuidIri)((Guid)value)).ToString());
+                return;
+            }
+
+            if (IsCustomType(value))
+            {
+                var t = value.GetType();
+                xmlWriter.WriteStartElement(Xmlify(t));
+                foreach (var p in t.GetProperties())
+                {
+                    var localName = Xmlify(p.Name);
+                    var v = p.GetValue(value);
+
+                    xmlWriter.WriteStartElement(localName);
+                    WriteValue(xmlWriter, v);
+                    xmlWriter.WriteEndElement();
+                }
+                xmlWriter.WriteEndElement();
+                return;
+            }
+
+            xmlWriter.WriteValue(value);
+        }
+
+        private static bool IsCustomType(object value)
+        {
+            var t = value.GetType();
+            return t != typeof(bool)
+                && t != typeof(DateTime)
+                && t != typeof(DateTimeOffset)
+                && t != typeof(decimal)
+                && t != typeof(double)
+                && t != typeof(float)
+                && t != typeof(int)
+                && t != typeof(long)
+                && t != typeof(string);
         }
 
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
@@ -130,6 +172,18 @@ namespace Grean.AtomEventStore
         private static string UnUrnify(string text)
         {
             return string.Join(".", text.Replace("urn:", "").Split(':').Select(UnXmlify));
+        }
+
+        private static string Xmlify(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var nonGenericName = type.Name.Replace("`1", "");
+                var gt = type.GetGenericArguments().Single();
+                return Xmlify(nonGenericName) + "-of-" + Xmlify(gt);
+            }
+
+            return Xmlify(type.Name);
         }
 
         private static string Xmlify(string text)

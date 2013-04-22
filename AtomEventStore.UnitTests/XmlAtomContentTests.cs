@@ -138,5 +138,29 @@ namespace Grean.AtomEventStore.UnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanSerializeNestedItem(
+            XmlAtomContent seed,
+            Envelope<TestEventX> env)
+        {
+            var sut = seed.WithItem(env);
+
+            var actual = sut.ToXmlString();
+
+            var expected = XDocument.Parse(
+                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
+                "  <envelope-of-test-event-x xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                "    <id>urn:uuid:" + env.Id + "</id>" +
+                "    <item>" +
+                "      <test-event-x>" +
+                "        <number>" + env.Item.Number + "</number>" +
+                "        <text>" + env.Item.Text + "</text>" +
+                "      </test-event-x>" +
+                "    </item>" +
+                "  </envelope-of-test-event-x>" +
+                "</content>");
+            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
+        }
     }
 }
