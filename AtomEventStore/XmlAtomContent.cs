@@ -8,7 +8,7 @@ using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
-    public class XmlAtomContent
+    public class XmlAtomContent : IXmlWritable
     {
         private readonly object item;
         private readonly Type itemType;
