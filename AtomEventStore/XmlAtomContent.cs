@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
-    public class XmlAtomContent
+    public class XmlAtomContent : IXmlWritable
     {
         private readonly object item;
         private readonly Type itemType;
@@ -19,7 +20,7 @@ namespace Grean.AtomEventStore
         {
             this.item = item;
             this.itemType = item.GetType();
-            this.itemXmlElement = Xmlify(this.itemType.Name);
+            this.itemXmlElement = Xmlify(this.itemType);
             this.itemXmlNamespace = Urnify(this.itemType.Namespace);
         }
 
@@ -47,9 +48,9 @@ namespace Grean.AtomEventStore
             return this.item.GetHashCode();
         }
 
-        internal void WriteTo(XmlWriter xmlWriter)
+        public void WriteTo(XmlWriter xmlWriter)
         {
-            xmlWriter.WriteStartElement("content");
+            xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
             xmlWriter.WriteStartElement(this.itemXmlElement, this.itemXmlNamespace);
@@ -69,12 +70,53 @@ namespace Grean.AtomEventStore
                 var value = p.GetValue(this.item);
 
                 xmlWriter.WriteStartElement(localName);
-                xmlWriter.WriteValue(value);
+                WriteValue(xmlWriter, value);
                 xmlWriter.WriteEndElement();
             }
         }
 
-        internal static XmlAtomContent ReadFrom(XmlReader xmlReader)
+        private static void WriteValue(XmlWriter xmlWriter, object value)
+        {
+            if (value is Guid)
+            {
+                xmlWriter.WriteValue(((UuidIri)((Guid)value)).ToString());
+                return;
+            }
+
+            if (IsCustomType(value.GetType()))
+            {
+                var t = value.GetType();
+                xmlWriter.WriteStartElement(Xmlify(t));
+                foreach (var p in t.GetProperties())
+                {
+                    var localName = Xmlify(p.Name);
+                    var v = p.GetValue(value);
+
+                    xmlWriter.WriteStartElement(localName);
+                    WriteValue(xmlWriter, v);
+                    xmlWriter.WriteEndElement();
+                }
+                xmlWriter.WriteEndElement();
+                return;
+            }
+
+            xmlWriter.WriteValue(value);
+        }
+
+        private static bool IsCustomType(Type type)
+        {
+            return type != typeof(bool)
+                && type != typeof(DateTime)
+                && type != typeof(DateTimeOffset)
+                && type != typeof(decimal)
+                && type != typeof(double)
+                && type != typeof(float)
+                && type != typeof(int)
+                && type != typeof(long)
+                && type != typeof(string);
+        }
+
+        public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
@@ -91,6 +133,8 @@ namespace Grean.AtomEventStore
 
             var typeName = UnXmlify(elementName);
             var dotNetNamespace = UnUrnify(xmlNamespace);
+            if (typeName.EndsWith("]]"))
+                typeName = typeName.Replace("]]", ", " + dotNetNamespace + "]]");
 
             var itemType = Type.GetType(
                 typeName + ", " + dotNetNamespace,
@@ -102,11 +146,34 @@ namespace Grean.AtomEventStore
                         select c).First();            
 
             var arguments = ctor.GetParameters()
-                .Select(p => navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single().ValueAs(p.ParameterType))
+                .Select(p => GetValueFrom(navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
                 .ToArray();
             var item = ctor.Invoke(arguments);
 
             return new XmlAtomContent(item);
+        }
+
+        private static object GetValueFrom(XPathNavigator navigator, IXmlNamespaceResolver resolver, Type type)
+        {
+            if (type == typeof(Guid))
+                return (Guid)UuidIri.Parse(navigator.Value);
+
+            if (IsCustomType(type))
+            {
+                var ctor = (from c in type.GetConstructors()
+                            let args = c.GetParameters()
+                            orderby args.Length
+                            select c).First();
+
+                var arguments = ctor.GetParameters()
+                    .Select(p => GetValueFrom(navigator.Select("//xn:" + Xmlify(type) + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
+                    .ToArray();
+                var item = ctor.Invoke(arguments);
+
+                return item;
+            }
+
+            return navigator.ValueAs(type);
         }
 
         private static Type ResolveType(
@@ -131,6 +198,18 @@ namespace Grean.AtomEventStore
             return string.Join(".", text.Replace("urn:", "").Split(':').Select(UnXmlify));
         }
 
+        private static string Xmlify(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var nonGenericName = type.Name.Replace("`1", "");
+                var gt = type.GetGenericArguments().Single();
+                return Xmlify(nonGenericName) + "-of-" + Xmlify(gt);
+            }
+
+            return Xmlify(type.Name);
+        }
+
         private static string Xmlify(string text)
         {
             return text
@@ -141,9 +220,24 @@ namespace Grean.AtomEventStore
 
         private static string UnXmlify(string text)
         {
+            var index = text.IndexOf("-of-");
+            if (index > 0)
+            {
+                var typeName = UnUrnify(text.Substring(0, index) + "`1");
+                var genericName = UnUrnify(text.Substring(index + 4));
+                return typeName + "[[" + genericName + "]]";
+            }
+
             return text.Split('-')
                 .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
                 .Aggregate((x, y) => x + y);
+        }
+
+        public static XmlAtomContent Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return XmlAtomContent.ReadFrom(r);
         }
     }
 }
