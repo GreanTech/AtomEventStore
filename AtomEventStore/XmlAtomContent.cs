@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -144,6 +145,13 @@ namespace Grean.AtomEventStore
             return text.Split('-')
                 .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
                 .Aggregate((x, y) => x + y);
+        }
+
+        public static XmlAtomContent Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return XmlAtomContent.ReadFrom(r);
         }
     }
 }
