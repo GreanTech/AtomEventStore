@@ -74,7 +74,7 @@ namespace Grean.AtomEventStore
             }
         }
 
-        internal static XmlAtomContent ReadFrom(XmlReader xmlReader)
+        public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
