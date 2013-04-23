@@ -53,26 +53,28 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
-            xmlWriter.WriteStartElement(this.itemXmlElement, this.itemXmlNamespace);
-
-            this.WriteItemTo(xmlWriter);
-
-            xmlWriter.WriteEndElement();
+            WriteValue(xmlWriter, this.item, this.item.GetType(), this.itemXmlNamespace);
 
             xmlWriter.WriteEndElement();
         }
 
-        private void WriteItemTo(XmlWriter xmlWriter)
+        private static void WriteValue(
+            XmlWriter xmlWriter,
+            object value,
+            Type type,
+            string xmlNamespace)
         {
-            foreach (var p in this.itemType.GetProperties())
+            xmlWriter.WriteStartElement(Xmlify(type), xmlNamespace);
+            foreach (var p in type.GetProperties())
             {
                 var localName = Xmlify(p.Name);
-                var value = p.GetValue(this.item);
+                var v = p.GetValue(value);
 
                 xmlWriter.WriteStartElement(localName);
-                WriteValue(xmlWriter, value);
+                WriteValue(xmlWriter, v);
                 xmlWriter.WriteEndElement();
             }
+            xmlWriter.WriteEndElement();
         }
 
         private static void WriteValue(XmlWriter xmlWriter, object value)
@@ -85,18 +87,7 @@ namespace Grean.AtomEventStore
 
             if (IsCustomType(value.GetType()))
             {
-                var t = value.GetType();
-                xmlWriter.WriteStartElement(Xmlify(t));
-                foreach (var p in t.GetProperties())
-                {
-                    var localName = Xmlify(p.Name);
-                    var v = p.GetValue(value);
-
-                    xmlWriter.WriteStartElement(localName);
-                    WriteValue(xmlWriter, v);
-                    xmlWriter.WriteEndElement();
-                }
-                xmlWriter.WriteEndElement();
+                WriteValue(xmlWriter, value, value.GetType(), null);
                 return;
             }
 
