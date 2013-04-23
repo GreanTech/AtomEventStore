@@ -121,7 +121,7 @@ namespace Grean.AtomEventStore
             resolver.AddNamespace("xn", xmlNamespace);
 
             var dotNetNamespace = UnUrnify(xmlNamespace);
-            var itemType = new XmlCase(elementName).ToTypeIn(dotNetNamespace);
+            var itemType = new XmlCasedName(elementName).ToTypeIn(dotNetNamespace);
             var ctor = (from c in itemType.GetConstructors()
                         let args = c.GetParameters()
                         orderby args.Length
@@ -182,56 +182,56 @@ namespace Grean.AtomEventStore
 
         private static string Xmlify(Type type)
         {
-            return XmlCase.FromType(type).ToString();
+            return XmlCasedName.FromType(type).ToString();
         }
 
         private static string Xmlify(string text)
         {
-            return XmlCase.FromText(text).ToString();
+            return XmlCasedName.FromText(text).ToString();
         }
 
         private static string UnXmlify(string text)
         {
-            return new XmlCase(text).ToPascalCase();
+            return new XmlCasedName(text).ToPascalCase();
         }
 
-        private class XmlCase
+        private class XmlCasedName
         {
             private readonly string value;
 
-            public XmlCase(string value)
+            public XmlCasedName(string value)
             {
                 this.value = value;
             }
 
-            public static XmlCase FromType(Type type)
+            public static XmlCasedName FromType(Type type)
             {
                 if (type.IsGenericType)
                 {
                     var nonGenericName = type.Name.Replace("`1", "");
                     var gt = type.GetGenericArguments().Single();
-                    return XmlCase.FromText(nonGenericName) + "Of" + XmlCase.FromType(gt);
+                    return XmlCasedName.FromText(nonGenericName) + "Of" + XmlCasedName.FromType(gt);
                 }
 
-                return XmlCase.FromText(type.Name);
+                return XmlCasedName.FromText(type.Name);
             }
 
-            public static XmlCase FromText(string text)
+            public static XmlCasedName FromText(string text)
             {
-                return new XmlCase(text
+                return new XmlCasedName(text
                     .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
                     .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
                     .ToLower());
             }
 
-            public static XmlCase operator +(XmlCase xmlName, string text)
+            public static XmlCasedName operator +(XmlCasedName xmlName, string text)
             {
-                return xmlName + XmlCase.FromText(text);
+                return xmlName + XmlCasedName.FromText(text);
             }
 
-            public static XmlCase operator +(XmlCase a, XmlCase b)
+            public static XmlCasedName operator +(XmlCasedName a, XmlCasedName b)
             {
-                return new XmlCase(a.value + "-" + b.value);
+                return new XmlCasedName(a.value + "-" + b.value);
             }
 
             public string ToPascalCase()
@@ -259,8 +259,8 @@ namespace Grean.AtomEventStore
                 if (index <= 0)
                     return this.ToPascalCase();
 
-                var typeName = new XmlCase(this.value.Substring(0, index) + "`1").ToPascalCase();
-                var genericName = new XmlCase(this.value.Substring(index + 4)).ToPascalCase();
+                var typeName = new XmlCasedName(this.value.Substring(0, index) + "`1").ToPascalCase();
+                var genericName = new XmlCasedName(this.value.Substring(index + 4)).ToPascalCase();
                 return typeName + "[[" + genericName + ", " + dotNetNamespace + "]]";
             }
 
