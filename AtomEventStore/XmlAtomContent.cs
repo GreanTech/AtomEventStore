@@ -53,7 +53,7 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
-            WriteValue(xmlWriter, this.item, this.item.GetType(), this.itemXmlNamespace);
+            WriteValue(xmlWriter, this.item, this.itemXmlNamespace);
 
             xmlWriter.WriteEndElement();
         }
@@ -61,9 +61,10 @@ namespace Grean.AtomEventStore
         private static void WriteValue(
             XmlWriter xmlWriter,
             object value,
-            Type type,
             string xmlNamespace)
         {
+            var type = value.GetType();
+
             xmlWriter.WriteStartElement(Xmlify(type), xmlNamespace);
             foreach (var p in type.GetProperties())
             {
@@ -87,7 +88,7 @@ namespace Grean.AtomEventStore
 
             if (IsCustomType(value.GetType()))
             {
-                WriteValue(xmlWriter, value, value.GetType(), null);
+                WriteValue(xmlWriter, value, null);
                 return;
             }
 
