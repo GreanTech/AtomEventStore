@@ -125,7 +125,7 @@ namespace Grean.AtomEventStore
             var ctor = (from c in itemType.GetConstructors()
                         let args = c.GetParameters()
                         orderby args.Length
-                        select c).First();            
+                        select c).First();
 
             var arguments = ctor.GetParameters()
                 .Select(p => GetValueFrom(navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
@@ -159,8 +159,8 @@ namespace Grean.AtomEventStore
         }
 
         private static Type ResolveType(
-            Assembly assembly, 
-            string typeName, 
+            Assembly assembly,
+            string typeName,
             bool ignoreCase)
         {
             if (assembly == null)
@@ -256,14 +256,12 @@ namespace Grean.AtomEventStore
             private string GetTypeName(string dotNetNamespace)
             {
                 var index = this.value.IndexOf("-of-");
-                if (index > 0)
-                {
-                    var typeName = new XmlCase(this.value.Substring(0, index) + "`1").ToPascalCase();
-                    var genericName = new XmlCase(this.value.Substring(index + 4)).ToPascalCase();
-                    return typeName + "[[" + genericName + ", " + dotNetNamespace + "]]";
-                }
+                if (index <= 0)
+                    return this.ToPascalCase();
 
-                return this.ToPascalCase();
+                var typeName = new XmlCase(this.value.Substring(0, index) + "`1").ToPascalCase();
+                var genericName = new XmlCase(this.value.Substring(index + 4)).ToPascalCase();
+                return typeName + "[[" + genericName + ", " + dotNetNamespace + "]]";
             }
 
             private static Type ResolveType(
