@@ -53,29 +53,29 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
-            xmlWriter.WriteStartElement(this.itemXmlElement, this.itemXmlNamespace);
-
-            this.WriteItemTo(xmlWriter);
-
-            xmlWriter.WriteEndElement();
+            this.WriteComplexObject(xmlWriter, this.item);
 
             xmlWriter.WriteEndElement();
         }
 
-        private void WriteItemTo(XmlWriter xmlWriter)
+        private void WriteComplexObject(XmlWriter xmlWriter, object value)
         {
-            foreach (var p in this.itemType.GetProperties())
+            var type = value.GetType();
+
+            xmlWriter.WriteStartElement(Xmlify(type), this.itemXmlNamespace);
+            foreach (var p in type.GetProperties())
             {
                 var localName = Xmlify(p.Name);
-                var value = p.GetValue(this.item);
+                var v = p.GetValue(value);
 
                 xmlWriter.WriteStartElement(localName);
-                WriteValue(xmlWriter, value);
+                this.WriteValue(xmlWriter, v);
                 xmlWriter.WriteEndElement();
             }
+            xmlWriter.WriteEndElement();
         }
 
-        private static void WriteValue(XmlWriter xmlWriter, object value)
+        private void WriteValue(XmlWriter xmlWriter, object value)
         {
             if (value is Guid)
             {
@@ -85,18 +85,7 @@ namespace Grean.AtomEventStore
 
             if (IsCustomType(value.GetType()))
             {
-                var t = value.GetType();
-                xmlWriter.WriteStartElement(Xmlify(t));
-                foreach (var p in t.GetProperties())
-                {
-                    var localName = Xmlify(p.Name);
-                    var v = p.GetValue(value);
-
-                    xmlWriter.WriteStartElement(localName);
-                    WriteValue(xmlWriter, v);
-                    xmlWriter.WriteEndElement();
-                }
-                xmlWriter.WriteEndElement();
+                this.WriteComplexObject(xmlWriter, value);
                 return;
             }
 
@@ -116,6 +105,13 @@ namespace Grean.AtomEventStore
                 && type != typeof(string);
         }
 
+        public static XmlAtomContent Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return XmlAtomContent.ReadFrom(r);
+        }
+
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
@@ -131,19 +127,12 @@ namespace Grean.AtomEventStore
 
             resolver.AddNamespace("xn", xmlNamespace);
 
-            var typeName = UnXmlify(elementName);
             var dotNetNamespace = UnUrnify(xmlNamespace);
-            if (typeName.EndsWith("]]"))
-                typeName = typeName.Replace("]]", ", " + dotNetNamespace + "]]");
-
-            var itemType = Type.GetType(
-                typeName + ", " + dotNetNamespace,
-                an => Assembly.Load(an),
-                ResolveType);
+            var itemType = new XmlCasedName(elementName).ToTypeIn(dotNetNamespace);
             var ctor = (from c in itemType.GetConstructors()
                         let args = c.GetParameters()
                         orderby args.Length
-                        select c).First();            
+                        select c).First();
 
             var arguments = ctor.GetParameters()
                 .Select(p => GetValueFrom(navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
@@ -176,18 +165,6 @@ namespace Grean.AtomEventStore
             return navigator.ValueAs(type);
         }
 
-        private static Type ResolveType(
-            Assembly assembly, 
-            string typeName, 
-            bool ignoreCase)
-        {
-            if (assembly == null)
-                return null;
-            return assembly.GetExportedTypes()
-                .Where(t => t.Name == typeName)
-                .Single();
-        }
-
         private static string Urnify(string text)
         {
             return "urn:" + string.Join(":", text.Split('.').Select(Xmlify));
@@ -200,44 +177,104 @@ namespace Grean.AtomEventStore
 
         private static string Xmlify(Type type)
         {
-            if (type.IsGenericType)
-            {
-                var nonGenericName = type.Name.Replace("`1", "");
-                var gt = type.GetGenericArguments().Single();
-                return Xmlify(nonGenericName) + "-of-" + Xmlify(gt);
-            }
-
-            return Xmlify(type.Name);
+            return XmlCasedName.FromType(type).ToString();
         }
 
         private static string Xmlify(string text)
         {
-            return text
-                .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
-                .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
-                .ToLower();
+            return XmlCasedName.FromText(text).ToString();
         }
 
         private static string UnXmlify(string text)
         {
-            var index = text.IndexOf("-of-");
-            if (index > 0)
-            {
-                var typeName = UnUrnify(text.Substring(0, index) + "`1");
-                var genericName = UnUrnify(text.Substring(index + 4));
-                return typeName + "[[" + genericName + "]]";
-            }
-
-            return text.Split('-')
-                .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
-                .Aggregate((x, y) => x + y);
+            return new XmlCasedName(text).ToPascalCase();
         }
 
-        public static XmlAtomContent Parse(string xml)
+        private class XmlCasedName
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return XmlAtomContent.ReadFrom(r);
+            private readonly string value;
+
+            public XmlCasedName(string value)
+            {
+                this.value = value;
+            }
+
+            public static XmlCasedName FromType(Type type)
+            {
+                if (type.IsGenericType)
+                {
+                    var nonGenericName = type.Name.Replace("`1", "");
+                    var gt = type.GetGenericArguments().Single();
+                    return XmlCasedName.FromText(nonGenericName) + "Of" + XmlCasedName.FromType(gt);
+                }
+
+                return XmlCasedName.FromText(type.Name);
+            }
+
+            public static XmlCasedName FromText(string text)
+            {
+                return new XmlCasedName(text
+                    .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
+                    .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
+                    .ToLower());
+            }
+
+            public static XmlCasedName operator +(XmlCasedName xmlName, string text)
+            {
+                return xmlName + XmlCasedName.FromText(text);
+            }
+
+            public static XmlCasedName operator +(XmlCasedName a, XmlCasedName b)
+            {
+                return new XmlCasedName(a.value + "-" + b.value);
+            }
+
+            public string ToPascalCase()
+            {
+                return this.value.Split('-')
+                    .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
+                    .Aggregate((x, y) => x + y);
+            }
+
+            public Type ToTypeIn(string dotNetNamespace)
+            {
+                var typeName = this.GetTypeName(dotNetNamespace);
+
+                var type = Type.GetType(
+                    typeName + ", " + dotNetNamespace,
+                    Assembly.Load,
+                    ResolveType);
+
+                return type;
+            }
+
+            private string GetTypeName(string dotNetNamespace)
+            {
+                var index = this.value.IndexOf("-of-");
+                if (index <= 0)
+                    return this.ToPascalCase();
+
+                var typeName = new XmlCasedName(this.value.Substring(0, index) + "`1").ToPascalCase();
+                var genericName = new XmlCasedName(this.value.Substring(index + 4)).ToPascalCase();
+                return typeName + "[[" + genericName + ", " + dotNetNamespace + "]]";
+            }
+
+            private static Type ResolveType(
+                Assembly assembly,
+                string typeName,
+                bool ignoreCase)
+            {
+                if (assembly == null)
+                    return null;
+                return assembly.GetExportedTypes()
+                    .Where(t => t.Name == typeName)
+                    .Single();
+            }
+
+            public override string ToString()
+            {
+                return this.value;
+            }
         }
     }
 }
