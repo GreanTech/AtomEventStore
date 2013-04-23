@@ -212,8 +212,8 @@ namespace Grean.AtomEventStore
             var index = text.IndexOf("-of-");
             if (index > 0)
             {
-                var typeName = UnUrnify(text.Substring(0, index) + "`1");
-                var genericName = UnUrnify(text.Substring(index + 4));
+                var typeName = UnXmlify(text.Substring(0, index) + "`1");
+                var genericName = UnXmlify(text.Substring(index + 4));
                 return typeName + "[[" + genericName + "]]";
             }
 
