@@ -189,37 +189,77 @@ namespace Grean.AtomEventStore
 
         private static string Xmlify(Type type)
         {
-            if (type.IsGenericType)
-            {
-                var nonGenericName = type.Name.Replace("`1", "");
-                var gt = type.GetGenericArguments().Single();
-                return Xmlify(nonGenericName) + "-of-" + Xmlify(gt);
-            }
-
-            return Xmlify(type.Name);
+            return XmlCase.FromType(type).ToString();
         }
 
         private static string Xmlify(string text)
         {
-            return text
-                .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
-                .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
-                .ToLower();
+            return XmlCase.FromText(text).ToString();
         }
 
         private static string UnXmlify(string text)
         {
-            var index = text.IndexOf("-of-");
-            if (index > 0)
+            return new XmlCase(text).ToPascalCase();
+        }
+
+        private class XmlCase
+        {
+            private readonly string value;
+
+            public XmlCase(string value)
             {
-                var typeName = UnXmlify(text.Substring(0, index) + "`1");
-                var genericName = UnXmlify(text.Substring(index + 4));
-                return typeName + "[[" + genericName + "]]";
+                this.value = value;
             }
 
-            return text.Split('-')
-                .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
-                .Aggregate((x, y) => x + y);
+            public static XmlCase FromType(Type type)
+            {
+                if (type.IsGenericType)
+                {
+                    var nonGenericName = type.Name.Replace("`1", "");
+                    var gt = type.GetGenericArguments().Single();
+                    return XmlCase.FromText(nonGenericName) + "Of" + XmlCase.FromType(gt);
+                }
+
+                return XmlCase.FromText(type.Name);
+            }
+
+            public static XmlCase FromText(string text)
+            {
+                return new XmlCase(text
+                    .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
+                    .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
+                    .ToLower());
+            }
+
+            public static XmlCase operator +(XmlCase xmlName, string text)
+            {
+                return xmlName + XmlCase.FromText(text);
+            }
+
+            public static XmlCase operator +(XmlCase a, XmlCase b)
+            {
+                return new XmlCase(a.value + "-" + b.value);
+            }
+
+            public string ToPascalCase()
+            {
+                var index = this.value.IndexOf("-of-");
+                if (index > 0)
+                {
+                    var typeName = new XmlCase(this.value.Substring(0, index) + "`1").ToPascalCase();
+                    var genericName = new XmlCase(this.value.Substring(index + 4)).ToPascalCase();
+                    return typeName + "[[" + genericName + "]]";
+                }
+
+                return this.value.Split('-')
+                    .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
+                    .Aggregate((x, y) => x + y);
+            }
+
+            public override string ToString()
+            {
+                return this.value;
+            }
         }
 
         public static XmlAtomContent Parse(string xml)
