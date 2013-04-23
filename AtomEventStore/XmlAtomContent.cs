@@ -165,18 +165,6 @@ namespace Grean.AtomEventStore
             return navigator.ValueAs(type);
         }
 
-        private static Type ResolveType(
-            Assembly assembly,
-            string typeName,
-            bool ignoreCase)
-        {
-            if (assembly == null)
-                return null;
-            return assembly.GetExportedTypes()
-                .Where(t => t.Name == typeName)
-                .Single();
-        }
-
         private static string Urnify(string text)
         {
             return "urn:" + string.Join(":", text.Split('.').Select(Xmlify));
