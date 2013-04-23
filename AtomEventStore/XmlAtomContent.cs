@@ -120,15 +120,8 @@ namespace Grean.AtomEventStore
 
             resolver.AddNamespace("xn", xmlNamespace);
 
-            var typeName = UnXmlify(elementName);
             var dotNetNamespace = UnUrnify(xmlNamespace);
-            if (typeName.EndsWith("]]"))
-                typeName = typeName.Replace("]]", ", " + dotNetNamespace + "]]");
-
-            var itemType = Type.GetType(
-                typeName + ", " + dotNetNamespace,
-                an => Assembly.Load(an),
-                ResolveType);
+            var itemType = new XmlCase(elementName).ToTypeIn(dotNetNamespace);
             var ctor = (from c in itemType.GetConstructors()
                         let args = c.GetParameters()
                         orderby args.Length
@@ -243,17 +236,46 @@ namespace Grean.AtomEventStore
 
             public string ToPascalCase()
             {
+                return this.value.Split('-')
+                    .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
+                    .Aggregate((x, y) => x + y);
+            }
+
+            public Type ToTypeIn(string dotNetNamespace)
+            {
+                var typeName = this.GetTypeName(dotNetNamespace);
+
+                var type = Type.GetType(
+                    typeName + ", " + dotNetNamespace,
+                    Assembly.Load,
+                    ResolveType);
+
+                return type;
+            }
+
+            private string GetTypeName(string dotNetNamespace)
+            {
                 var index = this.value.IndexOf("-of-");
                 if (index > 0)
                 {
                     var typeName = new XmlCase(this.value.Substring(0, index) + "`1").ToPascalCase();
                     var genericName = new XmlCase(this.value.Substring(index + 4)).ToPascalCase();
-                    return typeName + "[[" + genericName + "]]";
+                    return typeName + "[[" + genericName + ", " + dotNetNamespace + "]]";
                 }
 
-                return this.value.Split('-')
-                    .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
-                    .Aggregate((x, y) => x + y);
+                return this.ToPascalCase();
+            }
+
+            private static Type ResolveType(
+                Assembly assembly,
+                string typeName,
+                bool ignoreCase)
+            {
+                if (assembly == null)
+                    return null;
+                return assembly.GetExportedTypes()
+                    .Where(t => t.Name == typeName)
+                    .Single();
             }
 
             public override string ToString()
