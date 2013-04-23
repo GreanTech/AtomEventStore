@@ -105,6 +105,13 @@ namespace Grean.AtomEventStore
                 && type != typeof(string);
         }
 
+        public static XmlAtomContent Parse(string xml)
+        {
+            using (var sr = new StringReader(xml))
+            using (var r = XmlReader.Create(sr))
+                return XmlAtomContent.ReadFrom(r);
+        }
+
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
@@ -280,13 +287,6 @@ namespace Grean.AtomEventStore
             {
                 return this.value;
             }
-        }
-
-        public static XmlAtomContent Parse(string xml)
-        {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return XmlAtomContent.ReadFrom(r);
         }
     }
 }
