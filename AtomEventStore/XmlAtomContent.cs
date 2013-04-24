@@ -119,7 +119,9 @@ namespace Grean.AtomEventStore
             var resolver = new XmlNamespaceManager(new NameTable());
             resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
 
-            var contentElement = navigator.Select("/atom:content/*", resolver).Cast<XPathNavigator>()
+            var contentElement = navigator
+                .Select("/atom:content/*", resolver)
+                .Cast<XPathNavigator>()
                 .Single();
 
             var elementName = contentElement.LocalName;
