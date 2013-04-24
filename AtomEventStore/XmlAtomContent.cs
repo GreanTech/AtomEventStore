@@ -176,9 +176,18 @@ namespace Grean.AtomEventStore
             private object GetValueForParameter(ParameterInfo p)
             {
                 var xpath = "//xn:" + Xmlify(this.type) + "/xn:" + Xmlify(p.Name);
-                var selectedNode =
-                    this.navigator.Select(xpath, this.resolver).Cast<XPathNavigator>().Single();
-                return new TypedNavigator(selectedNode, this.resolver, p.ParameterType).GetValue();
+                var selectedNode = this.navigator
+                    .Select(xpath, this.resolver)
+                    .Cast<XPathNavigator>()
+                    .Single();
+                return this.WithNode(selectedNode, p.ParameterType).GetValue();
+            }
+
+            private TypedNavigator WithNode(
+                XPathNavigator newNavigator,
+                Type newType)
+            {
+                return new TypedNavigator(newNavigator, this.resolver, newType);
             }
         }
 
