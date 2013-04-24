@@ -129,15 +129,7 @@ namespace Grean.AtomEventStore
 
             var dotNetNamespace = UnUrnify(xmlNamespace);
             var itemType = new XmlCasedName(elementName).ToTypeIn(dotNetNamespace);
-            var ctor = (from c in itemType.GetConstructors()
-                        let args = c.GetParameters()
-                        orderby args.Length
-                        select c).First();
-
-            var arguments = ctor.GetParameters()
-                .Select(p => GetValueFrom(navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
-                .ToArray();
-            var item = ctor.Invoke(arguments);
+            var item = GetValueFrom(navigator, resolver, itemType);
 
             return new XmlAtomContent(item);
         }
