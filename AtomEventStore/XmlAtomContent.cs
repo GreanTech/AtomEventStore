@@ -147,7 +147,7 @@ namespace Grean.AtomEventStore
                             select c).First();
 
                 var arguments = ctor.GetParameters()
-                    .Select(p => GetValueFrom(navigator.Select("//xn:" + Xmlify(type) + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
+                    .Select(p => GetValueForParameter(navigator, resolver, type, p))
                     .ToArray();
                 var item = ctor.Invoke(arguments);
 
@@ -155,6 +155,11 @@ namespace Grean.AtomEventStore
             }
 
             return navigator.ValueAs(type);
+        }
+
+        private static object GetValueForParameter(XPathNavigator navigator, IXmlNamespaceResolver resolver, Type type, ParameterInfo p)
+        {
+            return GetValueFrom(navigator.Select("//xn:" + Xmlify(type) + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType);
         }
 
         private static string Urnify(string text)
