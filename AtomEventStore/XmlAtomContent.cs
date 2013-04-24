@@ -157,20 +157,22 @@ namespace Grean.AtomEventStore
 
                 if (IsCustomType(this.type))
                 {
-                    var ctor = (from c in this.type.GetConstructors()
-                                let args = c.GetParameters()
-                                orderby args.Length
-                                select c).First();
-
+                    var ctor = this.GetMostModestConstructor();
                     var arguments = ctor.GetParameters()
                         .Select(this.GetValueForParameter)
                         .ToArray();
-                    var item = ctor.Invoke(arguments);
-
-                    return item;
+                    return ctor.Invoke(arguments);
                 }
 
                 return this.navigator.ValueAs(this.type);
+            }
+
+            private ConstructorInfo GetMostModestConstructor()
+            {
+                return (from c in this.type.GetConstructors()
+                        let args = c.GetParameters()
+                        orderby args.Length
+                        select c).First();
             }
 
             private object GetValueForParameter(ParameterInfo p)
