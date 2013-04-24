@@ -13,7 +13,7 @@
     <tags>EventSourcing Atom</tags>
   </metadata>
   <files>
-    <file src="AtomEventStore\bin\Release\Ploeh.Hyprlinkr.dll" target="lib\net45" />
-    <file src="AtomEventStore\bin\Release\Ploeh.Hyprlinkr.XML" target="lib\net45" />
+    <file src="AtomEventStore\bin\Release\Grean.AtomEventStore.dll" target="lib\net45" />
+    <file src="AtomEventStore\bin\Release\Grean.AtomEventStore.XML" target="lib\net45" />
   </files>
 </package>
