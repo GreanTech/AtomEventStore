@@ -157,9 +157,16 @@ namespace Grean.AtomEventStore
             return navigator.ValueAs(type);
         }
 
-        private static object GetValueForParameter(XPathNavigator navigator, IXmlNamespaceResolver resolver, Type type, ParameterInfo p)
+        private static object GetValueForParameter(
+            XPathNavigator navigator,
+            IXmlNamespaceResolver resolver,
+            Type type,
+            ParameterInfo p)
         {
-            return GetValueFrom(navigator.Select("//xn:" + Xmlify(type) + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType);
+            var xpath = "//xn:" + Xmlify(type) + "/xn:" + Xmlify(p.Name);
+            var selectedNode = 
+                navigator.Select(xpath, resolver).Cast<XPathNavigator>().Single();
+            return GetValueFrom(selectedNode, resolver, p.ParameterType);
         }
 
         private static string Urnify(string text)
