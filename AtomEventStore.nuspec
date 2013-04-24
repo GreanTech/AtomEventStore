@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AtomEventStore</id>
+    <version>0.1.0</version>
+    <title>Atom Event Store</title>
+    <authors>Grean</authors>
+    <owners>Grean</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Event store implementation based on the Atom syndication format.</description>
+    <releaseNotes>First unstable release.</releaseNotes>
+    <copyright>Copyright Grean ApS 2013</copyright>
+    <tags>EventSourcing Atom</tags>
+  </metadata>
+  <files>
+    <file src="AtomEventStore\bin\Release\Grean.AtomEventStore.dll" target="lib\net45" />
+    <file src="AtomEventStore\bin\Release\Grean.AtomEventStore.XML" target="lib\net45" />
+  </files>
+</package>
