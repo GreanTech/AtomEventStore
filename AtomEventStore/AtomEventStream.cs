@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEventStream<T> : IEnumerable<T>
+    public class AtomEventStream<T> : IEnumerable<T>, IObserver<T>
     {
         private readonly UuidIri id;
         private readonly IAtomEventStorage storage;
@@ -116,6 +116,21 @@ namespace Grean.AtomEventStore
 
             using (var r = this.storage.CreateEntryReaderFor(previousLink.Href))
                 return AtomEntry.ReadFrom(r);
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnNext(T value)
+        {
+            throw new NotImplementedException();
         }
     }
 
