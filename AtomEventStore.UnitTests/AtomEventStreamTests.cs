@@ -280,5 +280,35 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = new ITestEvent[] { tey, tex };
             Assert.True(expected.SequenceEqual(sut));
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsObserver(AtomEventStream<TestEventX> sut)
+        {
+            Assert.IsAssignableFrom<IObserver<TestEventX>>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void OnNextAppendsItem(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<TestEventX> sut,
+            TestEventX tex)
+        {
+            sut.OnNext(tex);
+            Assert.Equal(tex, sut.SingleOrDefault());
+        }
+
+        [Theory, AutoAtomData]
+        public void OnErrorDoesNotThrow(
+            AtomEventStream<TestEventY> sut,
+            Exception e)
+        {
+            Assert.DoesNotThrow(() => sut.OnError(e));
+        }
+
+        [Theory, AutoAtomData]
+        public void OnCompletedDoesNotThrow(AtomEventStream<TestEventY> sut)
+        {
+            Assert.DoesNotThrow(() => sut.OnCompleted());
+        }
     }
 }
