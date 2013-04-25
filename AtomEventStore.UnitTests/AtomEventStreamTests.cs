@@ -286,5 +286,15 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.IsAssignableFrom<IObserver<TestEventX>>(sut);
         }
+
+        [Theory, AutoAtomData]
+        public void OnNextAppendsItem(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<TestEventX> sut,
+            TestEventX tex)
+        {
+            sut.OnNext(tex);
+            Assert.Equal(tex, sut.SingleOrDefault());
+        }
     }
 }
