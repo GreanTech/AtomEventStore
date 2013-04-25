@@ -296,5 +296,19 @@ namespace Grean.AtomEventStore.UnitTests
             sut.OnNext(tex);
             Assert.Equal(tex, sut.SingleOrDefault());
         }
+
+        [Theory, AutoAtomData]
+        public void OnErrorDoesNotThrow(
+            AtomEventStream<TestEventY> sut,
+            Exception e)
+        {
+            Assert.DoesNotThrow(() => sut.OnError(e));
+        }
+
+        [Theory, AutoAtomData]
+        public void OnCompletedDoesNotThrow(AtomEventStream<TestEventY> sut)
+        {
+            Assert.DoesNotThrow(() => sut.OnCompleted());
+        }
     }
 }
