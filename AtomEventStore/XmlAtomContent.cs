@@ -119,7 +119,9 @@ namespace Grean.AtomEventStore
             var resolver = new XmlNamespaceManager(new NameTable());
             resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
 
-            var contentElement = navigator.Select("/atom:content/*", resolver).Cast<XPathNavigator>()
+            var contentElement = navigator
+                .Select("/atom:content/*", resolver)
+                .Cast<XPathNavigator>()
                 .Single();
 
             var elementName = contentElement.LocalName;
@@ -129,40 +131,68 @@ namespace Grean.AtomEventStore
 
             var dotNetNamespace = UnUrnify(xmlNamespace);
             var itemType = new XmlCasedName(elementName).ToTypeIn(dotNetNamespace);
-            var ctor = (from c in itemType.GetConstructors()
-                        let args = c.GetParameters()
-                        orderby args.Length
-                        select c).First();
-
-            var arguments = ctor.GetParameters()
-                .Select(p => GetValueFrom(navigator.Select("//xn:" + elementName + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
-                .ToArray();
-            var item = ctor.Invoke(arguments);
+            var item = new TypedNavigator(navigator, resolver, itemType).GetValue();
 
             return new XmlAtomContent(item);
         }
 
-        private static object GetValueFrom(XPathNavigator navigator, IXmlNamespaceResolver resolver, Type type)
+        private class TypedNavigator
         {
-            if (type == typeof(Guid))
-                return (Guid)UuidIri.Parse(navigator.Value);
+            private readonly XPathNavigator navigator;
+            private readonly IXmlNamespaceResolver resolver;
+            private readonly Type type;
 
-            if (IsCustomType(type))
+            public TypedNavigator(
+                XPathNavigator navigator,
+                IXmlNamespaceResolver resolver,
+                Type type)
             {
-                var ctor = (from c in type.GetConstructors()
-                            let args = c.GetParameters()
-                            orderby args.Length
-                            select c).First();
-
-                var arguments = ctor.GetParameters()
-                    .Select(p => GetValueFrom(navigator.Select("//xn:" + Xmlify(type) + "/xn:" + Xmlify(p.Name), resolver).Cast<XPathNavigator>().Single(), resolver, p.ParameterType))
-                    .ToArray();
-                var item = ctor.Invoke(arguments);
-
-                return item;
+                this.navigator = navigator;
+                this.resolver = resolver;
+                this.type = type;
             }
 
-            return navigator.ValueAs(type);
+            public object GetValue()
+            {
+                if (this.type == typeof(Guid))
+                    return (Guid)UuidIri.Parse(this.navigator.Value);
+
+                if (IsCustomType(this.type))
+                {
+                    var ctor = this.GetMostModestConstructor();
+                    var arguments = ctor.GetParameters()
+                        .Select(this.GetValueForParameter)
+                        .ToArray();
+                    return ctor.Invoke(arguments);
+                }
+
+                return this.navigator.ValueAs(this.type);
+            }
+
+            private ConstructorInfo GetMostModestConstructor()
+            {
+                return (from c in this.type.GetConstructors()
+                        let args = c.GetParameters()
+                        orderby args.Length
+                        select c).First();
+            }
+
+            private object GetValueForParameter(ParameterInfo p)
+            {
+                var xpath = "//xn:" + Xmlify(this.type) + "/xn:" + Xmlify(p.Name);
+                var selectedNode = this.navigator
+                    .Select(xpath, this.resolver)
+                    .Cast<XPathNavigator>()
+                    .Single();
+                return this.WithNode(selectedNode, p.ParameterType).GetValue();
+            }
+
+            private TypedNavigator WithNode(
+                XPathNavigator newNavigator,
+                Type newType)
+            {
+                return new TypedNavigator(newNavigator, this.resolver, newType);
+            }
         }
 
         private static string Urnify(string text)
