@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
@@ -114,85 +115,76 @@ namespace Grean.AtomEventStore
 
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
-            var navigator = new XPathDocument(xmlReader).CreateNavigator();
-
-            var resolver = new XmlNamespaceManager(new NameTable());
-            resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
-
-            var contentElement = navigator
-                .Select("/atom:content/*", resolver)
-                .Cast<XPathNavigator>()
-                .Single();
-
-            var elementName = contentElement.LocalName;
-            var xmlNamespace = contentElement.NamespaceURI;
-
-            resolver.AddNamespace("xn", xmlNamespace);
-
-            var dotNetNamespace = UnUrnify(xmlNamespace);
-            var itemType = new XmlCasedName(elementName).ToTypeIn(dotNetNamespace);
-            var item = new TypedNavigator(navigator, resolver, itemType).GetValue();
-
+            xmlReader.MoveToContent();
+            var x = (XElement)XElement.ReadFrom(xmlReader);
+            var item = ReadFrom(x.Elements().Single());
             return new XmlAtomContent(item);
         }
 
-        private class TypedNavigator
+        private static object ReadFrom(XElement node)
         {
-            private readonly XPathNavigator navigator;
-            private readonly IXmlNamespaceResolver resolver;
-            private readonly Type type;
+            if (!node.HasElements)
+                return node.Value;
 
-            public TypedNavigator(
-                XPathNavigator navigator,
-                IXmlNamespaceResolver resolver,
-                Type type)
+            var arguments = node.Elements()
+                .Select(GetObjectFrom)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            var elementName = node.Name.LocalName;
+            var xmlNamespace = node.Name.NamespaceName;
+
+            var dotNetNamespace = UnUrnify(xmlNamespace);
+            var itemType = new XmlCasedName(elementName).ToTypeIn(dotNetNamespace);
+
+            var ctor = GetMostModestConstructor(itemType);
+
+            if (itemType.IsGenericTypeDefinition)
             {
-                this.navigator = navigator;
-                this.resolver = resolver;
-                this.type = type;
+                var openGenericType = itemType.GetGenericArguments().Single();
+                var genericCtorParamter = ctor.GetParameters()
+                    .Single(p => p.ParameterType == openGenericType);
+                var matchingArgument = arguments
+                    .Single(kvp => UnXmlify(kvp.Key.LocalName).Equals(genericCtorParamter.Name, StringComparison.OrdinalIgnoreCase))
+                    .Value;
+
+                itemType = itemType.MakeGenericType(matchingArgument.GetType());
+                ctor = GetMostModestConstructor(itemType);
             }
 
-            public object GetValue()
+            List<object> sortedArguments = new List<object>();
+            foreach (var p in ctor.GetParameters())
             {
-                if (this.type == typeof(Guid))
-                    return (Guid)UuidIri.Parse(this.navigator.Value);
-
-                if (IsCustomType(this.type))
-                {
-                    var ctor = this.GetMostModestConstructor();
-                    var arguments = ctor.GetParameters()
-                        .Select(this.GetValueForParameter)
-                        .ToArray();
-                    return ctor.Invoke(arguments);
-                }
-
-                return this.navigator.ValueAs(this.type);
+                var argValue = arguments.Single(kvp => UnXmlify(kvp.Key.LocalName).Equals(p.Name, StringComparison.OrdinalIgnoreCase));
+                sortedArguments.Add(ChangeType(argValue.Value, p.ParameterType));
             }
 
-            private ConstructorInfo GetMostModestConstructor()
-            {
-                return (from c in this.type.GetConstructors()
-                        let args = c.GetParameters()
-                        orderby args.Length
-                        select c).First();
-            }
+            var item = ctor.Invoke(sortedArguments.ToArray());
+            return item;
+        }
 
-            private object GetValueForParameter(ParameterInfo p)
-            {
-                var xpath = "//xn:" + Xmlify(this.type) + "/xn:" + Xmlify(p.Name);
-                var selectedNode = this.navigator
-                    .Select(xpath, this.resolver)
-                    .Cast<XPathNavigator>()
-                    .Single();
-                return this.WithNode(selectedNode, p.ParameterType).GetValue();
-            }
+        private static ConstructorInfo GetMostModestConstructor(Type itemType)
+        {
+            return (from c in itemType.GetConstructors()
+                    let args = c.GetParameters()
+                    orderby args.Length
+                    select c).First();
+        }
 
-            private TypedNavigator WithNode(
-                XPathNavigator newNavigator,
-                Type newType)
-            {
-                return new TypedNavigator(newNavigator, this.resolver, newType);
-            }
+        private static KeyValuePair<XName, object> GetObjectFrom(XElement node)
+        {
+            if (!node.HasElements)
+                return new KeyValuePair<XName, object>(node.Name, node.Value);
+
+            var value = ReadFrom(node.Elements().Single());
+            return new KeyValuePair<XName, object>(node.Name, value);
+        }
+
+        private static object ChangeType(object value, Type type)
+        {
+            if (type == typeof(Guid))
+                return (Guid)UuidIri.Parse(value.ToString());
+
+            return Convert.ChangeType(value, type);
         }
 
         private static string Urnify(string text)
@@ -234,8 +226,7 @@ namespace Grean.AtomEventStore
                 if (type.IsGenericType)
                 {
                     var nonGenericName = type.Name.Replace("`1", "");
-                    var gt = type.GetGenericArguments().Single();
-                    return XmlCasedName.FromText(nonGenericName) + "Of" + XmlCasedName.FromType(gt);
+                    return XmlCasedName.FromText(nonGenericName);
                 }
 
                 return XmlCasedName.FromText(type.Name);
@@ -280,13 +271,7 @@ namespace Grean.AtomEventStore
 
             private string GetTypeName(string dotNetNamespace)
             {
-                var index = this.value.IndexOf("-of-");
-                if (index <= 0)
-                    return this.ToPascalCase();
-
-                var typeName = new XmlCasedName(this.value.Substring(0, index) + "`1").ToPascalCase();
-                var genericName = new XmlCasedName(this.value.Substring(index + 4)).ToPascalCase();
-                return typeName + "[[" + genericName + ", " + dotNetNamespace + "]]";
+                return this.ToPascalCase();
             }
 
             private static Type ResolveType(
@@ -297,7 +282,7 @@ namespace Grean.AtomEventStore
                 if (assembly == null)
                     return null;
                 return assembly.GetExportedTypes()
-                    .Where(t => t.Name == typeName)
+                    .Where(t => t.Name == typeName || t.Name == typeName + "`1")
                     .Single();
             }
 
