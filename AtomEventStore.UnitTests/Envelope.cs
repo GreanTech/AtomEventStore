@@ -53,4 +53,20 @@ namespace Grean.AtomEventStore.UnitTests
                 (TResult)(object)this.item);
         }
     }
+
+    /// <summary>
+    /// This class mostly exists to test for proper type resolution behavior
+    /// when resolving type with ambigous names. This non-generic type has the
+    /// same name as Envelope&lt;T&gt;, but is a static class, so should not be
+    /// picked.
+    /// </summary>
+    public static class Envelope
+    {
+        public static Envelope<T> Envelop<T>(this T item)
+        {
+            return new Envelope<T>(
+                Guid.NewGuid(),
+                item);
+        }
+    }
 }
