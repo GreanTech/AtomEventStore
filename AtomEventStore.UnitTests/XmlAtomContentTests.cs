@@ -150,7 +150,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
-                "  <envelope-of-test-event-x xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                "  <envelope xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
                 "    <id>urn:uuid:" + env.Id + "</id>" +
                 "    <item>" +
                 "      <test-event-x>" +
@@ -158,7 +158,7 @@ namespace Grean.AtomEventStore.UnitTests
                 "        <text>" + env.Item.Text + "</text>" +
                 "      </test-event-x>" +
                 "    </item>" +
-                "  </envelope-of-test-event-x>" +
+                "  </envelope>" +
                 "</content>");
             Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
         }
