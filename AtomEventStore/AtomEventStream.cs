@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,7 +98,8 @@ namespace Grean.AtomEventStore
             var entry = this.ReadIndex().Entries.SingleOrDefault();
             while (entry != null)
             {
-                yield return (T)entry.Content.Item;
+                yield return Cast(entry.Content.Item);
+
                 entry = this.GetPrevious(entry);
             }
         }
@@ -105,6 +107,14 @@ namespace Grean.AtomEventStore
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        private static T Cast(object item)
+        {
+            if (item is T)
+                return (T)item;
+
+            return (T)TypeDescriptor.GetConverter(item).ConvertTo(item, typeof(T));
         }
 
         private AtomEntry GetPrevious(AtomEntry current)

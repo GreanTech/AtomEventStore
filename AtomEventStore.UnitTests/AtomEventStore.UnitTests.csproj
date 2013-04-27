@@ -74,6 +74,7 @@
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="AtomEventStreamTests.cs" />
     <Compile Include="Envelope.cs" />
+    <Compile Include="EnvelopeTypeConverter.cs" />
     <Compile Include="ITestEvent.cs" />
     <Compile Include="ITestEventVisitor.cs" />
     <Compile Include="TestEventY.cs" />

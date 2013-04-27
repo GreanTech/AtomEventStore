@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore.UnitTests
 {
+    [TypeConverter(typeof(EnvelopeTypeConverter))]
     public class Envelope<T>
     {
         private readonly Guid id;
@@ -42,6 +44,13 @@ namespace Grean.AtomEventStore.UnitTests
         public override int GetHashCode()
         {
             return 0;
+        }
+
+        public Envelope<TResult> Cast<TResult>()
+        {
+            return new Envelope<TResult>(
+                this.id,
+                (TResult)(object)this.item);
         }
     }
 }

@@ -282,6 +282,23 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void SutCanAppendAndYieldEnclosedPolymorphicEvents(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<Envelope<ITestEvent>> sut,
+            Envelope<TestEventX> texEnvelope,
+            Envelope<TestEventY> teyEnvelope)
+        {
+            var texA = texEnvelope.Cast<ITestEvent>();
+            var teyA = teyEnvelope.Cast<ITestEvent>();
+
+            sut.AppendAsync(texA).Wait();
+            sut.AppendAsync(teyA).Wait();
+
+            var expected = new Envelope<ITestEvent>[] { teyA, texA };
+            Assert.True(expected.SequenceEqual(sut));
+        }
+
+        [Theory, AutoAtomData]
         public void SutIsObserver(AtomEventStream<TestEventX> sut)
         {
             Assert.IsAssignableFrom<IObserver<TestEventX>>(sut);
