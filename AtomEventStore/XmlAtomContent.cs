@@ -84,6 +84,12 @@ namespace Grean.AtomEventStore
                 return;
             }
 
+            if (value is Uri)
+            {
+                xmlWriter.WriteValue(value.ToString());
+                return;
+            }
+
             if (IsCustomType(value.GetType()))
             {
                 this.WriteComplexObject(xmlWriter, value);
@@ -183,6 +189,8 @@ namespace Grean.AtomEventStore
         {
             if (type == typeof(Guid))
                 return (Guid)UuidIri.Parse(value.ToString());
+            if (type == typeof(Uri))
+                return new Uri(value.ToString());
 
             return Convert.ChangeType(value, type);
         }

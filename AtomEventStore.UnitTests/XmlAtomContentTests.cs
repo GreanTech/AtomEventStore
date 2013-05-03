@@ -175,5 +175,37 @@ namespace Grean.AtomEventStore.UnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanSerializeItemWithUri(
+            XmlAtomContent seed,
+            TestEventU teu)
+        {
+            var sut = seed.WithItem(teu);
+
+            var actual = sut.ToXmlString();
+
+            var expected = XDocument.Parse(
+                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
+                "  <test-event-u xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                "    <address>" + teu.Address.ToString() + "</address>" +
+                "    <text>" + teu.Text + "</text>" +
+                "  </test-event-u>" +
+                "</content>");
+            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
+        }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundTripItemWithUri(
+            XmlAtomContent seed,
+            TestEventU teu)
+        {
+            var expected = seed.WithItem(teu);
+            var xml = expected.ToXmlString();
+
+            var actual = XmlAtomContent.Parse(xml);
+
+            Assert.Equal(expected, actual);
+        }
     }
 }
