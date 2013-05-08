@@ -8,6 +8,7 @@
       <Word>grean</Word>
       <Word>rel</Word>
       <Word>uuid</Word>
+      <Word>iri</Word>
     </Recognized>
     <Deprecated>
       <Term PreferredAlternate=""></Term>
