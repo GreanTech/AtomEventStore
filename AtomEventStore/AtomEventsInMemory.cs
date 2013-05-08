@@ -57,6 +57,9 @@ namespace Grean.AtomEventStore
 
         public XmlReader CreateFeedReaderFor(Uri href)
         {
+            if (href == null)
+                throw new ArgumentNullException("href");
+
             if (this.feeds.ContainsKey(href))
                 return CreateReaderOver(this.feeds[href].ToString());
             else
