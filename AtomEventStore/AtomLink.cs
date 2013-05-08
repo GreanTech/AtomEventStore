@@ -74,9 +74,20 @@ namespace Grean.AtomEventStore
 
         public static AtomLink Parse(string xml)
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return AtomLink.ReadFrom(r);
+            var sr = new StringReader(xml);
+            try
+            {
+                using (var r = XmlReader.Create(sr))
+                {
+                    sr = null;
+                    return AtomLink.ReadFrom(r);
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                    sr.Dispose();
+            }
         }
 
         public static AtomLink ReadFrom(XmlReader xmlReader)
