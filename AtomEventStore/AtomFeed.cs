@@ -25,6 +25,15 @@ namespace Grean.AtomEventStore
             IEnumerable<AtomEntry> entries,
             IEnumerable<AtomLink> links)
         {
+            if (title == null)
+                throw new ArgumentNullException("title");
+            if (author == null)
+                throw new ArgumentNullException("author");
+            if (entries == null)
+                throw new ArgumentNullException("entries");
+            if (links == null)
+                throw new ArgumentNullException("links");
+
             this.id = id;
             this.title = title;
             this.updated = updated;
@@ -120,6 +129,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("feed", "http://www.w3.org/2005/Atom");
 
             xmlWriter.WriteElementString("id", this.id.ToString());
@@ -187,6 +199,9 @@ namespace Grean.AtomEventStore
 
         public AtomFeed AddLink(AtomLink newLink)
         {
+            if (newLink == null)
+                throw new ArgumentNullException("parameterToCheck");
+            
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 

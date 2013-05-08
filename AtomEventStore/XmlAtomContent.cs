@@ -19,6 +19,9 @@ namespace Grean.AtomEventStore
 
         public XmlAtomContent(object item)
         {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
             this.item = item;
             this.itemType = item.GetType();
             this.itemXmlElement = Xmlify(this.itemType);
@@ -32,6 +35,9 @@ namespace Grean.AtomEventStore
 
         public XmlAtomContent WithItem(object newItem)
         {
+            if (newItem == null)
+                throw new ArgumentNullException("newItem");
+
             return new XmlAtomContent(newItem);
         }
 
@@ -51,6 +57,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
@@ -121,6 +130,9 @@ namespace Grean.AtomEventStore
 
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
+            if (xmlReader == null)
+                throw new ArgumentNullException("xmlReader");
+
             xmlReader.MoveToContent();
             var x = (XElement)XElement.ReadFrom(xmlReader);
             var item = ReadFrom(x.Elements().Single());

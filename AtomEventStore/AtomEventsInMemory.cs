@@ -20,6 +20,9 @@ namespace Grean.AtomEventStore
 
         public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
         {
+            if (atomEntry == null)
+                throw new ArgumentNullException("atomEntry");
+
             var href = GetHrefFrom(atomEntry.Links);
             if (this.entries.ContainsKey(href))
                 throw new InvalidOperationException(
@@ -39,6 +42,9 @@ namespace Grean.AtomEventStore
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
+            if (atomFeed == null)
+                throw new ArgumentNullException("atomFeed");
+
             var id = GetHrefFrom(atomFeed.Links);
             var sb = new StringBuilder();
             this.feeds[id] = sb;

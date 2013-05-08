@@ -15,6 +15,11 @@ namespace Grean.AtomEventStore
 
         public AtomLink(string rel, Uri href)
         {
+            if (rel == null)
+                throw new ArgumentNullException("rel");
+            if (href == null)
+                throw new ArgumentNullException("href");
+
             this.rel = rel;
             this.href = href;
         }
@@ -58,6 +63,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("link", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("href", this.href.ToString());
             xmlWriter.WriteAttributeString("rel", this.rel);

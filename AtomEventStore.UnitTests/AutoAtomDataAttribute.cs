@@ -21,6 +21,7 @@ namespace Grean.AtomEventStore.UnitTests
             public AtomEventsCustomization()
                 : base(
                     new DirectoryCustomization(),
+                    new StreamCustomization(),
                     new AutoMoqCustomization())
             {
             }
@@ -31,6 +32,15 @@ namespace Grean.AtomEventStore.UnitTests
                 {
                     fixture.Inject(
                         new DirectoryInfo(Environment.CurrentDirectory));
+                }
+            }
+
+            private class StreamCustomization : ICustomization
+            {
+                public void Customize(IFixture fixture)
+                {
+                    fixture.Register<Stream>(
+                        () => new MemoryStream());
                 }
             }
         }

@@ -14,6 +14,9 @@ namespace Grean.AtomEventStore
 
         public AtomAuthor(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException("name");
+
             this.name = name;
         }
 
@@ -44,6 +47,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("author", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteElementString("name", this.name);
             xmlWriter.WriteEndElement();

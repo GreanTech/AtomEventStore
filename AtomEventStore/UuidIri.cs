@@ -12,6 +12,9 @@ namespace Grean.AtomEventStore
 
         public UuidIri(Guid id)
         {
+            if (id == Guid.Empty)
+                throw new ArgumentException("The empty Guid is not allowed. Please supply an appropriate Guid value.", "id");
+
             this.id = id;
         }
 
