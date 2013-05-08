@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -58,6 +59,7 @@ namespace Grean.AtomEventStore
             if (!couldParse)
                 throw new ArgumentException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "The candidate string is not a correctly formatted UUID IRI. The valid format is: \"urn:uuid:<Guid value>\". Example: \"urn:uuid:7eddb2e3-369b-4f3d-8697-520bc5de8ed4\". The actual candidate string was: \"{0}\"",
                         candidate),
                     "candidate");
