@@ -84,6 +84,16 @@ namespace Grean.AtomEventStore
             return object.Equals(this.id, other.id);
         }
 
+        public static bool operator ==(UuidIri x, UuidIri y)
+        {
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(UuidIri x, UuidIri y)
+        {
+            return !x.Equals(y);
+        }
+
         public override int GetHashCode()
         {
             return this.id.GetHashCode();

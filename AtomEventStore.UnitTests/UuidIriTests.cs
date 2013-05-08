@@ -51,9 +51,13 @@ namespace Grean.AtomEventStore.UnitTests
 
             var actual1 = sut.Equals((object)other);
             var actual2 = sut.Equals(other);
+            var actual3 = sut == other;
+            var actual4 = sut != other;
 
             Assert.True(actual1, "Equals(object)");
             Assert.True(actual2, "Equals(UuidIri)");
+            Assert.True(actual3, "==");
+            Assert.False(actual4, "!=");
         }
 
         [Theory, AutoAtomData]
@@ -68,9 +72,13 @@ namespace Grean.AtomEventStore.UnitTests
 
             var actual1 = sut.Equals((object)other);
             var actual2 = sut.Equals(other);
+            var actual3 = sut == other;
+            var actual4 = sut != other;
 
             Assert.False(actual1, "Equals(object)");
             Assert.False(actual2, "Equals(UuidIri)");
+            Assert.False(actual3, "==");
+            Assert.True(actual4, "!=");
         }
 
         [Theory, AutoAtomData]
