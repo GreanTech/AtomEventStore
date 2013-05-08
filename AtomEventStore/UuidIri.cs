@@ -38,7 +38,7 @@ namespace Grean.AtomEventStore
         {
             Guid parsedId;
             if (candidate != null &&
-                candidate.StartsWith(prefix) &&
+                candidate.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
                 Guid.TryParse(candidate.Substring(prefix.Length), out parsedId))
             {
                 uuidIri = parsedId;
