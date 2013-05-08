@@ -29,9 +29,9 @@ namespace Grean.AtomEventStore
             return uuidIri.id;
         }
 
-        public static implicit operator UuidIri(Guid guid)
+        public static implicit operator UuidIri(Guid value)
         {
-            return new UuidIri(guid);
+            return new UuidIri(value);
         }
 
         public static bool TryParse(string candidate, out UuidIri uuidIri)
