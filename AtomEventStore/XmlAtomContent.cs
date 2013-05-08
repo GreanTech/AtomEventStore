@@ -266,9 +266,10 @@ namespace Grean.AtomEventStore
             public static XmlCasedName FromText(string text)
             {
                 return new XmlCasedName(text
-                    .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
+                    .Take(1).Select(c => Char.ToLower(c, CultureInfo.InvariantCulture))
+                    .Concat(text.Skip(1))
                     .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
-                    .ToLower());
+                    .ToLower(CultureInfo.InvariantCulture));
             }
 
             public static XmlCasedName operator +(XmlCasedName xmlName, string text)
