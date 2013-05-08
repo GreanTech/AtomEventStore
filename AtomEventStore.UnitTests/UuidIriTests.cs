@@ -64,6 +64,16 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void GetHashCodeReturnsCorrectResult(
+            UuidIri sut)
+        {
+            var actual = sut.GetHashCode();
+
+            var expected = ((Guid)sut).GetHashCode();
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
         public void ParseCorrectlyFormattedStringReturnsCorrectResult(
             UuidIri expected)
         {

@@ -70,5 +70,18 @@ namespace Grean.AtomEventStore
         {
             return new UuidIri(Guid.NewGuid());
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is UuidIri)
+                return object.Equals(this.id, ((UuidIri)obj).id);
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.id.GetHashCode();
+        }
     }
 }
