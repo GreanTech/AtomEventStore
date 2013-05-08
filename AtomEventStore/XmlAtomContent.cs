@@ -123,9 +123,20 @@ namespace Grean.AtomEventStore
 
         public static XmlAtomContent Parse(string xml)
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return XmlAtomContent.ReadFrom(r);
+            var sr = new StringReader(xml);
+            try
+            {
+                using (var r = XmlReader.Create(sr))
+                {
+                    sr = null;
+                    return XmlAtomContent.ReadFrom(r);
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                    sr.Dispose();
+            }
         }
 
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
