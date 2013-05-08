@@ -14,7 +14,6 @@ namespace Grean.AtomEventStore
     {
         private readonly object item;
         private readonly Type itemType;
-        private readonly string itemXmlElement;
         private readonly string itemXmlNamespace;
 
         public XmlAtomContent(object item)
@@ -24,7 +23,6 @@ namespace Grean.AtomEventStore
 
             this.item = item;
             this.itemType = item.GetType();
-            this.itemXmlElement = Xmlify(this.itemType);
             this.itemXmlNamespace = Urnify(this.itemType.Namespace);
         }
 
