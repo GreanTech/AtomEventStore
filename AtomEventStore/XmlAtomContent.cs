@@ -263,6 +263,7 @@ namespace Grean.AtomEventStore
                 return XmlCasedName.FromText(type.Name);
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "This rule concerns itself with certain international characters that can't properly make a round-trip if lower-cased. However, this entire algorihtm (explicitly) uses the invariant culture, where this shouldn't be a problem. In any case, the reason for lower-casing isn't to perform normalization, but explicitly in order to convert to lower case - that's the desired outcome.")]
             public static XmlCasedName FromText(string text)
             {
                 return new XmlCasedName(text
