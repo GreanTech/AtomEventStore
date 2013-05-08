@@ -292,7 +292,7 @@ namespace Grean.AtomEventStore
 
             public Type ToTypeIn(string dotNetNamespace)
             {
-                var typeName = this.GetTypeName(dotNetNamespace);
+                var typeName = this.GetTypeName();
 
                 var type = Type.GetType(
                     typeName + ", " + dotNetNamespace,
@@ -302,7 +302,7 @@ namespace Grean.AtomEventStore
                 return type;
             }
 
-            private string GetTypeName(string dotNetNamespace)
+            private string GetTypeName()
             {
                 return this.ToPascalCase();
             }
