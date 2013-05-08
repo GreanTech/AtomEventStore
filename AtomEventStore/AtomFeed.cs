@@ -200,16 +200,27 @@ namespace Grean.AtomEventStore
         public AtomFeed AddLink(AtomLink newLink)
         {
             if (newLink == null)
-                throw new ArgumentNullException("parameterToCheck");
+                throw new ArgumentNullException("newLink");
             
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 
         public static AtomFeed Parse(string xml)
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return AtomFeed.ReadFrom(r);
+            var sr = new StringReader(xml);
+            try
+            {
+                using (var r = XmlReader.Create(sr))
+                {
+                    sr = null;
+                    return AtomFeed.ReadFrom(r);
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                    sr.Dispose();
+            }
         }
     }
 }
