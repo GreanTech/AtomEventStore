@@ -19,6 +19,7 @@ namespace Grean.AtomEventStore
             this.entries = new Dictionary<Uri, StringBuilder>();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XmlWriter", Justification = "This is a bug in the Code Analysis rule: http://bit.ly/17M7Jom")]
         public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
         {
             if (atomEntry == null)
