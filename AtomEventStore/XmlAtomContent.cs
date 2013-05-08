@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -214,7 +215,7 @@ namespace Grean.AtomEventStore
             if (type == typeof(Uri))
                 return new Uri(value.ToString());
 
-            return Convert.ChangeType(value, type);
+            return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
         }
 
         private static string Urnify(string text)
