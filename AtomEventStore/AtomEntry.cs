@@ -213,8 +213,8 @@ namespace Grean.AtomEventStore
             return new AtomEntry(
                 UuidIri.Parse(id),
                 title,
-                DateTimeOffset.Parse(published),
-                DateTimeOffset.Parse(updated),
+                DateTimeOffset.Parse(published, CultureInfo.InvariantCulture),
+                DateTimeOffset.Parse(updated, CultureInfo.InvariantCulture),
                 AtomAuthor.ReadFrom(author),
                 XmlAtomContent.ReadFrom(content),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
