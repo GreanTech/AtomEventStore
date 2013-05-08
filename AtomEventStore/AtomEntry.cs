@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -154,7 +155,11 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteString(this.title);
             xmlWriter.WriteEndElement();
 
-            xmlWriter.WriteElementString("published", this.published.ToString("o"));
+            xmlWriter.WriteElementString(
+                "published",
+                this.published.ToString(
+                    "o",
+                    CultureInfo.InvariantCulture));
 
             xmlWriter.WriteElementString("updated", this.updated.ToString("o"));
 
