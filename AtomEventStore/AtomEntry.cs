@@ -161,7 +161,11 @@ namespace Grean.AtomEventStore
                     "o",
                     CultureInfo.InvariantCulture));
 
-            xmlWriter.WriteElementString("updated", this.updated.ToString("o"));
+            xmlWriter.WriteElementString(
+                "updated",
+                this.updated.ToString(
+                    "o",
+                    CultureInfo.InvariantCulture));
 
             this.author.WriteTo(xmlWriter);
 
