@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Grean.AtomEventStore
 {
-    public struct UuidIri
+    public struct UuidIri : IEquatable<UuidIri>
     {
         private const string prefix = "urn:uuid:";
         private readonly Guid id;
@@ -74,9 +74,14 @@ namespace Grean.AtomEventStore
         public override bool Equals(object obj)
         {
             if (obj is UuidIri)
-                return object.Equals(this.id, ((UuidIri)obj).id);
+                return this.Equals((UuidIri)obj);
 
             return base.Equals(obj);
+        }
+
+        public bool Equals(UuidIri other)
+        {
+            return object.Equals(this.id, other.id);
         }
 
         public override int GetHashCode()
