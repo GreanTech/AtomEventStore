@@ -196,7 +196,7 @@ namespace Grean.AtomEventStore
             return new AtomFeed(
                 UuidIri.Parse(id),
                 title,
-                DateTimeOffset.Parse(updated),
+                DateTimeOffset.Parse(updated, CultureInfo.InvariantCulture),
                 AtomAuthor.ReadFrom(author),
                 entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree())),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
