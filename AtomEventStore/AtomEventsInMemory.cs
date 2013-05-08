@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,7 @@ namespace Grean.AtomEventStore
             if (this.entries.ContainsKey(href))
                 throw new InvalidOperationException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "Will not create a new XmlWriter for the supplied AtomEntry, because a an AtomEntry with the ID {0} was already written.",
                         href.ToString()));
 
