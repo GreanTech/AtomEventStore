@@ -14,7 +14,6 @@ namespace Grean.AtomEventStore
     public class XmlAtomContent : IXmlWritable
     {
         private readonly object item;
-        private readonly Type itemType;
 
         public XmlAtomContent(object item)
         {
@@ -22,7 +21,6 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("item");
 
             this.item = item;
-            this.itemType = item.GetType();
         }
 
         public object Item
