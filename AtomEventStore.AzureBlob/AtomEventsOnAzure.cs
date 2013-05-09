@@ -59,9 +59,17 @@ namespace Grean.AtomEventStore.AzureBlob
                 .ToXmlString();
 
             var sr = new StringReader(xml);
-            return XmlReader.Create(
-                sr,
-                new XmlReaderSettings { CloseInput = true });
+            try
+            {
+                return XmlReader.Create(
+                    sr,
+                    new XmlReaderSettings { CloseInput = true });
+            }
+            catch
+            {
+                sr.Dispose();
+                throw;
+            }
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
