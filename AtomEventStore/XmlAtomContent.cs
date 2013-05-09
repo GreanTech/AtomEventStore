@@ -296,7 +296,7 @@ namespace Grean.AtomEventStore
 
                 var type = Type.GetType(
                     typeName + ", " + dotNetNamespace,
-                    Assembly.Load,
+                    ResolveAssembly,
                     ResolveType);
 
                 return type;
@@ -305,6 +305,28 @@ namespace Grean.AtomEventStore
             private string GetTypeName()
             {
                 return this.ToPascalCase();
+            }
+
+            private static Assembly ResolveAssembly(AssemblyName assemblyName)
+            {
+                Assembly foundAssembly = null;
+                var nameCandidate = (AssemblyName)assemblyName.Clone();
+                while (foundAssembly == null)
+                {
+                    try
+                    {
+                        foundAssembly = Assembly.Load(nameCandidate);
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        var dotIndex = nameCandidate.Name.LastIndexOf('.');
+                        if (dotIndex < 0)
+                            throw;
+                        nameCandidate.Name = nameCandidate.Name.Substring(0, dotIndex);
+                    }
+                }
+
+                return foundAssembly;
             }
 
             private static Type ResolveType(
