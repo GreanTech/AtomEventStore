@@ -14,6 +14,9 @@ namespace Grean.AtomEventStore
 
         public AtomAuthor(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException("name");
+
             this.name = name;
         }
 
@@ -22,6 +25,7 @@ namespace Grean.AtomEventStore
             get { return this.name; }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "While the documentation of this CA warning mostly states that you can suppress this warning for already shipped code, as it would be a breaking change to address it, I'm taking the reverse position: making it static now would mean that it'd be a breaking change to make it an instance method later. All these 'With' methods are, in their nature, instance methods. The only reason the 'this' keyword isn't used here is because there's only a single field on the class, but this may change in the future.")]
         public AtomAuthor WithName(string newName)
         {
             return new AtomAuthor(newName);
@@ -43,6 +47,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("author", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteElementString("name", this.name);
             xmlWriter.WriteEndElement();
@@ -64,9 +71,20 @@ namespace Grean.AtomEventStore
 
         public static AtomAuthor Parse(string xml)
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return AtomAuthor.ReadFrom(r);
+            var sr = new StringReader(xml);
+            try
+            {
+                using (var r = XmlReader.Create(sr))
+                {
+                    sr = null;
+                    return AtomAuthor.ReadFrom(r);
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                    sr.Dispose();
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,12 +19,18 @@ namespace Grean.AtomEventStore
             this.entries = new Dictionary<Uri, StringBuilder>();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AtomEntry", Justification = "This is a bug in the Code Analysis rule: http://bit.ly/17M7Jom")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XmlWriter", Justification = "This is a bug in the Code Analysis rule: http://bit.ly/17M7Jom")]
         public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
         {
+            if (atomEntry == null)
+                throw new ArgumentNullException("atomEntry");
+
             var href = GetHrefFrom(atomEntry.Links);
             if (this.entries.ContainsKey(href))
                 throw new InvalidOperationException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "Will not create a new XmlWriter for the supplied AtomEntry, because a an AtomEntry with the ID {0} was already written.",
                         href.ToString()));
 
@@ -39,6 +46,9 @@ namespace Grean.AtomEventStore
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
+            if (atomFeed == null)
+                throw new ArgumentNullException("atomFeed");
+
             var id = GetHrefFrom(atomFeed.Links);
             var sb = new StringBuilder();
             this.feeds[id] = sb;
@@ -47,6 +57,9 @@ namespace Grean.AtomEventStore
 
         public XmlReader CreateFeedReaderFor(Uri href)
         {
+            if (href == null)
+                throw new ArgumentNullException("href");
+
             if (this.feeds.ContainsKey(href))
                 return CreateReaderOver(this.feeds[href].ToString());
             else
@@ -79,9 +92,17 @@ namespace Grean.AtomEventStore
         private static XmlReader CreateReaderOver(string xml)
         {
             var sr = new StringReader(xml);
-            return XmlReader.Create(
-                sr,
-                new XmlReaderSettings { CloseInput = true });
+            try
+            {
+                return XmlReader.Create(
+                    sr,
+                    new XmlReaderSettings { CloseInput = true });
+            }
+            catch
+            {
+                sr.Dispose();
+                throw;
+            }
         }
 
         public IEnumerable<string> Feeds

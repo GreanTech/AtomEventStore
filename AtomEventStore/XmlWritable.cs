@@ -18,6 +18,9 @@ namespace Grean.AtomEventStore
             this IXmlWritable xmlWritable, 
             XmlWriterSettings settings)
         {
+            if (xmlWritable == null)
+                throw new ArgumentNullException("xmlWritable");
+
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb, settings))
             {

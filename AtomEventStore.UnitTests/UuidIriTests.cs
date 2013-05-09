@@ -38,14 +38,26 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void SutIsEquatable(UuidIri sut)
+        {
+            Assert.IsAssignableFrom<IEquatable<UuidIri>>(sut);
+        }
+
+        [Theory, AutoAtomData]
         public void TwoSutsWithIdenticalIdAreEqual(Guid guid)
         {
             UuidIri sut = guid;
             UuidIri other = guid;
 
-            var actual = sut.Equals(other);
+            var actual1 = sut.Equals((object)other);
+            var actual2 = sut.Equals(other);
+            var actual3 = sut == other;
+            var actual4 = sut != other;
 
-            Assert.True(actual, "Equals");
+            Assert.True(actual1, "Equals(object)");
+            Assert.True(actual2, "Equals(UuidIri)");
+            Assert.True(actual3, "==");
+            Assert.False(actual4, "!=");
         }
 
         [Theory, AutoAtomData]
@@ -58,9 +70,25 @@ namespace Grean.AtomEventStore.UnitTests
             UuidIri sut = x;
             UuidIri other = y;
 
-            var actual = sut.Equals(other);
+            var actual1 = sut.Equals((object)other);
+            var actual2 = sut.Equals(other);
+            var actual3 = sut == other;
+            var actual4 = sut != other;
 
-            Assert.False(actual, "Equals");
+            Assert.False(actual1, "Equals(object)");
+            Assert.False(actual2, "Equals(UuidIri)");
+            Assert.False(actual3, "==");
+            Assert.True(actual4, "!=");
+        }
+
+        [Theory, AutoAtomData]
+        public void GetHashCodeReturnsCorrectResult(
+            UuidIri sut)
+        {
+            var actual = sut.GetHashCode();
+
+            var expected = ((Guid)sut).GetHashCode();
+            Assert.Equal(expected, actual);
         }
 
         [Theory, AutoAtomData]

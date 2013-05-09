@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,14 +15,15 @@ namespace Grean.AtomEventStore
     {
         private readonly object item;
         private readonly Type itemType;
-        private readonly string itemXmlElement;
         private readonly string itemXmlNamespace;
 
         public XmlAtomContent(object item)
         {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
             this.item = item;
             this.itemType = item.GetType();
-            this.itemXmlElement = Xmlify(this.itemType);
             this.itemXmlNamespace = Urnify(this.itemType.Namespace);
         }
 
@@ -30,8 +32,12 @@ namespace Grean.AtomEventStore
             get { return this.item; }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "While the documentation of this CA warning mostly states that you can suppress this warning for already shipped code, as it would be a breaking change to address it, I'm taking the reverse position: making it static now would mean that it'd be a breaking change to make it an instance method later. All these 'With' methods are, in their nature, instance methods. The only reason the 'this' keyword isn't used here is because there's only a single field on the class, but this may change in the future.")]
         public XmlAtomContent WithItem(object newItem)
         {
+            if (newItem == null)
+                throw new ArgumentNullException("newItem");
+
             return new XmlAtomContent(newItem);
         }
 
@@ -51,6 +57,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
@@ -114,13 +123,27 @@ namespace Grean.AtomEventStore
 
         public static XmlAtomContent Parse(string xml)
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return XmlAtomContent.ReadFrom(r);
+            var sr = new StringReader(xml);
+            try
+            {
+                using (var r = XmlReader.Create(sr))
+                {
+                    sr = null;
+                    return XmlAtomContent.ReadFrom(r);
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                    sr.Dispose();
+            }
         }
 
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
+            if (xmlReader == null)
+                throw new ArgumentNullException("xmlReader");
+
             xmlReader.MoveToContent();
             var x = (XElement)XElement.ReadFrom(xmlReader);
             var item = ReadFrom(x.Elements().Single());
@@ -192,7 +215,7 @@ namespace Grean.AtomEventStore
             if (type == typeof(Uri))
                 return new Uri(value.ToString());
 
-            return Convert.ChangeType(value, type);
+            return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
         }
 
         private static string Urnify(string text)
@@ -240,12 +263,14 @@ namespace Grean.AtomEventStore
                 return XmlCasedName.FromText(type.Name);
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "This rule concerns itself with certain international characters that can't properly make a round-trip if lower-cased. However, this entire algorihtm (explicitly) uses the invariant culture, where this shouldn't be a problem. In any case, the reason for lower-casing isn't to perform normalization, but explicitly in order to convert to lower case - that's the desired outcome.")]
             public static XmlCasedName FromText(string text)
             {
                 return new XmlCasedName(text
-                    .Take(1).Select(Char.ToLower).Concat(text.Skip(1))
+                    .Take(1).Select(c => Char.ToLower(c, CultureInfo.InvariantCulture))
+                    .Concat(text.Skip(1))
                     .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
-                    .ToLower());
+                    .ToLower(CultureInfo.InvariantCulture));
             }
 
             public static XmlCasedName operator +(XmlCasedName xmlName, string text)
@@ -267,7 +292,7 @@ namespace Grean.AtomEventStore
 
             public Type ToTypeIn(string dotNetNamespace)
             {
-                var typeName = this.GetTypeName(dotNetNamespace);
+                var typeName = this.GetTypeName();
 
                 var type = Type.GetType(
                     typeName + ", " + dotNetNamespace,
@@ -277,7 +302,7 @@ namespace Grean.AtomEventStore
                 return type;
             }
 
-            private string GetTypeName(string dotNetNamespace)
+            private string GetTypeName()
             {
                 return this.ToPascalCase();
             }

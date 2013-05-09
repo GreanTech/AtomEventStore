@@ -13,23 +13,35 @@ namespace Grean.AtomEventStore
 
         public AtomEventsInFiles(DirectoryInfo directory)
         {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
             this.directory = directory;
         }
 
         public XmlReader CreateEntryReaderFor(Uri href)
         {
+            if (href == null)
+                throw new ArgumentNullException("href");
+
             var fileName = this.CreateFileName(href);
             return XmlReader.Create(fileName);
         }
 
         public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
         {
+            if (atomEntry == null)
+                throw new ArgumentNullException("atomEntry");
+
             var fileName = this.CreateFileName(atomEntry.Links);
             return XmlWriter.Create(fileName);
         }
 
         public XmlReader CreateFeedReaderFor(Uri href)
         {
+            if (href == null)
+                throw new ArgumentNullException("href");
+
             var fileName = this.CreateFileName(href);
 
             if (File.Exists(fileName))
@@ -49,13 +61,24 @@ namespace Grean.AtomEventStore
                 .ToXmlString();
 
             var sr = new StringReader(xml);
-            return XmlReader.Create(
-                sr,
-                new XmlReaderSettings { CloseInput = true });
+            try
+            {
+                return XmlReader.Create(
+                    sr,
+                    new XmlReaderSettings { CloseInput = true });
+            }
+            catch
+            {
+                sr.Dispose();
+                throw;
+            }
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
+            if (atomFeed == null)
+                throw new ArgumentNullException("atomFeed");
+
             var fileName = this.CreateFileName(atomFeed.Links);
             return XmlWriter.Create(fileName);
         }

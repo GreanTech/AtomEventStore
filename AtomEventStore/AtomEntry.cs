@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,15 @@ namespace Grean.AtomEventStore
             XmlAtomContent content,
             IEnumerable<AtomLink> links)
         {
+            if (title == null)
+                throw new ArgumentNullException("title");
+            if (author == null)
+                throw new ArgumentNullException("author");
+            if (content == null)
+                throw new ArgumentNullException("content");
+            if (links == null)
+                throw new ArgumentNullException("links");
+            
             this.id = id;
             this.title = title;
             this.published = published;
@@ -133,6 +143,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("entry", "http://www.w3.org/2005/Atom");
 
             xmlWriter.WriteElementString("id", this.id.ToString());
@@ -142,9 +155,17 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteString(this.title);
             xmlWriter.WriteEndElement();
 
-            xmlWriter.WriteElementString("published", this.published.ToString("o"));
+            xmlWriter.WriteElementString(
+                "published",
+                this.published.ToString(
+                    "o",
+                    CultureInfo.InvariantCulture));
 
-            xmlWriter.WriteElementString("updated", this.updated.ToString("o"));
+            xmlWriter.WriteElementString(
+                "updated",
+                this.updated.ToString(
+                    "o",
+                    CultureInfo.InvariantCulture));
 
             this.author.WriteTo(xmlWriter);
 
@@ -192,8 +213,8 @@ namespace Grean.AtomEventStore
             return new AtomEntry(
                 UuidIri.Parse(id),
                 title,
-                DateTimeOffset.Parse(published),
-                DateTimeOffset.Parse(updated),
+                DateTimeOffset.Parse(published, CultureInfo.InvariantCulture),
+                DateTimeOffset.Parse(updated, CultureInfo.InvariantCulture),
                 AtomAuthor.ReadFrom(author),
                 XmlAtomContent.ReadFrom(content),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
@@ -201,14 +222,28 @@ namespace Grean.AtomEventStore
 
         public AtomEntry AddLink(AtomLink newLink)
         {
+            if (newLink == null)
+                throw new ArgumentNullException("newLink");
+
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 
         public static AtomEntry Parse(string xml)
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return AtomEntry.ReadFrom(r);
+            var sr = new StringReader(xml);
+            try
+            {
+                using (var r = XmlReader.Create(sr))
+                {
+                    sr = null;
+                    return AtomEntry.ReadFrom(r);
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                    sr.Dispose();
+            }
         }
     }
 }

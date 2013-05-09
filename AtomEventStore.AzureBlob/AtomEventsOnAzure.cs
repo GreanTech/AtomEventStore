@@ -28,6 +28,9 @@ namespace Grean.AtomEventStore.AzureBlob
 
         public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
         {
+            if (atomEntry == null)
+                throw new ArgumentNullException("atomEntry");
+
             var blobRef = this.CreateBlobReference(atomEntry.Links);            
             return XmlWriter.Create(
                 blobRef.OpenWrite(),
@@ -56,13 +59,24 @@ namespace Grean.AtomEventStore.AzureBlob
                 .ToXmlString();
 
             var sr = new StringReader(xml);
-            return XmlReader.Create(
-                sr,
-                new XmlReaderSettings { CloseInput = true });
+            try
+            {
+                return XmlReader.Create(
+                    sr,
+                    new XmlReaderSettings { CloseInput = true });
+            }
+            catch
+            {
+                sr.Dispose();
+                throw;
+            }
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
+            if (atomFeed == null)
+                throw new ArgumentNullException("atomFeed");
+
             var blobRef = this.CreateBlobReference(atomFeed.Links);
             return XmlWriter.Create(
                 blobRef.OpenWrite(),

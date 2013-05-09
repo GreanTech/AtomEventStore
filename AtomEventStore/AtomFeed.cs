@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,15 @@ namespace Grean.AtomEventStore
             IEnumerable<AtomEntry> entries,
             IEnumerable<AtomLink> links)
         {
+            if (title == null)
+                throw new ArgumentNullException("title");
+            if (author == null)
+                throw new ArgumentNullException("author");
+            if (entries == null)
+                throw new ArgumentNullException("entries");
+            if (links == null)
+                throw new ArgumentNullException("links");
+
             this.id = id;
             this.title = title;
             this.updated = updated;
@@ -120,6 +130,9 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+
             xmlWriter.WriteStartElement("feed", "http://www.w3.org/2005/Atom");
 
             xmlWriter.WriteElementString("id", this.id.ToString());
@@ -129,7 +142,11 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteString(this.title);
             xmlWriter.WriteEndElement();
 
-            xmlWriter.WriteElementString("updated", this.updated.ToString("o"));
+            xmlWriter.WriteElementString(
+                "updated",
+                this.updated.ToString(
+                    "o",
+                    CultureInfo.InvariantCulture));
 
             this.author.WriteTo(xmlWriter);
 
@@ -179,7 +196,7 @@ namespace Grean.AtomEventStore
             return new AtomFeed(
                 UuidIri.Parse(id),
                 title,
-                DateTimeOffset.Parse(updated),
+                DateTimeOffset.Parse(updated, CultureInfo.InvariantCulture),
                 AtomAuthor.ReadFrom(author),
                 entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree())),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
@@ -187,14 +204,28 @@ namespace Grean.AtomEventStore
 
         public AtomFeed AddLink(AtomLink newLink)
         {
+            if (newLink == null)
+                throw new ArgumentNullException("newLink");
+            
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 
         public static AtomFeed Parse(string xml)
         {
-            using (var sr = new StringReader(xml))
-            using (var r = XmlReader.Create(sr))
-                return AtomFeed.ReadFrom(r);
+            var sr = new StringReader(xml);
+            try
+            {
+                using (var r = XmlReader.Create(sr))
+                {
+                    sr = null;
+                    return AtomFeed.ReadFrom(r);
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                    sr.Dispose();
+            }
         }
     }
 }
