@@ -14,8 +14,6 @@ namespace Grean.AtomEventStore
     public class XmlAtomContent : IXmlWritable
     {
         private readonly object item;
-        private readonly Type itemType;
-        private readonly string itemXmlNamespace;
 
         public XmlAtomContent(object item)
         {
@@ -23,8 +21,6 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("item");
 
             this.item = item;
-            this.itemType = item.GetType();
-            this.itemXmlNamespace = Urnify(this.itemType.Namespace);
         }
 
         public object Item
@@ -71,8 +67,9 @@ namespace Grean.AtomEventStore
         private void WriteComplexObject(XmlWriter xmlWriter, object value)
         {
             var type = value.GetType();
+            var xmlNamespace = Urnify(type.Namespace);
 
-            xmlWriter.WriteStartElement(Xmlify(type), this.itemXmlNamespace);
+            xmlWriter.WriteStartElement(Xmlify(type), xmlNamespace);
             foreach (var p in type.GetProperties())
             {
                 var localName = Xmlify(p.Name);
@@ -296,7 +293,7 @@ namespace Grean.AtomEventStore
 
                 var type = Type.GetType(
                     typeName + ", " + dotNetNamespace,
-                    Assembly.Load,
+                    ResolveAssembly,
                     ResolveType);
 
                 return type;
@@ -305,6 +302,28 @@ namespace Grean.AtomEventStore
             private string GetTypeName()
             {
                 return this.ToPascalCase();
+            }
+
+            private static Assembly ResolveAssembly(AssemblyName assemblyName)
+            {
+                Assembly foundAssembly = null;
+                var nameCandidate = (AssemblyName)assemblyName.Clone();
+                while (foundAssembly == null)
+                {
+                    try
+                    {
+                        foundAssembly = Assembly.Load(nameCandidate);
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        var dotIndex = nameCandidate.Name.LastIndexOf('.');
+                        if (dotIndex < 0)
+                            throw;
+                        nameCandidate.Name = nameCandidate.Name.Substring(0, dotIndex);
+                    }
+                }
+
+                return foundAssembly;
             }
 
             private static Type ResolveType(
