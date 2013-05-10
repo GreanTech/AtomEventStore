@@ -7,6 +7,49 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Represents a stream of events. Events can be of (potentially) any type,
+    /// as long as there's a storage mechanism that can persist and read back
+    /// instances of that type.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of event represented by the stream.
+    /// </typeparam>
+    /// <remarks>
+    /// <para>
+    /// The AtomEventStream class stores and reads events using a Linked List
+    /// storage approach. For its particulars, it uses Atom for persistence and
+    /// linking.
+    /// </para>
+    /// <para>
+    /// The concepts of storing events as a linked list was inspired by an
+    /// article by Yves Reynhout called "Your EventStream is a linked list" at
+    /// http://bit.ly/AqearV.
+    /// </para>
+    /// <para>
+    /// When you store an event with <see cref="AppendAsync" /> or
+    /// <see cref="OnNext" />, AtomEventStream creates a new Atom entry with
+    /// that event. It uses a "previous" link to point to the previous Atom
+    /// entry, and it also updates an Atom feed, which contains the index of
+    /// the event stream.
+    /// </para>
+    /// <para>
+    /// When you read the event stream, the AtomEventStream starts at the index
+    /// and works its way back, yielding events as it goes along. Thus, newest
+    /// events are served first, until you stop enumerating, or until you reach
+    /// the first event.
+    /// </para>
+    /// <para>
+    /// Various storage mechanisms can be plugged into AtomEventStream, such as
+    /// a file-based storage mechanism, or in-memory storage. Third-party
+    /// storage add-ins for e.g. cloud-based storage is also an option. A
+    /// custom storage mechanism must implement the
+    /// <see cref="IAtomEventStorage" /> interface.
+    /// </para>
+    /// </remarks>
+    /// <seealso cref="AtomEventsInMemory" />
+    /// <seealso cref="AtomEventsInFiles" />
+    /// <seealso cref="IAtomEventStorage" />
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = "Suppressed on common vote by Mark Seemann and Mikkel Christensen, 2013-05-09. See also http://bit.ly/13ioVAG")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class AtomEventStream<T> : IEnumerable<T>, IObserver<T>
