@@ -317,5 +317,49 @@ namespace Grean.AtomEventStore.UnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanSerializeEnumerable(
+            XmlAtomContent seed,
+            Guid id,
+            TestEventX tex,
+            TestEventY tey)
+        {
+            var sut = seed.WithItem(new Changeset<ITestEvent>(id, tex, tey));
+
+            var actual = sut.ToXmlString();
+
+            var expected = XDocument.Parse(
+                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
+                "  <changeset xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                "    <id>urn:uuid:" + id + "</id>" +
+                "    <test-event-x>" +
+                "      <number>" + tex.Number + "</number>" +
+                "      <text>" + tex.Text + "</text>" +
+                "    </test-event-x>" +
+                "    <test-event-y>" +
+                "      <number>" + tey.Number + "</number>" +
+                "      <is-true>" + tey.IsTrue.ToString().ToLowerInvariant() + "</is-true>" +
+                "    </test-event-y>" +
+                "  </changeset>" +
+                "</content>");
+            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
+        }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundtripEnumerable(
+            XmlAtomContent seed,
+            Guid id,
+            TestEventX tex1,
+            TestEventY tey,
+            TestEventX tex2)
+        {
+            var expected = seed.WithItem(new Changeset<ITestEvent>(id, tex1, tey, tex2));
+            var xml = expected.ToXmlString();
+
+            var actual = XmlAtomContent.Parse(xml);
+
+            Assert.Equal(expected, actual);
+        }
     }
 }
