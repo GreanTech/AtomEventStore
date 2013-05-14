@@ -246,7 +246,7 @@ namespace Grean.AtomEventStore
         private static Type GetMatchingArgument(List<Argument> namedArguments, Argument[] paramsValues, Type itemType, ConstructorInfo ctor)
         {
             return GetDirectMatchingArgument(namedArguments, itemType, ctor).Concat(
-                GetArrayMatchingArgument(paramsValues, itemType, ctor))
+                GetArrayMatchingArgument(paramsValues))
                 .First();
         }
 
@@ -264,7 +264,7 @@ namespace Grean.AtomEventStore
             yield return matchingArgument.GetType();
         }
 
-        private static IEnumerable<Type> GetArrayMatchingArgument(IEnumerable<Argument> paramsValues, Type itemType, ConstructorInfo ctor)
+        private static IEnumerable<Type> GetArrayMatchingArgument(IEnumerable<Argument> paramsValues)
         {
             var interfaces = from a in paramsValues
                              select GetBaseTypes(a.Value.GetType());
