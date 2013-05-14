@@ -84,8 +84,8 @@ namespace Grean.AtomEventStore
             var sequence = value as IEnumerable;
             if (sequence != null)
             {
-                foreach (var item in sequence)
-                    this.WriteComplexObject(xmlWriter, item);
+                foreach (var x in sequence)
+                    this.WriteComplexObject(xmlWriter, x);
             }
 
             xmlWriter.WriteEndElement();
