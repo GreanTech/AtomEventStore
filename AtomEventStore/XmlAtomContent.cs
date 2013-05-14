@@ -288,6 +288,8 @@ namespace Grean.AtomEventStore
                 return (Guid)UuidIri.Parse(value.ToString());
             if (type == typeof(Uri))
                 return new Uri(value.ToString());
+            if (type == typeof(DateTimeOffset))
+                return DateTimeOffset.Parse(value.ToString());
 
             return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
         }

@@ -402,5 +402,37 @@ namespace Grean.AtomEventStore.UnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanSerializeEventWithDateTimeOffset(
+            XmlAtomContent seed,
+            TestEventD ted)
+        {
+            var sut = seed.WithItem(ted);
+
+            var actual = sut.ToXmlString();
+
+            var expected = XDocument.Parse(
+                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
+                "  <test-event-d xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                "    <number>" + ted.Number + "</number>" +
+                "    <date-time>" + ted.DateTime.ToString("o") + "</date-time>" +
+                "  </test-event-d>" +
+                "</content>");
+            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
+        }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundTripEventWithDateTimeOffset(
+            XmlAtomContent seed,
+            TestEventD ted)
+        {
+            var expected = seed.WithItem(ted);
+            var xml = expected.ToXmlString();
+
+            var actual = XmlAtomContent.Parse(xml);
+
+            Assert.Equal(expected, actual);
+        }
     }
 }
