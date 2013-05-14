@@ -161,10 +161,6 @@ namespace Grean.AtomEventStore
             if (!node.HasElements)
                 return node.Value;
 
-            var arguments = node.Elements()
-                .Select(GetObjectFrom)
-                .ToList();
-
             var elementName = node.Name.LocalName;
             var xmlNamespace = node.Name.NamespaceName;
 
@@ -173,9 +169,19 @@ namespace Grean.AtomEventStore
 
             var ctor = GetMostModestConstructor(itemType);
 
+            var namedArguments = (from p in ctor.GetParameters()
+                                  let xpn = Xmlify(p.Name)
+                                  join x in node.Elements() on xpn equals x.Name.LocalName
+                                  select GetObjectFrom(x))
+                                 .ToList();
+            var paramsValues = (from x in node.Elements()
+                                where !namedArguments.Select(a => a.Name).Contains(x.Name.LocalName)
+                                select GetParamsObjectFrom(x))
+                               .ToArray();
+
             if (itemType.IsGenericTypeDefinition)
             {
-                var matchingArgumentType = GetMatchingArgument(arguments, itemType, ctor);
+                var matchingArgumentType = GetMatchingArgument(namedArguments, paramsValues, itemType, ctor);
 
                 itemType = itemType.MakeGenericType(matchingArgumentType);
                 ctor = GetMostModestConstructor(itemType);
@@ -187,15 +193,14 @@ namespace Grean.AtomEventStore
                 if (Attribute.IsDefined(p, typeof(ParamArrayAttribute)))
                 {
                     var elementType = p.ParameterType.GetElementType();
-                    var arr = Array.CreateInstance(elementType, arguments.Count);
-                    arguments.Select(a => a.Value).ToArray().CopyTo(arr, 0);
+                    var arr = Array.CreateInstance(elementType, paramsValues.Length);
+                    paramsValues.Select(a => a.Value).ToArray().CopyTo(arr, 0);
                     sortedArguments.Add(arr);
                 }
                 else
                 {
-                    var argValue = arguments.Single(kvp => UnXmlify(kvp.Name).Equals(p.Name, StringComparison.OrdinalIgnoreCase));
+                    var argValue = namedArguments.Single(kvp => UnXmlify(kvp.Name).Equals(p.Name, StringComparison.OrdinalIgnoreCase));
                     sortedArguments.Add(ChangeType(argValue.Value, p.ParameterType));
-                    arguments.Remove(argValue);
                 }
             }
 
@@ -228,22 +233,20 @@ namespace Grean.AtomEventStore
             if (!node.HasElements)
                 return new Argument(node.Name.LocalName, node.Value);
 
-            if (node.Elements().Take(2).Count() == 1)
-            {
-                var value = ReadFrom(node.Elements().Single());
-                return new Argument(node.Name.LocalName, value);
-            }
-            else
-            {
-                var value = ReadFrom(node);
-                return new Argument(node.Name.LocalName, value);
-            }
+            var value = ReadFrom(node.Elements().Single());
+            return new Argument(node.Name.LocalName, value);
         }
 
-        private static Type GetMatchingArgument(List<Argument> arguments, Type itemType, ConstructorInfo ctor)
+        private static Argument GetParamsObjectFrom(XElement node)
         {
-            return GetDirectMatchingArgument(arguments, itemType, ctor).Concat(
-                GetArrayMatchingArgument(arguments, itemType, ctor))
+            var value = ReadFrom(node);
+            return new Argument(node.Name.LocalName, value);
+        }
+
+        private static Type GetMatchingArgument(List<Argument> namedArguments, Argument[] paramsValues, Type itemType, ConstructorInfo ctor)
+        {
+            return GetDirectMatchingArgument(namedArguments, itemType, ctor).Concat(
+                GetArrayMatchingArgument(paramsValues, itemType, ctor))
                 .First();
         }
 
@@ -261,27 +264,10 @@ namespace Grean.AtomEventStore
             yield return matchingArgument.GetType();
         }
 
-        private static IEnumerable<Type> GetArrayMatchingArgument(IEnumerable<Argument> arguments, Type itemType, ConstructorInfo ctor)
+        private static IEnumerable<Type> GetArrayMatchingArgument(IEnumerable<Argument> paramsValues, Type itemType, ConstructorInfo ctor)
         {
-            var openGenericType = itemType.GetGenericArguments().Single();
-            var arrayType = openGenericType.MakeArrayType();
-            var genericCtorParameter = ctor.GetParameters()
-                .Single(p => p.ParameterType == arrayType);
-
-            var argList = arguments.ToList();
-            foreach (var p in ctor.GetParameters())
-            {
-                if (Attribute.IsDefined(p, typeof(ParamArrayAttribute)))
-                { }
-                else
-                {
-                    var argValue = argList.Single(kvp => UnXmlify(kvp.Name).Equals(p.Name, StringComparison.OrdinalIgnoreCase));
-                    argList.Remove(argValue);
-                }
-            }
-
-            var interfaces = from a in argList
-                             select a.Value.GetType().GetInterfaces();
+            var interfaces = from a in paramsValues
+                             select GetBaseTypes(a.Value.GetType());
 
             var commonInterfaces = interfaces.Aggregate((x, y) => x.Intersect(y).ToArray());
             var commonInterface = commonInterfaces.FirstOrDefault();
@@ -289,6 +275,11 @@ namespace Grean.AtomEventStore
                 yield break;
 
             yield return commonInterface;
+        }
+
+        private static IEnumerable<Type> GetBaseTypes(Type type)
+        {
+            return new[] { type }.Concat(type.GetInterfaces());
         }
 
         private static object ChangeType(object value, Type type)
