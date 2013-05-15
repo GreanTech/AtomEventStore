@@ -57,6 +57,32 @@ namespace Grean.AtomEventStore
         private readonly UuidIri id;
         private readonly IAtomEventStorage storage;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomEventStream{T}" />
+        /// class.
+        /// </summary>
+        /// <param name="id">The ID of the event stream.</param>
+        /// <param name="storage">
+        /// The underlying storage mechanism to use.
+        /// </param>
+        /// <remarks>
+        /// <para>
+        /// The <paramref name="id" /> is the ID of a single event stream. Each
+        /// event stream has its own ID. If you need more than a single event
+        /// stream (e.g. if you are implementing the Aggregate Root pattern),
+        /// each event stream should have a separate ID.
+        /// </para>
+        /// <para>
+        /// The <paramref name="storage" /> value can be any implementation of
+        /// <see cref="IAtomEventStorage" />. Built-in implementatoins include
+        /// <see cref="AtomEventsInMemory" /> and
+        /// <see cref="AtomEventsInFiles" />.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="AtomEventStream{T}" />
+        /// <seealso cref="AtomEventsInMemory" />
+        /// <seealso cref="AtomEventsInFiles" />
+        /// <seealso cref="IAtomEventStorage" />
         public AtomEventStream(
             UuidIri id,
             IAtomEventStorage storage)
