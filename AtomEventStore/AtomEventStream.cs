@@ -210,6 +210,14 @@ namespace Grean.AtomEventStore
             get { return this.id; }
         }
 
+        /// <summary>
+        /// Gets the underlying storage mechanism.
+        /// </summary>
+        /// <value>
+        /// The underlying storage mechanism, as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage)" />
         public IAtomEventStorage Storage
         {
             get { return this.storage; }
