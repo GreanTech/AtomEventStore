@@ -298,6 +298,10 @@ namespace Grean.AtomEventStore
                 return AtomEntry.ReadFrom(r);
         }
 
+        /// <summary>
+        /// Notifies the <see cref="AtomEventStream{T}" /> that the provider
+        /// has finished sending push-based notifications.
+        /// </summary>
         public void OnCompleted()
         {
         }
