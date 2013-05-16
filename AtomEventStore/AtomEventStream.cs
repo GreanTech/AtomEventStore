@@ -228,6 +228,33 @@ namespace Grean.AtomEventStore
             return AtomEventStream.CreateSelfLinkFrom(id);
         }
 
+        /// <summary>
+        /// Gets the enumerator for the event stream.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="IEnumerator{T}" /> instance that can be used to
+        /// iterate through the event stream, from most newest to oldest event.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// When you enumerate the event stream, the
+        /// <see cref="AtomEventStream{T}" /> starts at the most recent event
+        /// and works its way back, yielding events as it goes along. Thus,
+        /// newest events are served first, until you stop enumerating, or
+        /// until you reach the oldest event, which is the first event that was
+        /// written.
+        /// </para>
+        /// <para>
+        /// Each time you move to the next entry, the underlying
+        /// <see cref="Storage" /> mechanism is invoked in order to read the
+        /// previous event. If the storage mechanism involves I/O latency,
+        /// enumeration may be a slow operation when there are many events.
+        /// However, since events are immutable, they can be cached. Additional
+        /// optimizations, such as snapshots, are also an option. Such
+        /// optimizations can be implemented as Decorators of
+        /// <see cref="IEnumerable{T}" />.
+        /// </para>
+        /// </remarks>
         public IEnumerator<T> GetEnumerator()
         {
             var entry = this.ReadIndex().Entries.SingleOrDefault();
@@ -239,6 +266,14 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can
+        /// be used to iterate through the collection.
+        /// </returns>
+        /// <seealso cref="GetEnumerator()" />
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
