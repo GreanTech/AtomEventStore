@@ -306,6 +306,25 @@ namespace Grean.AtomEventStore
         {
         }
 
+        /// <summary>
+        /// Provides the <see cref="AtomEventStream{T}" /> with a new event,
+        /// appending it to the event stream.
+        /// </summary>
+        /// <param name="value">The event appended to the event stream.</param>
+        /// <remarks>
+        /// <para>
+        /// Invoking this method appends <paramref name="value" /> to the event
+        /// stream and blocks until the write and update operations are
+        /// completed. Since it uses the underlying <see cref="Storage" />
+        /// mechanism to write the event to persistent storage, and since this
+        /// may involve I/O, the execution time of this method can be
+        /// significant.
+        /// </para>
+        /// <para>
+        /// For an asynchronous alternative, use <see cref="AppendAsync(T)" />.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="AppendAsync(T)" />
         public void OnNext(T value)
         {
             this.AppendAsync(value).Wait();
