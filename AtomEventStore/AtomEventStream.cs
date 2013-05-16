@@ -342,9 +342,44 @@ namespace Grean.AtomEventStore
         }
     }
 
+    /// <summary>
+    /// Contains helper methods related to <see cref="AtomEventStream{T}" />.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = "Suppressed on common vote by Mark Seemann and Mikkel Christensen, 2013-05-09. See also http://bit.ly/13ioVAG")]
     public static class AtomEventStream
     {
+        /// <summary>
+        /// Creates a 'self' link from a <see cref="Guid" />, for explicit use
+        /// with <see cref="AtomEventStream{T}" />.
+        /// </summary>
+        /// <param name="id">
+        /// The id from which the 'self' link should be generated.
+        /// </param>
+        /// <returns>
+        /// A new <see cref="AtomLink" /> instance with the appropriate
+        /// <see cref="AtomLink.Href" /> value based on <paramref name="id"/>,
+        /// and a <see cref="AtomLink.Rel" /> value of "self".
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// While the CreateSelfLinkFrom method smell of Feature Envy, the
+        /// reason this isn't a method on <see cref="AtomLink" /> is that this
+        /// particular definition of how to create a 'self' link from a
+        /// <see cref="Guid" /> is particular to how it's being used by
+        /// <see cref="AtomEventStream{T}" />, and not general in all contexts.
+        /// </para>
+        /// <para>
+        /// This is also the reason that this method isn't an extension method
+        /// on Guid. It's not the only way to create a 'self' link from a Guid,
+        /// but it's the appropriate way to do it in the context of an
+        /// AtomEventStream&lt;T&gt;.
+        /// </para>
+        /// <para>
+        /// The reason that this isn't a static helper method on 
+        /// AtomEventStream&lt;T&gt; is that the generic type argument isn't
+        /// used.
+        /// </para>
+        /// </remarks>
         public static AtomLink CreateSelfLinkFrom(Guid id)
         {
             return AtomLink.CreateSelfLink(
