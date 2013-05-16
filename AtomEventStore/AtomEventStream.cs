@@ -91,6 +91,54 @@ namespace Grean.AtomEventStore
             this.storage = storage;
         }
 
+        /// <summary>
+        /// Appends an event to the event stream.
+        /// </summary>
+        /// <param name="event">
+        /// The event to append to the event stream.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task" /> representing the asynchronous operation of
+        /// appending the event to the event stream.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// This method appends <paramref name="event" /> to the current event
+        /// stream. Appending an event indicates that it happened
+        /// <em>after</em> all previous events. However, keep in mind that
+        /// since <see cref="AtomEventStream{T}" /> iterates over the event
+        /// stream from newest to oldest event, the newly appended event will
+        /// also be the first item to be enumerated, because it's the most
+        /// recent event.
+        /// </para>
+        /// <para>
+        /// Since this method conceptually involves writing the event to the
+        /// underlying <see cref="Storage" />, it may take significant time to
+        /// complete; for that reason, it's an asynchronous method, returning a
+        /// <see cref="Task" />. The operation is not guaranteed to be complete
+        /// before the Task completes successfully.
+        /// </para>
+        /// <para>
+        /// When updating the underlying Storage, the method first writes a new
+        /// Atom entry representing the serialized event, using
+        /// <see cref="IAtomEventStorage.CreateFeedWriterFor(AtomFeed)" />.
+        /// Subsequently, it updates the index of the event stream, using
+        /// <see cref="IAtomEventStorage.CreateEntryWriterFor(AtomEntry)" />.
+        /// Since these two operations are not guaranteed to happen with an
+        /// ACID transaction, it's possible that the Atom entry is saved, but
+        /// that the update of the index fails. If the underlying storage
+        /// throws an exception at that point, that exception will bubble up to
+        /// the caller of the AppendAsync method. It's up to the caller to
+        /// retry the operation.
+        /// </para>
+        /// <para>
+        /// However, in that situation, an orphaned Atom entry is likely to
+        /// have been left in the underlying storage. This doesn't affect
+        /// consistency of the system, but may take up unnecessary disk space.
+        /// If this is the case, a separate clean-up task should find and
+        /// delete orphaned entries.
+        /// </para>
+        /// </remarks>
         public Task AppendAsync(T @event)
         {
             return Task.Factory.StartNew(() =>
