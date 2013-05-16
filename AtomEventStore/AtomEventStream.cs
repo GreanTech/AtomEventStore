@@ -197,6 +197,14 @@ namespace Grean.AtomEventStore
             return link.IsSelfLink ? link.ToViaLink() : link;
         }
 
+        /// <summary>
+        /// Gets the id of the event stream.
+        /// </summary>
+        /// <value>
+        /// The id of the event stream, as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage)" />
         public UuidIri Id
         {
             get { return this.id; }
