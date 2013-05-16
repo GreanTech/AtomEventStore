@@ -306,6 +306,13 @@ namespace Grean.AtomEventStore
         {
         }
 
+        /// <summary>
+        /// Notifies the <see cref="AtomEventStream{T}" /> that the provider
+        /// has experienced an error condition.
+        /// </summary>
+        /// <param name="error">
+        /// An object that provides additional information about the error.
+        /// </param>
         public void OnError(Exception error)
         {
         }
