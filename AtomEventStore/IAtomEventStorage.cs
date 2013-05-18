@@ -29,6 +29,27 @@ namespace Grean.AtomEventStore
     /// <seealso cref="AtomEventStream{T}" />
     public interface IAtomEventStorage
     {
+        /// <summary>
+        /// Creates an <see cref="XmlReader" /> for reading an AtomEntry from
+        /// the provided <see cref="Uri" />.
+        /// </summary>
+        /// <param name="href">
+        /// The relative <see cref="Uri" /> of the Atom entry to read.
+        /// </param>
+        /// <returns>
+        /// An <see cref="XmlReader" /> over the Atom entry identified by
+        /// <paramref name="href" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// <strong>Note to implementers:</strong>
+        /// </para>
+        /// <para>
+        /// If no entry can be found for <paramref name="href" />, the method
+        /// must throw an appropriate exception. Returning
+        /// <see langword="null" /> is considered an incorrect implementation.
+        /// </para>
+        /// </remarks>
         XmlReader CreateEntryReaderFor(Uri href);
         XmlWriter CreateEntryWriterFor(AtomEntry atomEntry);
         XmlReader CreateFeedReaderFor(Uri href);
