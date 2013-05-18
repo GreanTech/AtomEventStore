@@ -112,6 +112,37 @@ namespace Grean.AtomEventStore
         /// </para>
         /// </remarks>
         XmlReader CreateFeedReaderFor(Uri href);
+
+        /// <summary>
+        /// Creates an <see cref="XmlWriter" /> for writing the provided
+        /// <see cref="AtomFeed" />.
+        /// </summary>
+        /// <param name="atomFeed">The Atom feed to write.</param>
+        /// <returns>
+        /// An <see cref="XmlWriter" /> over the Atom feed provided by
+        /// <paramref name="atomFeed" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// <strong>Note to implementers:</strong>
+        /// </para>
+        /// <para>
+        /// The implementation is free to choose an appropriate naming or
+        /// identification scheme that fits the underlying persistence
+        /// technology. However, it must be able to find the written Atom feed
+        /// when a client subsequently invokes
+        /// <see cref="CreateFeedReaderFor" />.
+        /// </para>
+        /// <para>
+        /// When the CreateFeedWriterFor method is invoked,
+        /// <paramref name="atomFeed" /> contains at least a 'self' link
+        /// (identified by <see cref="AtomLink.IsSelfLink" />) identifying the
+        /// Atom entry. The <see cref="AtomLink.Href" /> value of this link is
+        /// the value used when CreateFeedReaderFor is subsequently invoked to
+        /// read the Atom feed. In other words, this is the corrolation ID,
+        /// so a naming or identification scheme must take this into account.
+        /// </para>
+        /// </remarks>
         XmlWriter CreateFeedWriterFor(AtomFeed atomFeed);
     }
 }
