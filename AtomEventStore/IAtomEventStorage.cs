@@ -30,7 +30,7 @@ namespace Grean.AtomEventStore
     public interface IAtomEventStorage
     {
         /// <summary>
-        /// Creates an <see cref="XmlReader" /> for reading an AtomEntry from
+        /// Creates an <see cref="XmlReader" /> for reading an Atom entry from
         /// the provided <see cref="Uri" />.
         /// </summary>
         /// <param name="href">
@@ -52,6 +52,34 @@ namespace Grean.AtomEventStore
         /// </remarks>
         XmlReader CreateEntryReaderFor(Uri href);
         XmlWriter CreateEntryWriterFor(AtomEntry atomEntry);
+
+        /// <summary>
+        /// Creates an <see cref="XmlReader" /> for reading an Atom feed from
+        /// the provided <see cref="Uri" />.
+        /// </summary>
+        /// <param name="href">
+        /// The relative <see cref="Uri" /> of the Atom feed to read.
+        /// </param>
+        /// <returns>
+        /// An <see cref="XmlReader" /> over the Atom feed identified by
+        /// <paramref name="href" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// <strong>Note to implementers:</strong>
+        /// </para>
+        /// <para>
+        /// If no entry can be found for <paramref name="href" />, the method
+        /// must return an <see cref="XmlReader" /> over an empty Atom feed.
+        /// Returning <see langword="null" /> is considered an incorrect
+        /// implementation.
+        /// </para>
+        /// <para>
+        /// One, relatively easy way to create an XmlReader over an empty Atom
+        /// feed is to create a new <see cref="AtomFeed" /> instance with no
+        /// entries, serialize it to XML and return a reader over the XML.
+        /// </para>
+        /// </remarks>
         XmlReader CreateFeedReaderFor(Uri href);
         XmlWriter CreateFeedWriterFor(AtomFeed atomFeed);
     }
