@@ -2,16 +2,15 @@
 <package >
   <metadata>
     <id>AtomEventStore.AzureBlob</id>
-    <version>0.3.4</version>
+    <version>0.3.5</version>
     <title>Azure Blog Storage persistence for Atom Event Store</title>
     <authors>Grean</authors>
     <owners>Grean</owners>
     <dependencies>
-      <dependency id="AtomEventStore" version="0.3.3" />
+      <dependency id="AtomEventStore" version="0.3.5" />
     </dependencies>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Azure Blog Storage persistence library for an event store implementation based on the Atom syndication format.</description>
-    <releaseNotes>Handled enumerables with params arrays.</releaseNotes>
     <copyright>Copyright Grean ApS 2013</copyright>
     <tags>EventSourcing Atom</tags>
   </metadata>

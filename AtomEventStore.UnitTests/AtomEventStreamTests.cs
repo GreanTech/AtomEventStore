@@ -7,6 +7,9 @@ using Ploeh.AutoFixture.Xunit;
 using Xunit.Extensions;
 using Grean.AtomEventStore;
 using Xunit;
+using Moq;
+using System.Xml;
+using System.IO;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -326,6 +329,41 @@ namespace Grean.AtomEventStore.UnitTests
         public void OnCompletedDoesNotThrow(AtomEventStream<TestEventY> sut)
         {
             Assert.DoesNotThrow(() => sut.OnCompleted());
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncWritesEntryBeforeFeed(
+            [Frozen]Mock<IAtomEventStorage> storageMock,
+            AtomEventStream<TestEventX> sut,
+            TestEventX tex,
+            AtomFeed initialFeed)
+        {
+            // Fixture setup
+            var stream = new MemoryStream();
+            using (var xw = XmlWriter.Create(stream))
+                initialFeed.WriteTo(xw);
+            stream.Position = 0;
+            storageMock
+                .Setup(s => s.CreateFeedReaderFor(It.IsAny<Uri>()))
+                .Returns(XmlReader.Create(stream));
+
+            var actual = new List<int>();
+            storageMock
+                .Setup(s => s.CreateEntryWriterFor(It.IsAny<AtomEntry>()))
+                .Callback(() => actual.Add(1))
+                .Returns(XmlWriter.Create(new StringBuilder()));
+            storageMock
+                .Setup(s => s.CreateFeedWriterFor(It.IsAny<AtomFeed>()))
+                .Callback(() => actual.Add(2))
+                .Returns(XmlWriter.Create(new StringBuilder()));
+
+            // Exercise system
+            sut.AppendAsync(tex).Wait();
+
+            // Verify outcome
+            var expected = Enumerable.Range(1, 2);
+            Assert.Equal(expected, actual);
+            // Teardown
         }
     }
 }
