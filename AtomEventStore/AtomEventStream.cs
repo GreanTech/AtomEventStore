@@ -165,10 +165,10 @@ namespace Grean.AtomEventStore
                     new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) },
                     new[] { CreateSelfLinkFrom(this.id) });
 
-                using (var w = this.storage.CreateFeedWriterFor(feed))
-                    feed.WriteTo(w);
                 using (var w = this.storage.CreateEntryWriterFor(entry))
                     entry.WriteTo(w);
+                using (var w = this.storage.CreateFeedWriterFor(feed))
+                    feed.WriteTo(w);
             });
         }
 
