@@ -34,6 +34,15 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void PageSizeIsCorrect(
+            [Frozen]int expected,
+            AtomEventStream<TestEventX> sut)
+        {
+            int actual = sut.PageSize;
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
         public void CreateSelfLinkFromReturnsCorrectResult(
             UuidIri id)
         {

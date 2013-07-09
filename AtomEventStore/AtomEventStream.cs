@@ -56,6 +56,7 @@ namespace Grean.AtomEventStore
     {
         private readonly UuidIri id;
         private readonly IAtomEventStorage storage;
+        private readonly int pageSize;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AtomEventStream{T}" />
@@ -85,10 +86,12 @@ namespace Grean.AtomEventStore
         /// <seealso cref="IAtomEventStorage" />
         public AtomEventStream(
             UuidIri id,
-            IAtomEventStorage storage)
+            IAtomEventStorage storage,
+            int pageSize)
         {
             this.id = id;
             this.storage = storage;
+            this.pageSize = pageSize;
         }
 
         /// <summary>
@@ -221,6 +224,11 @@ namespace Grean.AtomEventStore
         public IAtomEventStorage Storage
         {
             get { return this.storage; }
+        }
+
+        public int PageSize
+        {
+            get { return this.pageSize; }
         }
 
         private static AtomLink CreateSelfLinkFrom(Guid id)
