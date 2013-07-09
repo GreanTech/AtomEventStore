@@ -414,7 +414,7 @@ namespace Grean.AtomEventStore
                     return null;
                 return assembly.GetExportedTypes()
                     .Where(t =>
-                        (t.Name == typeName && !t.IsAbstract && !t.IsSealed) ||
+                        (t.Name == typeName && !(t.IsAbstract && t.IsSealed)) ||
                         t.Name == typeName + "`1")
                     .Single();
             }
