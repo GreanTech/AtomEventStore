@@ -141,40 +141,23 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyStoresFeedAndEntries(
+        public void AppendAsyncCorrectlyStoresFeeds(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
             TestEventX event1,
             TestEventX event2)
         {
-            // Fixture setup
             var before = DateTimeOffset.Now;
 
-            // Exercise system
             sut.AppendAsync(event1).Wait();
             sut.AppendAsync(event2).Wait();
 
-            // Verify outcome
             var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
-            var writtenEntries = storage.Entries.Select(AtomEntry.Parse);
-
             var expectedFeed =
                 new AtomFeedLikeness(before, sut.Id, event2, event1);
-            var expectedEntries = new HashSet<object>(
-                new[]
-                {
-                    new AtomEntryLikeness(before, event1, "self"),
-                    new AtomEntryLikeness(before, event2, "self")
-                },
-                new HashFreeEqualityComparer<object>());
-
             Assert.True(
                 expectedFeed.Equals(writtenFeed),
                 "Expected feed must match actual feed.");
-            Assert.True(
-                expectedEntries.SetEquals(writtenEntries),
-                "Expected entries must match actual entries.");
-            // Teardown
         }
 
         [Theory, AutoAtomData]
