@@ -553,6 +553,25 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void SutYieldsPagedEvents(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var expected = events.AsEnumerable().Reverse();
+            Assert.True(
+                expected.SequenceEqual(sut),
+                "Events should be yielded in a FILO order");
+            Assert.True(
+                expected.Cast<object>().SequenceEqual(sut.OfType<object>()),
+                "Events should be yielded in a FILO order");
+        }
+
+        [Theory, AutoAtomData]
         public void SutCanAppendAndYieldPolymorphicEvents(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
             AtomEventStream<ITestEvent> sut,

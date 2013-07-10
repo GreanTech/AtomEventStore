@@ -278,12 +278,13 @@ namespace Grean.AtomEventStore
         /// </remarks>
         public IEnumerator<T> GetEnumerator()
         {
-            var entry = this.ReadIndex().Entries.FirstOrDefault();
-            while (entry != null)
+            var page = this.ReadIndex();
+            while (page != null)
             {
-                yield return Cast(entry.Content.Item);
+                foreach (var entry in page.Entries)
+                    yield return Cast(entry.Content.Item);
 
-                entry = this.GetPrevious(entry);
+                page = this.GetPreviousPage(page);
             }
         }
 
@@ -308,15 +309,15 @@ namespace Grean.AtomEventStore
             return (T)TypeDescriptor.GetConverter(item).ConvertTo(item, typeof(T));
         }
 
-        private AtomEntry GetPrevious(AtomEntry current)
+        private AtomFeed GetPreviousPage(AtomFeed current)
         {
-            var previousLink = current.Links.SingleOrDefault(
-                l => l.Rel == "previous");
+            var previousLink = 
+                current.Links.SingleOrDefault(l => l.IsPreviousLink);
             if (previousLink == null)
                 return null;
 
-            using (var r = this.storage.CreateEntryReaderFor(previousLink.Href))
-                return AtomEntry.ReadFrom(r);
+            using (var r = this.storage.CreateFeedReaderFor(previousLink.Href))
+                return AtomFeed.ReadFrom(r);
         }
 
         /// <summary>
