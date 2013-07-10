@@ -166,10 +166,12 @@ namespace Grean.AtomEventStore
                     now,
                     new AtomAuthor("Grean"),
                     new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) }.Concat(index.Entries),
-                    new[] { AtomEventStream.CreateSelfLinkFrom(this.id), AtomEventStream.CreatePreviousLinkFrom(Guid.NewGuid()) });
+                    new[] { AtomEventStream.CreateSelfLinkFrom(this.id) });
 
                 if (feed.Entries.Count() > this.pageSize)
-                    feed = feed.WithEntries(feed.Entries.Take(1));
+                    feed = feed
+                        .WithEntries(feed.Entries.Take(1))
+                        .WithLinks(feed.Links.Concat(new[] { AtomEventStream.CreatePreviousLinkFrom(Guid.NewGuid()) }));
 
                 using (var w = this.storage.CreateEntryWriterFor(entry))
                     entry.WriteTo(w);
