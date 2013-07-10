@@ -176,7 +176,7 @@ namespace Grean.AtomEventStore
                         "Partial event stream",
                         now,
                         new AtomAuthor("Grean"),
-                        new AtomEntry[0],
+                        feed.Entries.Skip(1),
                         new[] { AtomEventStream.CreateSelfLinkFrom(previousFeedId) });
                     using (var w = this.storage.CreateFeedWriterFor(previousFeed))
                         previousFeed.WriteTo(w);

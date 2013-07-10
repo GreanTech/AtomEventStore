@@ -286,6 +286,37 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsStoresOldestEventsInPreviousPage(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            UuidIri previousPageId =
+                Guid.Parse(
+                    writtenIndex.Links
+                        .Single(AtomEventStream.IsPreviousFeedLink)
+                        .Href.ToString());
+            var actualPreviousPage = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == previousPageId);
+            var expectedPreviousPage = new AtomFeedLikeness(
+                before,
+                previousPageId,
+                events.AsEnumerable().Reverse().Skip(1).ToArray());
+            Assert.True(
+                expectedPreviousPage.Equals(actualPreviousPage),
+                "Expected feed must match actual feed.");
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyLinksSecondChangesetToFirst(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
@@ -345,7 +376,7 @@ namespace Grean.AtomEventStore.UnitTests
                     .Cast<object>();
 
                 return object.Equals(this.expectedId, actual.Id)
-                    && object.Equals("Index of event stream " + (Guid)this.expectedId, actual.Title)
+                    && (object.Equals("Index of event stream " + (Guid)this.expectedId, actual.Title) || "Partial event stream" == actual.Title)
                     && this.minimumTime <= actual.Updated
                     && actual.Updated <= DateTimeOffset.Now
                     && expectedEntries.SequenceEqual(actual.Entries)
