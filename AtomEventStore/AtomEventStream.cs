@@ -396,5 +396,11 @@ namespace Grean.AtomEventStore
             return AtomLink.CreateSelfLink(
                 new Uri(id.ToString(), UriKind.Relative));
         }
+
+        public static AtomLink CreatePreviousLinkFrom(Guid id)
+        {
+            return AtomLink.CreatePreviousLink(
+                new Uri(id.ToString(), UriKind.Relative));
+        }
     }
 }

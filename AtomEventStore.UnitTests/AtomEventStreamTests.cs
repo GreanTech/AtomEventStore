@@ -57,6 +57,19 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void CreatePreviousLinkFromReturnsCorrectResult(
+            UuidIri id)
+        {
+            AtomLink actual = AtomEventStream.CreatePreviousLinkFrom(id);
+
+            var expected = AtomLink.CreatePreviousLink(
+                new Uri(
+                    ((Guid)id).ToString(),
+                    UriKind.Relative));
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeedAndEntry(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
