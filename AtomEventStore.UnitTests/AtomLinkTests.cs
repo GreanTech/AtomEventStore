@@ -241,5 +241,44 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = sut.WithRel("via");
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void CreatePreviousLinkReturnsCorrectResult(
+            AtomLink link)
+        {
+            AtomLink actual = AtomLink.CreatePreviousLink(link.Href);
+
+            var expected = link.WithRel("previous");
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousLinkReturnsTrueForPreviousLink(
+            Uri href)
+        {
+            bool actual = AtomLink.CreatePreviousLink(href).IsPreviousLink;
+            Assert.True(actual, "Should be previous link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousLinkReturnsFalsForNonPreviousLink(
+            AtomLink sut)
+        {
+            Assert.NotEqual("previous", sut.Rel);
+            var actual = sut.IsPreviousLink;
+            Assert.False(actual, "Should not be previous link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void ToPreviousLinkReturnsCorrectResult(
+            AtomLink sut)
+        {
+            Assert.NotEqual("previous", sut.Rel);
+
+            AtomLink actual = sut.ToPreviousLink();
+
+            var expected = sut.WithRel("previous");
+            Assert.Equal(expected, actual);
+        }
     }
 }
