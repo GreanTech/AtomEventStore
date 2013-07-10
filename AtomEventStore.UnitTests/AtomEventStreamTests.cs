@@ -317,6 +317,55 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void AppendAsyncExactlyTwicePageSizeEventsStoresTwoFeedPages(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize * 2).ToList();
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+            Assert.Equal(2, storage.Feeds.Count());
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanTwicePageSizeEventsCreatesThreeFeedPages(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+            Assert.Equal(3, storage.Feeds.Count());
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanTwicePageSizeEventAddsPreviousLinkToMiddlePage(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            UuidIri previousPageId =
+                Guid.Parse(
+                    writtenIndex.Links
+                        .Single(AtomEventStream.IsPreviousFeedLink)
+                        .Href.ToString());
+            var middlePage = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == previousPageId);
+            Assert.Equal(
+                1,
+                middlePage.Links.Count(AtomEventStream.IsPreviousFeedLink));
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyLinksSecondChangesetToFirst(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,

@@ -177,7 +177,7 @@ namespace Grean.AtomEventStore
                         now,
                         new AtomAuthor("Grean"),
                         feed.Entries.Skip(1),
-                        new[] { AtomEventStream.CreateSelfLinkFrom(previousFeedId) });
+                        new[] { AtomEventStream.CreateSelfLinkFrom(previousFeedId), AtomEventStream.CreatePreviousLinkFrom(Guid.NewGuid()) });
                     using (var w = this.storage.CreateFeedWriterFor(previousFeed))
                         previousFeed.WriteTo(w);
 
