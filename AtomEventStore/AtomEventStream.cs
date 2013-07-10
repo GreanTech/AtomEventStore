@@ -416,6 +416,9 @@ namespace Grean.AtomEventStore
 
         public static bool IsPreviousFeedLink(AtomLink link)
         {
+            if (link == null)
+                throw new ArgumentNullException("link");
+
             Guid g;
             return link.IsPreviousLink
                 && !link.Href.IsAbsoluteUri
