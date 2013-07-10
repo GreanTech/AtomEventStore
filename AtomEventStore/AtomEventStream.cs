@@ -148,56 +148,30 @@ namespace Grean.AtomEventStore
             {
                 var now = DateTimeOffset.Now;
 
+                var entry = CreateEntry(@event, now);
+
                 var index = this.ReadIndex();
-
-                var changesetId = Guid.NewGuid();
-                var entry = new AtomEntry(
-                    changesetId,
-                    "Changeset " + changesetId,
-                    now,
-                    now,
-                    new AtomAuthor("Grean"),
-                    new XmlAtomContent(@event),
-                    new AtomLink[0]);
-
-                var feed = new AtomFeed(
-                    this.id,
-                    "Index of event stream " + (Guid)this.id,
-                    now,
-                    new AtomAuthor("Grean"),
-                    new[] { entry }.Concat(index.Entries),
-                    index.Links);
-
-                if (feed.Entries.Count() > this.pageSize)
+                if (index.Entries.Count() >= this.pageSize)
                 {
                     var previousId = UuidIri.NewId();
-                    var previousFeed = new AtomFeed(
-                        previousId,
-                        "Partial event stream",
-                        now,
-                        new AtomAuthor("Grean"),
-                        feed.Entries.Skip(1),
-                        feed.Links
-                            .Where(AtomEventStream.IsPreviousFeedLink)
-                            .Concat(new[]
-                            {
-                                AtomEventStream.CreateSelfLinkFrom(previousId) 
-                            }));
+                    var previousFeed =
+                        CreatePreviousPageFrom(index, previousId, now);
+
+                    var newIndex =
+                        this.CreateNewIndex(entry, index.Links, previousId, now);
+
                     using (var w = this.storage.CreateFeedWriterFor(previousFeed))
                         previousFeed.WriteTo(w);
-
-                    feed = feed
-                        .WithEntries(feed.Entries.Take(1))
-                        .WithLinks(feed.Links
-                            .Where(l => !AtomEventStream.IsPreviousFeedLink(l))
-                            .Concat(new[]
-                            {
-                                AtomEventStream.CreatePreviousLinkFrom(previousId)
-                            }));
+                    using (var w = this.storage.CreateFeedWriterFor(newIndex))
+                        newIndex.WriteTo(w);
                 }
-
-                using (var w = this.storage.CreateFeedWriterFor(feed))
-                    feed.WriteTo(w);
+                else
+                {
+                    var newIndex = 
+                        this.AddEntryTo(index, entry, now);    
+                    using (var w = this.storage.CreateFeedWriterFor(newIndex))
+                        newIndex.WriteTo(w);
+                }
             });
         }
 
@@ -207,6 +181,85 @@ namespace Grean.AtomEventStore
                 new Uri(((Guid)this.id).ToString(), UriKind.Relative);
             using (var r = this.storage.CreateFeedReaderFor(indexAddress))
                 return AtomFeed.ReadFrom(r);
+        }
+
+        private static AtomEntry CreateEntry(T @event, DateTimeOffset now)
+        {
+            var changesetId = Guid.NewGuid();
+            return new AtomEntry(
+                changesetId,
+                "Changeset " + changesetId,
+                now,
+                now,
+                new AtomAuthor("Grean"),
+                new XmlAtomContent(@event),
+                new AtomLink[0]);
+        }
+
+        private AtomFeed AddEntryTo(
+            AtomFeed index,
+            AtomEntry entry,
+            DateTimeOffset now)
+        {
+            var entries = new[] { entry }.Concat(index.Entries);
+            return this.CreateNewIndex(entries, index.Links, now);
+        }
+
+        private AtomFeed CreateNewIndex(
+            IEnumerable<AtomEntry> entries,
+            IEnumerable<AtomLink> links,
+            DateTimeOffset now)
+        {
+            return new AtomFeed(
+                this.id,
+                "Index of event stream " + (Guid)id,
+                now,
+                new AtomAuthor("Grean"),
+                entries,
+                links);
+        }
+
+        private AtomFeed CreateNewIndex(
+            AtomEntry entry,
+            IEnumerable<AtomLink> links,
+            UuidIri previousId,
+            DateTimeOffset now)
+        {
+            return this.CreateNewIndex(
+                new[] { entry },
+                ReplacePreviousLink(links, previousId),
+                now);
+        }
+
+        private static IEnumerable<AtomLink> ReplacePreviousLink(
+            IEnumerable<AtomLink> links,
+            UuidIri previousId)
+        {
+            return links
+                .Where(l => !AtomEventStream.IsPreviousFeedLink(l))
+                .Concat(new[]
+                {
+                    AtomEventStream.CreatePreviousLinkFrom(previousId)
+                });
+        }
+
+        private static AtomFeed CreatePreviousPageFrom(
+            AtomFeed index,
+            UuidIri previousId,
+            DateTimeOffset now)
+        {
+            return new AtomFeed(
+                previousId,
+                "Partial event stream",
+                now,
+                new AtomAuthor("Grean"),
+                index.Entries,
+                index.Links
+                    .Where(AtomEventStream.IsPreviousFeedLink)
+                    .Concat(new[]
+                    {
+                        AtomEventStream.CreateSelfLinkFrom(previousId)
+                    }));
         }
 
         /// <summary>
@@ -302,7 +355,7 @@ namespace Grean.AtomEventStore
 
         private AtomFeed GetPreviousPage(AtomFeed current)
         {
-            var previousLink = 
+            var previousLink =
                 current.Links.SingleOrDefault(l => l.IsPreviousLink);
             if (previousLink == null)
                 return null;
