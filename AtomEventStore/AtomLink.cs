@@ -139,9 +139,6 @@ namespace Grean.AtomEventStore
 
         public static AtomLink CreatePreviousLink(Uri uri)
         {
-            if (uri == null)
-                throw new ArgumentNullException("uri");
-
             return new AtomLink("previous", uri);
         }
 
@@ -153,6 +150,21 @@ namespace Grean.AtomEventStore
         public AtomLink ToPreviousLink()
         {
             return this.WithRel("previous");
+        }
+
+        public static AtomLink CreateNextLink(Uri uri)
+        {
+            return new AtomLink("next", uri);
+        }
+
+        public bool IsNextLink
+        {
+            get { return this.rel == "next"; }
+        }
+
+        public AtomLink ToNextLink()
+        {
+            return this.WithRel("next");
         }
     }
 }
