@@ -402,5 +402,13 @@ namespace Grean.AtomEventStore
             return AtomLink.CreatePreviousLink(
                 new Uri(id.ToString(), UriKind.Relative));
         }
+
+        public static bool IsPreviousFeedLink(AtomLink link)
+        {
+            Guid g;
+            return link.IsPreviousLink
+                && !link.Href.IsAbsoluteUri
+                && Guid.TryParse(link.Href.ToString(), out g);
+        }
     }
 }

@@ -70,6 +70,48 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsTrueForPreviousFeedLink(
+            UuidIri id)
+        {
+            var link = AtomEventStream.CreatePreviousLinkFrom(id);
+            bool actual = AtomEventStream.IsPreviousFeedLink(link);
+            Assert.True(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsFalsForLinkWithIncorrectRel(
+            UuidIri id)
+        {
+            var link = AtomEventStream.CreateSelfLinkFrom(id);
+            var actual = AtomEventStream.IsPreviousFeedLink(link);
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsFalseForLinkWithAbsoluteUri(
+            Uri uri)
+        {
+            Assert.True(uri.IsAbsoluteUri);
+            var link = AtomLink.CreatePreviousLink(uri);
+
+            var actual = AtomEventStream.IsPreviousFeedLink(link);
+
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsFalseForLinkNotUuid(
+            int number)
+        {
+            var uri = new Uri(number.ToString(), UriKind.Relative);
+            var link = AtomLink.CreatePreviousLink(uri);
+
+            var actual = AtomEventStream.IsPreviousFeedLink(link);
+
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeedAndEntry(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
