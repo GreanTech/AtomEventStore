@@ -569,38 +569,18 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncWritesEntryBeforeFeed(
-            [Frozen]Mock<IAtomEventStorage> storageMock,
+        public void AppendAsyncWritesPreviousPageBeforeIndex(
+            [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
             AtomEventStream<TestEventX> sut,
-            TestEventX tex,
-            AtomFeedBuilder<TestEventX> initialFeedBuilder)
+            Generator<TestEventX> eventGenerator)
         {
-            // Fixture setup
-            var stream = new MemoryStream();
-            using (var xw = XmlWriter.Create(stream))
-                initialFeedBuilder.Build().WriteTo(xw);
-            stream.Position = 0;
-            storageMock
-                .Setup(s => s.CreateFeedReaderFor(It.IsAny<Uri>()))
-                .Returns(XmlReader.Create(stream));
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+            
+            events.ForEach(e => sut.AppendAsync(e).Wait());
 
-            var actual = new List<int>();
-            storageMock
-                .Setup(s => s.CreateEntryWriterFor(It.IsAny<AtomEntry>()))
-                .Callback(() => actual.Add(1))
-                .Returns(XmlWriter.Create(new StringBuilder()));
-            storageMock
-                .Setup(s => s.CreateFeedWriterFor(It.IsAny<AtomFeed>()))
-                .Callback(() => actual.Add(2))
-                .Returns(XmlWriter.Create(new StringBuilder()));
-
-            // Exercise system
-            sut.AppendAsync(tex).Wait();
-
-            // Verify outcome
-            var expected = Enumerable.Range(1, 2);
-            Assert.Equal(expected, actual);
-            // Teardown
-        }
+            var feed = Assert.IsAssignableFrom<AtomFeed>(
+                spyStore.ObservedArguments.Last());
+            Assert.Equal(sut.Id, feed.Id);
+        }        
     }
 }
