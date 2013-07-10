@@ -169,9 +169,22 @@ namespace Grean.AtomEventStore
                     new[] { AtomEventStream.CreateSelfLinkFrom(this.id) });
 
                 if (feed.Entries.Count() > this.pageSize)
+                {
+                    var previousFeedId = UuidIri.NewId();
+                    var previousFeed = new AtomFeed(
+                        previousFeedId,
+                        "Partial event stream",
+                        now,
+                        new AtomAuthor("Grean"),
+                        new AtomEntry[0],
+                        new[] { AtomEventStream.CreateSelfLinkFrom(previousFeedId) });
+                    using (var w = this.storage.CreateFeedWriterFor(previousFeed))
+                        previousFeed.WriteTo(w);
+
                     feed = feed
                         .WithEntries(feed.Entries.Take(1))
-                        .WithLinks(feed.Links.Concat(new[] { AtomEventStream.CreatePreviousLinkFrom(Guid.NewGuid()) }));
+                        .WithLinks(feed.Links.Concat(new[] { AtomEventStream.CreatePreviousLinkFrom(previousFeedId) }));
+                }
 
                 using (var w = this.storage.CreateEntryWriterFor(entry))
                     entry.WriteTo(w);

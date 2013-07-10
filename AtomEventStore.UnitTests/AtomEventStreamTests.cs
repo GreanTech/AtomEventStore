@@ -190,7 +190,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
             var expectedFeed = new AtomFeedLikeness(
-                before, 
+                before,
                 sut.Id,
                 events.AsEnumerable().Reverse().ToArray());
             Assert.True(
@@ -222,7 +222,7 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncMoreThenPageSizeEventsAddsLinkToPreviousPageToIndex(
+        public void AppendAsyncMoreThanPageSizeEventsAddsLinkToPreviousPageToIndex(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
@@ -257,6 +257,32 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(
                 0,
                 writtenIndex.Links.Count(AtomEventStream.IsPreviousFeedLink));
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsStoresPreviousPage(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            UuidIri previousPageId = 
+                Guid.Parse(
+                    writtenIndex.Links
+                        .Single(AtomEventStream.IsPreviousFeedLink)
+                        .Href.ToString());
+            Assert.True(
+                storage.Feeds
+                    .Select(AtomFeed.Parse)
+                    .Any(f => f.Id == previousPageId),
+                "The previous feed should have been stored.");
         }
 
         [Theory, AutoAtomData]
