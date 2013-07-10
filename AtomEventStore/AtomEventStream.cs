@@ -165,7 +165,7 @@ namespace Grean.AtomEventStore
                     "Index of event stream " + (Guid)this.id,
                     now,
                     new AtomAuthor("Grean"),
-                    new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) },
+                    new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) }.Concat(index.Entries),
                     new[] { CreateSelfLinkFrom(this.id) });
 
                 using (var w = this.storage.CreateEntryWriterFor(entry))
@@ -265,7 +265,7 @@ namespace Grean.AtomEventStore
         /// </remarks>
         public IEnumerator<T> GetEnumerator()
         {
-            var entry = this.ReadIndex().Entries.SingleOrDefault();
+            var entry = this.ReadIndex().Entries.FirstOrDefault();
             while (entry != null)
             {
                 yield return Cast(entry.Content.Item);

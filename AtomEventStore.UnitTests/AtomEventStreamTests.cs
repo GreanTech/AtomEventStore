@@ -104,7 +104,8 @@ namespace Grean.AtomEventStore.UnitTests
             var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
             var writtenEntries = storage.Entries.Select(AtomEntry.Parse);
 
-            var expectedFeed = new AtomFeedLikeness(before, sut.Id, event2);
+            var expectedFeed =
+                new AtomFeedLikeness(before, sut.Id, event2, event1);
             var expectedEntries = new HashSet<object>(
                 new[]
                 {
@@ -113,8 +114,12 @@ namespace Grean.AtomEventStore.UnitTests
                 },
                 new HashFreeEqualityComparer<object>());
 
-            Assert.True(expectedFeed.Equals(writtenFeed));
-            Assert.True(expectedEntries.SetEquals(writtenEntries));
+            Assert.True(
+                expectedFeed.Equals(writtenFeed),
+                "Expected feed must match actual feed.");
+            Assert.True(
+                expectedEntries.SetEquals(writtenEntries),
+                "Expected entries must match actual entries.");
             // Teardown
         }
 
@@ -344,12 +349,12 @@ namespace Grean.AtomEventStore.UnitTests
             [Frozen]Mock<IAtomEventStorage> storageMock,
             AtomEventStream<TestEventX> sut,
             TestEventX tex,
-            AtomFeed initialFeed)
+            AtomFeedBuilder<TestEventX> initialFeedBuilder)
         {
             // Fixture setup
             var stream = new MemoryStream();
             using (var xw = XmlWriter.Create(stream))
-                initialFeed.WriteTo(xw);
+                initialFeedBuilder.Build().WriteTo(xw);
             stream.Position = 0;
             storageMock
                 .Setup(s => s.CreateFeedReaderFor(It.IsAny<Uri>()))
