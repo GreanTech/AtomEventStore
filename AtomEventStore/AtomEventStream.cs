@@ -166,7 +166,7 @@ namespace Grean.AtomEventStore
                     now,
                     new AtomAuthor("Grean"),
                     new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) }.Concat(index.Entries),
-                    new[] { CreateSelfLinkFrom(this.id) });
+                    new[] { AtomEventStream.CreateSelfLinkFrom(this.id), AtomEventStream.CreatePreviousLinkFrom(Guid.NewGuid()) });
 
                 if (feed.Entries.Count() > this.pageSize)
                     feed = feed.WithEntries(feed.Entries.Take(1));
@@ -195,7 +195,7 @@ namespace Grean.AtomEventStore
                     where l.IsViaLink
                     select l.WithRel("previous"))
                     .Take(1)
-                    .Concat(new[] { CreateSelfLinkFrom(changesetId) });
+                    .Concat(new[] { AtomEventStream.CreateSelfLinkFrom(changesetId) });
         }
 
         private static AtomLink ChangeRelFromSelfToVia(AtomLink link)
@@ -232,11 +232,6 @@ namespace Grean.AtomEventStore
         public int PageSize
         {
             get { return this.pageSize; }
-        }
-
-        private static AtomLink CreateSelfLinkFrom(Guid id)
-        {
-            return AtomEventStream.CreateSelfLinkFrom(id);
         }
 
         /// <summary>
