@@ -170,20 +170,30 @@ namespace Grean.AtomEventStore
 
                 if (feed.Entries.Count() > this.pageSize)
                 {
-                    var previousFeedId = UuidIri.NewId();
+                    var previousId = UuidIri.NewId();
                     var previousFeed = new AtomFeed(
-                        previousFeedId,
+                        previousId,
                         "Partial event stream",
                         now,
                         new AtomAuthor("Grean"),
                         feed.Entries.Skip(1),
-                        feed.Links.Where(AtomEventStream.IsPreviousFeedLink).Concat(new[] { AtomEventStream.CreateSelfLinkFrom(previousFeedId) }));
+                        feed.Links
+                            .Where(AtomEventStream.IsPreviousFeedLink)
+                            .Concat(new[]
+                            {
+                                AtomEventStream.CreateSelfLinkFrom(previousId) 
+                            }));
                     using (var w = this.storage.CreateFeedWriterFor(previousFeed))
                         previousFeed.WriteTo(w);
 
                     feed = feed
                         .WithEntries(feed.Entries.Take(1))
-                        .WithLinks(feed.Links.Where(l => !AtomEventStream.IsPreviousFeedLink(l)).Concat(new[] { AtomEventStream.CreatePreviousLinkFrom(previousFeedId) }));
+                        .WithLinks(feed.Links
+                            .Where(l => !AtomEventStream.IsPreviousFeedLink(l))
+                            .Concat(new[]
+                            {
+                                AtomEventStream.CreatePreviousLinkFrom(previousId)
+                            }));
                 }
 
                 using (var w = this.storage.CreateFeedWriterFor(feed))
