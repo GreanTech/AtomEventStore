@@ -166,7 +166,7 @@ namespace Grean.AtomEventStore
                     now,
                     new AtomAuthor("Grean"),
                     new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) }.Concat(index.Entries),
-                    new[] { AtomEventStream.CreateSelfLinkFrom(this.id) });
+                    index.Links);
 
                 if (feed.Entries.Count() > this.pageSize)
                 {
@@ -177,13 +177,13 @@ namespace Grean.AtomEventStore
                         now,
                         new AtomAuthor("Grean"),
                         feed.Entries.Skip(1),
-                        new[] { AtomEventStream.CreateSelfLinkFrom(previousFeedId), AtomEventStream.CreatePreviousLinkFrom(Guid.NewGuid()) });
+                        feed.Links.Where(AtomEventStream.IsPreviousFeedLink).Concat(new[] { AtomEventStream.CreateSelfLinkFrom(previousFeedId) }));
                     using (var w = this.storage.CreateFeedWriterFor(previousFeed))
                         previousFeed.WriteTo(w);
 
                     feed = feed
                         .WithEntries(feed.Entries.Take(1))
-                        .WithLinks(feed.Links.Concat(new[] { AtomEventStream.CreatePreviousLinkFrom(previousFeedId) }));
+                        .WithLinks(feed.Links.Where(l => !AtomEventStream.IsPreviousFeedLink(l)).Concat(new[] { AtomEventStream.CreatePreviousLinkFrom(previousFeedId) }));
                 }
 
                 using (var w = this.storage.CreateEntryWriterFor(entry))
