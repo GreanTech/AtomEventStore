@@ -384,7 +384,7 @@ namespace Grean.AtomEventStore.UnitTests
                     return base.Equals(obj);
 
                 var expectedEntries = this.expectedEvents
-                    .Select(e => new AtomEntryLikeness(this.minimumTime, e, "via"))
+                    .Select(e => new AtomEntryLikeness(this.minimumTime, e))
                     .Cast<object>();
 
                 return object.Equals(this.expectedId, actual.Id)
@@ -406,16 +406,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             private readonly DateTimeOffset minimumTime;
             private readonly object expectedEvent;
-            private readonly string idRel;
 
             public AtomEntryLikeness(
                 DateTimeOffset minimumTime,
-                object expectedEvent,
-                string idRel)
+                object expectedEvent)
             {
                 this.minimumTime = minimumTime;
                 this.expectedEvent = expectedEvent;
-                this.idRel = idRel;
             }
 
             public override bool Equals(object obj)
@@ -430,10 +427,6 @@ namespace Grean.AtomEventStore.UnitTests
                     && actual.Published <= DateTimeOffset.Now
                     && this.minimumTime <= actual.Updated
                     && actual.Updated <= DateTimeOffset.Now
-                    && actual.Links.Contains(
-                        AtomEventStream
-                            .CreateSelfLinkFrom(actual.Id)
-                            .WithRel(this.idRel))
                     && object.Equals(this.expectedEvent, actual.Content.Item);
             }
 

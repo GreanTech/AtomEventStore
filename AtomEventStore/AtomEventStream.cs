@@ -158,14 +158,14 @@ namespace Grean.AtomEventStore
                     now,
                     new AtomAuthor("Grean"),
                     new XmlAtomContent(@event),
-                    CreateLinksForNewEntry(index, changesetId));
+                    new AtomLink[0]);
 
                 var feed = new AtomFeed(
                     this.id,
                     "Index of event stream " + (Guid)this.id,
                     now,
                     new AtomAuthor("Grean"),
-                    new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) }.Concat(index.Entries),
+                    new[] { entry }.Concat(index.Entries),
                     index.Links);
 
                 if (feed.Entries.Count() > this.pageSize)
@@ -197,23 +197,6 @@ namespace Grean.AtomEventStore
                 new Uri(((Guid)this.id).ToString(), UriKind.Relative);
             using (var r = this.storage.CreateFeedReaderFor(indexAddress))
                 return AtomFeed.ReadFrom(r);
-        }
-
-        private static IEnumerable<AtomLink> CreateLinksForNewEntry(
-            AtomFeed index,
-            Guid changesetId)
-        {
-            return (from e in index.Entries
-                    from l in e.Links
-                    where l.IsViaLink
-                    select l.WithRel("previous"))
-                    .Take(1)
-                    .Concat(new[] { AtomEventStream.CreateSelfLinkFrom(changesetId) });
-        }
-
-        private static AtomLink ChangeRelFromSelfToVia(AtomLink link)
-        {
-            return link.IsSelfLink ? link.ToViaLink() : link;
         }
 
         /// <summary>
