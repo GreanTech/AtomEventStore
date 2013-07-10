@@ -18,25 +18,6 @@ namespace Grean.AtomEventStore.AzureBlob
             this.container = container;
         }
 
-        public XmlReader CreateEntryReaderFor(Uri href)
-        {
-            var blobRef = this.CreateBlobReference(href);
-            return XmlReader.Create(
-                blobRef.OpenRead(),
-                new XmlReaderSettings { CloseInput = true });
-        }
-
-        public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
-        {
-            if (atomEntry == null)
-                throw new ArgumentNullException("atomEntry");
-
-            var blobRef = this.CreateBlobReference(atomEntry.Links);            
-            return XmlWriter.Create(
-                blobRef.OpenWrite(),
-                new XmlWriterSettings { CloseOutput = true });
-        }
-
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             var blobRef = this.CreateBlobReference(href);

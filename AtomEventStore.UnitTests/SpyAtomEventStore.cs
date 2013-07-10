@@ -23,18 +23,6 @@ namespace Grean.AtomEventStore.UnitTests
             get { return this.observedArguments; }
         }
 
-        public XmlReader CreateEntryReaderFor(Uri href)
-        {
-            this.observedArguments.Add(href);
-            return this.store.CreateEntryReaderFor(href);
-        }
-
-        public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
-        {
-            this.observedArguments.Add(atomEntry);
-            return this.store.CreateEntryWriterFor(atomEntry);
-        }
-
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             this.observedArguments.Add(href);

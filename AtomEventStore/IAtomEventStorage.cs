@@ -30,61 +30,6 @@ namespace Grean.AtomEventStore
     public interface IAtomEventStorage
     {
         /// <summary>
-        /// Creates an <see cref="XmlReader" /> for reading an Atom entry from
-        /// the provided <see cref="Uri" />.
-        /// </summary>
-        /// <param name="href">
-        /// The relative <see cref="Uri" /> of the Atom entry to read.
-        /// </param>
-        /// <returns>
-        /// An <see cref="XmlReader" /> over the Atom entry identified by
-        /// <paramref name="href" />.
-        /// </returns>
-        /// <remarks>
-        /// <para>
-        /// <strong>Note to implementers:</strong>
-        /// </para>
-        /// <para>
-        /// If no entry can be found for <paramref name="href" />, the method
-        /// must throw an appropriate exception. Returning
-        /// <see langword="null" /> is considered an incorrect implementation.
-        /// </para>
-        /// </remarks>
-        XmlReader CreateEntryReaderFor(Uri href);
-
-        /// <summary>
-        /// Creates an <see cref="XmlWriter" /> for writing the provided
-        /// <see cref="AtomEntry" />.
-        /// </summary>
-        /// <param name="atomEntry">The Atom entry to write.</param>
-        /// <returns>
-        /// An <see cref="XmlWriter" /> over the Atom entry provided by
-        /// <paramref name="atomEntry" />.
-        /// </returns>
-        /// <remarks>
-        /// <para>
-        /// <strong>Note to implementers:</strong>
-        /// </para>
-        /// <para>
-        /// The implementation is free to choose an appropriate naming or
-        /// identification scheme that fits the underlying persistence
-        /// technology. However, it must be able to find the written Atom entry
-        /// when a client subsequently invokes
-        /// <see cref="CreateEntryReaderFor" />.
-        /// </para>
-        /// <para>
-        /// When the CreateEntryWriterFor method is invoked,
-        /// <paramref name="atomEntry" /> contains at least a 'self' link
-        /// (identified by <see cref="AtomLink.IsSelfLink" />) identifying the
-        /// Atom entry. The <see cref="AtomLink.Href" /> value of this link is
-        /// the value used when CreateEntryReaderFor is subsequently invoked to
-        /// read the Atom entry. In other words, this is the corrolation ID,
-        /// so a naming or identification scheme must take this into account.
-        /// </para>
-        /// </remarks>
-        XmlWriter CreateEntryWriterFor(AtomEntry atomEntry);
-
-        /// <summary>
         /// Creates an <see cref="XmlReader" /> for reading an Atom feed from
         /// the provided <see cref="Uri" />.
         /// </summary>
