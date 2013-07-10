@@ -35,12 +35,10 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void PageSizeIsCorrect(
-            [Frozen]int expected,
-            AtomEventStream<TestEventX> sut)
+        public void Test(Generator<AtomEventStream<TestEventX>> g)
         {
-            int actual = sut.PageSize;
-            Assert.Equal(expected, actual);
+            var pageSizes = g.Select(s => s.PageSize).Take(256);
+            Assert.NotEmpty(pageSizes.Where(i => i != 1));
         }
 
         [Theory, AutoAtomData]
