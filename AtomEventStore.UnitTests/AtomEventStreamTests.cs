@@ -361,39 +361,6 @@ namespace Grean.AtomEventStore.UnitTests
                 previousPage.Links.Count(AtomEventStream.IsPreviousFeedLink));
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyLinksSecondChangesetToFirst(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomEventStream<TestEventX> sut,
-            TestEventX event1,
-            TestEventX event2)
-        {
-            // Fixture setup
-
-            // Exercise system
-            sut.AppendAsync(event1).Wait();
-            sut.AppendAsync(event2).Wait();
-
-            // Verify outcome
-            var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
-            var writtenEntries = storage.Entries.Select(AtomEntry.Parse);
-
-            var headLink = writtenFeed
-                .Entries.First()
-                .Links.FirstOrDefault(l => l.IsViaLink);
-            Assert.NotNull(headLink);
-            var head = writtenEntries.Single(
-                e => e.Links.Any(l => headLink.ToSelfLink().Equals(l)));
-            var previousLink = head.Links.SingleOrDefault(l => l.Rel == "previous");
-            Assert.NotNull(previousLink);
-            var previous = writtenEntries.Single(
-                e => e.Links.Any(l => previousLink.ToSelfLink().Equals(l)));
-            Assert.False(
-                previous.Links.Any(l => l.Rel == "previous"),
-                "First entry can't have a previous link.");
-            // Teardown
-        }
-
         private class AtomFeedLikeness
         {
             private readonly DateTimeOffset minimumTime;
