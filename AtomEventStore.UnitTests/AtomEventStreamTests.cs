@@ -10,6 +10,7 @@ using Xunit;
 using Moq;
 using System.Xml;
 using System.IO;
+using Ploeh.AutoFixture;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -121,6 +122,27 @@ namespace Grean.AtomEventStore.UnitTests
                 expectedEntries.SetEquals(writtenEntries),
                 "Expected entries must match actual entries.");
             // Teardown
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncPageSizeEventsSavesAllEntriesInIndex(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
+            var expectedFeed = new AtomFeedLikeness(
+                before, 
+                sut.Id,
+                events.AsEnumerable().Reverse().ToArray());
+            Assert.True(
+                expectedFeed.Equals(writtenFeed),
+                "Expected feed must match actual feed.");
         }
 
         [Theory, AutoAtomData]
