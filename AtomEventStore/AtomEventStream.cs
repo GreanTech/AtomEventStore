@@ -186,8 +186,6 @@ namespace Grean.AtomEventStore
                         .WithLinks(feed.Links.Where(l => !AtomEventStream.IsPreviousFeedLink(l)).Concat(new[] { AtomEventStream.CreatePreviousLinkFrom(previousFeedId) }));
                 }
 
-                using (var w = this.storage.CreateEntryWriterFor(entry))
-                    entry.WriteTo(w);
                 using (var w = this.storage.CreateFeedWriterFor(feed))
                     feed.WriteTo(w);
             });
