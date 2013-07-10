@@ -146,6 +146,29 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            var expectedIndex = new AtomFeedLikeness(
+                before,
+                sut.Id,
+                events.AsEnumerable().Reverse().First());
+            Assert.True(
+                expectedIndex.Equals(writtenIndex),
+                "Expected feed must match actual feed.");
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyLinksSecondChangesetToFirst(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,

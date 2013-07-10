@@ -168,6 +168,9 @@ namespace Grean.AtomEventStore
                     new[] { entry.WithLinks(entry.Links.Select(ChangeRelFromSelfToVia)) }.Concat(index.Entries),
                     new[] { CreateSelfLinkFrom(this.id) });
 
+                if (feed.Entries.Count() > this.pageSize)
+                    feed = feed.WithEntries(feed.Entries.Take(1));
+
                 using (var w = this.storage.CreateEntryWriterFor(entry))
                     entry.WriteTo(w);
                 using (var w = this.storage.CreateFeedWriterFor(feed))
