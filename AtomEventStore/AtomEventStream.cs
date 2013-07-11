@@ -325,10 +325,12 @@ namespace Grean.AtomEventStore
             var page = this.ReadIndex();
             while (page != null)
             {
+                var t = Task.Factory.StartNew(() => this.GetPreviousPage(page));
+
                 foreach (var entry in page.Entries)
                     yield return Cast(entry.Content.Item);
 
-                page = this.GetPreviousPage(page);
+                page = t.Result;
             }
         }
 
