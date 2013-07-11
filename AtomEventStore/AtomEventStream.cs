@@ -70,6 +70,10 @@ namespace Grean.AtomEventStore
         /// <param name="storage">
         /// The underlying storage mechanism to use.
         /// </param>
+        /// <param name="pageSize">
+        /// The maxkum page size; that is: the maximum number of instances of
+        /// T stored in a single Atom feed page.
+        /// </param>
         /// <remarks>
         /// <para>
         /// The <paramref name="id" /> is the ID of a single event stream. Each
@@ -275,7 +279,7 @@ namespace Grean.AtomEventStore
         /// The id of the event stream, as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
         public UuidIri Id
         {
             get { return this.id; }
@@ -288,7 +292,7 @@ namespace Grean.AtomEventStore
         /// The underlying storage mechanism, as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
         public IAtomEventStorage Storage
         {
             get { return this.storage; }
@@ -299,10 +303,11 @@ namespace Grean.AtomEventStore
         /// </summary>
         /// <value>
         /// The maximum page size, measured in numbers of entries per Atom feed
-        /// page.
+        /// page. This value is supplied via the constructor.
         /// </value>
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
         /// <seealso cref="AtomEventStream{T}" />
-        /// <seealso cref="AppendAsync{T}" />
+        /// <seealso cref="AppendAsync(T)" />
         public int PageSize
         {
             get { return this.pageSize; }
