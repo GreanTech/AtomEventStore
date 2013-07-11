@@ -29,9 +29,13 @@ namespace Grean.AtomEventStore
     /// <para>
     /// When you store an event with <see cref="AppendAsync" /> or
     /// <see cref="OnNext" />, AtomEventStream creates a new Atom entry with
-    /// that event. It uses a "previous" link to point to the previous Atom
-    /// entry, and it also updates an Atom feed, which contains the index of
-    /// the event stream.
+    /// that event, and adds it to an Atom feed, which contains the index of
+    /// the event stream. When the number of entries in the index exceeds the
+    /// configured <see cref="PageSize" />, the oldest entries are moved to a
+    /// new Atom feed page, and a "previous" link is added to the index page.
+    /// If a previous page was already present, the new 'previous' page itself
+    /// gets a link to its previous page, thus establishing a Linked List of
+    /// Atom feed pages.
     /// </para>
     /// <para>
     /// When you read the event stream, the AtomEventStream starts at the index
@@ -122,24 +126,26 @@ namespace Grean.AtomEventStore
         /// before the Task completes successfully.
         /// </para>
         /// <para>
-        /// When updating the underlying Storage, the method first writes a new
-        /// Atom entry representing the serialized event, using
+        /// When updating the underlying Storage, the method typically only
+        /// updates the index feed, using
         /// <see cref="IAtomEventStorage.CreateFeedWriterFor(AtomFeed)" />.
-        /// Subsequently, it updates the index of the event stream, using
-        /// <see cref="IAtomEventStorage.CreateEntryWriterFor(AtomEntry)" />.
-        /// Since these two operations are not guaranteed to happen with an
-        /// ACID transaction, it's possible that the Atom entry is saved, but
-        /// that the update of the index fails. If the underlying storage
-        /// throws an exception at that point, that exception will bubble up to
-        /// the caller of the AppendAsync method. It's up to the caller to
-        /// retry the operation.
+        /// However, when the number of entries in the index surpasses
+        /// <see cref="PageSize" />, the oldest entries are moved to a new,
+        /// "previous" feed page. This page is also written using the
+        /// CreateFeedWriterFor method, and only after this succeeds is the
+        /// index updated. Since these two operations are not guaranteed to
+        /// happen within an ACID transaction, it's possible that the
+        /// "previous" page is saved, but that the update of the index fails.
+        /// If the underlying storage throws an exception at that point, that
+        /// exception will bubble up to the caller of the AppendAsync method.
+        /// It's up to the caller to retry the operation.
         /// </para>
         /// <para>
-        /// However, in that situation, an orphaned Atom entry is likely to
+        /// However, in that situation, an orphaned Atom feed page is likely to
         /// have been left in the underlying storage. This doesn't affect
         /// consistency of the system, but may take up unnecessary disk space.
         /// If this is the case, a separate clean-up task should find and
-        /// delete orphaned entries.
+        /// delete orphaned pages.
         /// </para>
         /// </remarks>
         public Task AppendAsync(T @event)
@@ -288,6 +294,15 @@ namespace Grean.AtomEventStore
             get { return this.storage; }
         }
 
+        /// <summary>
+        /// Gets the maximum page size.
+        /// </summary>
+        /// <value>
+        /// The maximum page size, measured in numbers of entries per Atom feed
+        /// page.
+        /// </value>
+        /// <seealso cref="AtomEventStream{T}" />
+        /// <seealso cref="AppendAsync{T}" />
         public int PageSize
         {
             get { return this.pageSize; }
@@ -310,13 +325,13 @@ namespace Grean.AtomEventStore
         /// written.
         /// </para>
         /// <para>
-        /// Each time you move to the next entry, the underlying
-        /// <see cref="Storage" /> mechanism is invoked in order to read the
-        /// previous event. If the storage mechanism involves I/O latency,
-        /// enumeration may be a slow operation when there are many events.
-        /// However, since events are immutable, they can be cached. Additional
-        /// optimizations, such as snapshots, are also an option. Such
-        /// optimizations can be implemented as Decorators of
+        /// When you move to the next entry, the underlying
+        /// <see cref="Storage" /> mechanism may be invoked in order to read
+        /// the previous page of events. If the storage mechanism involves I/O
+        /// latency, enumeration may be a slow operation when there are many
+        /// events. However, since events are immutable, they can be cached.
+        /// Additional optimizations, such as snapshots, are also an option. 
+        /// Such optimizations can be implemented as Decorators of
         /// <see cref="IEnumerable{T}" />.
         /// </para>
         /// </remarks>
@@ -430,7 +445,7 @@ namespace Grean.AtomEventStore
         /// </returns>
         /// <remarks>
         /// <para>
-        /// While the CreateSelfLinkFrom method smell of Feature Envy, the
+        /// While the CreateSelfLinkFrom method smells of Feature Envy, the
         /// reason this isn't a method on <see cref="AtomLink" /> is that this
         /// particular definition of how to create a 'self' link from a
         /// <see cref="Guid" /> is particular to how it's being used by
@@ -454,12 +469,58 @@ namespace Grean.AtomEventStore
                 new Uri(id.ToString(), UriKind.Relative));
         }
 
+        /// <summary>
+        /// Creates a 'previous' link from a <see cref="Guid" />, for explicit 
+        /// use with <see cref="AtomEventStream{T}" />.
+        /// </summary>
+        /// <param name="id">
+        /// The id from which the 'previous' link should be generated.
+        /// </param>
+        /// <returns>
+        /// A new <see cref="AtomLink" /> instance with the appropriate
+        /// <see cref="AtomLink.Href" /> value based on <paramref name="id"/>,
+        /// and a <see cref="AtomLink.Rel" /> value of "previous".
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// While the CreatePreviousLinkFrom method smells of Feature Envy, the
+        /// reason this isn't a method on <see cref="AtomLink" /> is that this
+        /// particular definition of how to create a 'previous' link from a
+        /// <see cref="Guid" /> is particular to how it's being used by
+        /// <see cref="AtomEventStream{T}" />, and not general in all contexts.
+        /// </para>
+        /// <para>
+        /// This is also the reason that this method isn't an extension method
+        /// on Guid. It's not the only way to create a 'previous' link from a
+        /// Guid, but it's the appropriate way to do it in the context of an
+        /// AtomEventStream&lt;T&gt;.
+        /// </para>
+        /// <para>
+        /// The reason that this isn't a static helper method on 
+        /// AtomEventStream&lt;T&gt; is that the generic type argument isn't
+        /// used.
+        /// </para>
+        /// </remarks>
         public static AtomLink CreatePreviousLinkFrom(Guid id)
         {
             return AtomLink.CreatePreviousLink(
                 new Uri(id.ToString(), UriKind.Relative));
         }
 
+        /// <summary>
+        /// Determines whether a link is a 'previous' link, as used by
+        /// AtomEventStream&lt;T&gt;.
+        /// </summary>
+        /// <param name="link">The link to examine.</param>
+        /// <returns>
+        /// <see langword="true" /> if <paramref name="link" /> is a 'previous'
+        /// link with a proper value for use by
+        /// <see cref="AtomEventStream{T}" />; otherwise,
+        /// <see langword="false" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// link is null
+        /// </exception>
         public static bool IsPreviousFeedLink(AtomLink link)
         {
             if (link == null)
