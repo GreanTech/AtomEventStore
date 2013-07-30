@@ -414,9 +414,14 @@ namespace Grean.AtomEventStore
                     return null;
                 return assembly.GetExportedTypes()
                     .Where(t =>
-                        (t.Name == typeName && !(t.IsAbstract && t.IsSealed)) ||
+                        (t.Name == typeName && !IsStatic(t)) ||
                         t.Name == typeName + "`1")
                     .Single();
+            }
+
+            private static bool IsStatic(Type type)
+            {
+                return type.IsAbstract && type.IsSealed;
             }
 
             public override string ToString()
