@@ -10,6 +10,7 @@ using Xunit;
 using Moq;
 using System.Xml;
 using System.IO;
+using Ploeh.AutoFixture;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -34,6 +35,13 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void Test(Generator<AtomEventStream<TestEventX>> g)
+        {
+            var pageSizes = g.Select(s => s.PageSize).Take(256);
+            Assert.NotEmpty(pageSizes.Where(i => i != 1));
+        }
+
+        [Theory, AutoAtomData]
         public void CreateSelfLinkFromReturnsCorrectResult(
             UuidIri id)
         {
@@ -47,115 +55,326 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyStoresFeedAndEntry(
+        public void CreatePreviousLinkFromReturnsCorrectResult(
+            UuidIri id)
+        {
+            AtomLink actual = AtomEventStream.CreatePreviousLinkFrom(id);
+
+            var expected = AtomLink.CreatePreviousLink(
+                new Uri(
+                    ((Guid)id).ToString(),
+                    UriKind.Relative));
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsTrueForPreviousFeedLink(
+            UuidIri id)
+        {
+            var link = AtomEventStream.CreatePreviousLinkFrom(id);
+            bool actual = AtomEventStream.IsPreviousFeedLink(link);
+            Assert.True(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsFalsForLinkWithIncorrectRel(
+            UuidIri id)
+        {
+            var link = AtomEventStream.CreateSelfLinkFrom(id);
+            var actual = AtomEventStream.IsPreviousFeedLink(link);
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsFalseForLinkWithAbsoluteUri(
+            Uri uri)
+        {
+            Assert.True(uri.IsAbsoluteUri);
+            var link = AtomLink.CreatePreviousLink(uri);
+
+            var actual = AtomEventStream.IsPreviousFeedLink(link);
+
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousFeedLinkReturnsFalseForLinkNotUuid(
+            int number)
+        {
+            var uri = new Uri(number.ToString(), UriKind.Relative);
+            var link = AtomLink.CreatePreviousLink(uri);
+
+            var actual = AtomEventStream.IsPreviousFeedLink(link);
+
+            Assert.False(actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncCorrectlyStoresFeed(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
             TestEventX expectedEvent)
         {
-            // Fixture setup
             var before = DateTimeOffset.Now;
 
-            // Exercise system
             sut.AppendAsync(expectedEvent).Wait();
 
-            // Verify outcome
             var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
             var expectedFeed = new AtomFeedLikeness(before, sut.Id, expectedEvent);
             Assert.True(
                 expectedFeed.Equals(writtenFeed),
                 "Expected feed must match actual feed.");
-
-            var writtenEntry = storage.Entries.Select(AtomEntry.Parse).Single();
-            var expectedEntry = new AtomEntryLikeness(
-                before,
-                expectedEvent,
-                "self");
-            Assert.True(
-                expectedEntry.Equals(writtenEntry),
-                "Expected entry must match actual entry.");
-
-            // Teardown
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyStoresFeedAndEntries(
+        public void AppendAsyncCorrectlyStoresFeeds(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
             TestEventX event1,
             TestEventX event2)
         {
-            // Fixture setup
             var before = DateTimeOffset.Now;
 
-            // Exercise system
             sut.AppendAsync(event1).Wait();
             sut.AppendAsync(event2).Wait();
 
-            // Verify outcome
             var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
-            var writtenEntries = storage.Entries.Select(AtomEntry.Parse);
-
-            var expectedFeed = new AtomFeedLikeness(before, sut.Id, event2);
-            var expectedEntries = new HashSet<object>(
-                new[]
-                {
-                    new AtomEntryLikeness(before, event1, "self"),
-                    new AtomEntryLikeness(before, event2, "self")
-                },
-                new HashFreeEqualityComparer<object>());
-
-            Assert.True(expectedFeed.Equals(writtenFeed));
-            Assert.True(expectedEntries.SetEquals(writtenEntries));
-            // Teardown
+            var expectedFeed =
+                new AtomFeedLikeness(before, sut.Id, event2, event1);
+            Assert.True(
+                expectedFeed.Equals(writtenFeed),
+                "Expected feed must match actual feed.");
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyLinksSecondChangesetToFirst(
+        public void AppendAsyncPageSizeEventsSavesAllEntriesInIndex(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
             AtomEventStream<TestEventX> sut,
-            TestEventX event1,
-            TestEventX event2)
+            Generator<TestEventX> eventGenerator)
         {
-            // Fixture setup
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize).ToList();
 
-            // Exercise system
-            sut.AppendAsync(event1).Wait();
-            sut.AppendAsync(event2).Wait();
+            events.ForEach(e => sut.AppendAsync(e).Wait());
 
-            // Verify outcome
             var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
-            var writtenEntries = storage.Entries.Select(AtomEntry.Parse);
+            var expectedFeed = new AtomFeedLikeness(
+                before,
+                sut.Id,
+                events.AsEnumerable().Reverse().ToArray());
+            Assert.True(
+                expectedFeed.Equals(writtenFeed),
+                "Expected feed must match actual feed.");
+        }
 
-            var headLink = writtenFeed
-                .Entries.First()
-                .Links.FirstOrDefault(l => l.IsViaLink);
-            Assert.NotNull(headLink);
-            var head = writtenEntries.Single(
-                e => e.Links.Any(l => headLink.ToSelfLink().Equals(l)));
-            var previousLink = head.Links.SingleOrDefault(l => l.Rel == "previous");
-            Assert.NotNull(previousLink);
-            var previous = writtenEntries.Single(
-                e => e.Links.Any(l => previousLink.ToSelfLink().Equals(l)));
-            Assert.False(
-                previous.Links.Any(l => l.Rel == "previous"),
-                "First entry can't have a previous link.");
-            // Teardown
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            var expectedIndex = new AtomFeedLikeness(
+                before,
+                sut.Id,
+                events.AsEnumerable().Reverse().First());
+            Assert.True(
+                expectedIndex.Equals(writtenIndex),
+                "Expected feed must match actual feed.");
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsAddsLinkToPreviousPageToIndex(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            Assert.Equal(
+                1,
+                writtenIndex.Links.Count(AtomEventStream.IsPreviousFeedLink));
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncLessThanPageSizeEventsDoesNotAddLinkToPreviousPageToIndex(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            Assert.Equal(
+                0,
+                writtenIndex.Links.Count(AtomEventStream.IsPreviousFeedLink));
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsStoresPreviousPage(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            UuidIri previousPageId = 
+                Guid.Parse(
+                    writtenIndex.Links
+                        .Single(AtomEventStream.IsPreviousFeedLink)
+                        .Href.ToString());
+            Assert.True(
+                storage.Feeds
+                    .Select(AtomFeed.Parse)
+                    .Any(f => f.Id == previousPageId),
+                "The previous feed should have been stored.");
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsStoresOldestEventsInPreviousPage(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            UuidIri previousPageId =
+                Guid.Parse(
+                    writtenIndex.Links
+                        .Single(AtomEventStream.IsPreviousFeedLink)
+                        .Href.ToString());
+            var actualPreviousPage = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == previousPageId);
+            var expectedPreviousPage = new AtomFeedLikeness(
+                before,
+                previousPageId,
+                events.AsEnumerable().Reverse().Skip(1).ToArray());
+            Assert.True(
+                expectedPreviousPage.Equals(actualPreviousPage),
+                "Expected feed must match actual feed.");
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncExactlyTwicePageSizeEventsStoresTwoFeedPages(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize * 2).ToList();
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+            Assert.Equal(2, storage.Feeds.Count());
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanTwicePageSizeEventsCreatesThreeFeedPages(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+            Assert.Equal(3, storage.Feeds.Count());
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanTwicePageSizeEventAddsPreviousLinkToMiddlePage(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            UuidIri previousPageId =
+                Guid.Parse(
+                    writtenIndex.Links
+                        .Single(AtomEventStream.IsPreviousFeedLink)
+                        .Href.ToString());
+            var middlePage = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == previousPageId);
+            Assert.Equal(
+                1,
+                middlePage.Links.Count(AtomEventStream.IsPreviousFeedLink));
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncTwicePageSizeEventDoesNotAddPreviousLinkToPreviousPage(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize * 2).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIndex = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == sut.Id);
+            UuidIri previousPageId =
+                Guid.Parse(
+                    writtenIndex.Links
+                        .Single(AtomEventStream.IsPreviousFeedLink)
+                        .Href.ToString());
+            var previousPage = storage.Feeds
+                .Select(AtomFeed.Parse)
+                .Single(f => f.Id == previousPageId);
+            Assert.Equal(
+                0,
+                previousPage.Links.Count(AtomEventStream.IsPreviousFeedLink));
         }
 
         private class AtomFeedLikeness
         {
             private readonly DateTimeOffset minimumTime;
             private readonly UuidIri expectedId;
-            private readonly object expectedEvent;
+            private readonly object[] expectedEvents;
 
             public AtomFeedLikeness(
                 DateTimeOffset minimumTime,
                 UuidIri expectedId,
-                object expectedEvent)
+                params object[] expectedEvents)
             {
                 this.minimumTime = minimumTime;
                 this.expectedId = expectedId;
-                this.expectedEvent = expectedEvent;
+                this.expectedEvents = expectedEvents;
             }
 
             public override bool Equals(object obj)
@@ -164,16 +383,15 @@ namespace Grean.AtomEventStore.UnitTests
                 if (actual == null)
                     return base.Equals(obj);
 
-                var expectedEntry = new AtomEntryLikeness(
-                    this.minimumTime,
-                    this.expectedEvent,
-                    "via");
+                var expectedEntries = this.expectedEvents
+                    .Select(e => new AtomEntryLikeness(this.minimumTime, e))
+                    .Cast<object>();
 
                 return object.Equals(this.expectedId, actual.Id)
-                    && object.Equals("Index of event stream " + (Guid)this.expectedId, actual.Title)
+                    && (object.Equals("Index of event stream " + (Guid)this.expectedId, actual.Title) || "Partial event stream" == actual.Title)
                     && this.minimumTime <= actual.Updated
                     && actual.Updated <= DateTimeOffset.Now
-                    && object.Equals(expectedEntry, actual.Entries.Single())
+                    && expectedEntries.SequenceEqual(actual.Entries)
                     && actual.Links.Contains(
                         AtomEventStream.CreateSelfLinkFrom(this.expectedId));
             }
@@ -188,16 +406,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             private readonly DateTimeOffset minimumTime;
             private readonly object expectedEvent;
-            private readonly string idRel;
 
             public AtomEntryLikeness(
                 DateTimeOffset minimumTime,
-                object expectedEvent,
-                string idRel)
+                object expectedEvent)
             {
                 this.minimumTime = minimumTime;
                 this.expectedEvent = expectedEvent;
-                this.idRel = idRel;
             }
 
             public override bool Equals(object obj)
@@ -212,10 +427,6 @@ namespace Grean.AtomEventStore.UnitTests
                     && actual.Published <= DateTimeOffset.Now
                     && this.minimumTime <= actual.Updated
                     && actual.Updated <= DateTimeOffset.Now
-                    && actual.Links.Contains(
-                        AtomEventStream
-                            .CreateSelfLinkFrom(actual.Id)
-                            .WithRel(this.idRel))
                     && object.Equals(this.expectedEvent, actual.Content.Item);
             }
 
@@ -259,6 +470,25 @@ namespace Grean.AtomEventStore.UnitTests
             AtomEventStream<TestEventX> sut,
             List<TestEventX> events)
         {
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var expected = events.AsEnumerable().Reverse();
+            Assert.True(
+                expected.SequenceEqual(sut),
+                "Events should be yielded in a FILO order");
+            Assert.True(
+                expected.Cast<object>().SequenceEqual(sut.OfType<object>()),
+                "Events should be yielded in a FILO order");
+        }
+
+        [Theory, AutoAtomData]
+        public void SutYieldsPagedEvents(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<TestEventX> sut,
+            Generator<TestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var expected = events.AsEnumerable().Reverse();
@@ -332,38 +562,18 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncWritesEntryBeforeFeed(
-            [Frozen]Mock<IAtomEventStorage> storageMock,
+        public void AppendAsyncWritesPreviousPageBeforeIndex(
+            [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
             AtomEventStream<TestEventX> sut,
-            TestEventX tex,
-            AtomFeed initialFeed)
+            Generator<TestEventX> eventGenerator)
         {
-            // Fixture setup
-            var stream = new MemoryStream();
-            using (var xw = XmlWriter.Create(stream))
-                initialFeed.WriteTo(xw);
-            stream.Position = 0;
-            storageMock
-                .Setup(s => s.CreateFeedReaderFor(It.IsAny<Uri>()))
-                .Returns(XmlReader.Create(stream));
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+            
+            events.ForEach(e => sut.AppendAsync(e).Wait());
 
-            var actual = new List<int>();
-            storageMock
-                .Setup(s => s.CreateEntryWriterFor(It.IsAny<AtomEntry>()))
-                .Callback(() => actual.Add(1))
-                .Returns(XmlWriter.Create(new StringBuilder()));
-            storageMock
-                .Setup(s => s.CreateFeedWriterFor(It.IsAny<AtomFeed>()))
-                .Callback(() => actual.Add(2))
-                .Returns(XmlWriter.Create(new StringBuilder()));
-
-            // Exercise system
-            sut.AppendAsync(tex).Wait();
-
-            // Verify outcome
-            var expected = Enumerable.Range(1, 2);
-            Assert.Equal(expected, actual);
-            // Teardown
-        }
+            var feed = Assert.IsAssignableFrom<AtomFeed>(
+                spyStore.ObservedArguments.Last());
+            Assert.Equal(sut.Id, feed.Id);
+        }        
     }
 }

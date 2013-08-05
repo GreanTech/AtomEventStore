@@ -12,80 +12,6 @@ namespace Grean.AtomEventStore.UnitTests
     public class AtomEventsInMemoryTests
     {
         [Theory, AutoAtomData]
-        public void ClientCanReadWrittenEntry(
-            AtomEventsInMemory sut,
-            AtomEntryBuilder<TestEventX> entry)
-        {
-            var expected = entry.Build();
-
-            using (var w = sut.CreateEntryWriterFor(expected))
-                expected.WriteTo(w);
-            using (var r = sut.CreateEntryReaderFor(expected.Locate()))
-            {
-                var actual = AtomEntry.ReadFrom(r);
-
-                Assert.Equal(expected, actual, new AtomEntryComparer());
-            }
-        }
-
-        [Theory, AutoAtomData]
-        public void ClientCanReadFirstEntry(
-            AtomEventsInMemory sut,
-            AtomEntryBuilder<TestEventX> entry1,
-            AtomEntryBuilder<TestEventY> entry2)
-        {
-            var expected = entry1.Build();
-            var other = entry2.Build();
-
-            using (var w = sut.CreateEntryWriterFor(expected))
-                expected.WriteTo(w);
-            using (var w = sut.CreateEntryWriterFor(other))
-                other.WriteTo(w);
-
-            using (var r = sut.CreateEntryReaderFor(expected.Locate()))
-            {
-                var actual = AtomEntry.ReadFrom(r);
-
-                Assert.Equal(expected, actual, new AtomEntryComparer());
-            }
-        }
-
-        [Theory, AutoAtomData]
-        public void ClientCanReadSecondEntry(
-            AtomEventsInMemory sut,
-            AtomEntryBuilder<TestEventX> entry1,
-            AtomEntryBuilder<TestEventY> entry2)
-        {
-            var other = entry1.Build();
-            var expected = entry2.Build();
-
-            using (var w = sut.CreateEntryWriterFor(other))
-                other.WriteTo(w);
-            using (var w = sut.CreateEntryWriterFor(expected))
-                expected.WriteTo(w);
-
-            using (var r = sut.CreateEntryReaderFor(expected.Locate()))
-            {
-                var actual = AtomEntry.ReadFrom(r);
-
-                Assert.Equal(expected, actual, new AtomEntryComparer());
-            }
-        }
-
-        [Theory, AutoAtomData]
-        public void ClientCannotRepeatedWriteSameEntry(
-            AtomEventsInMemory sut,
-            AtomEntryBuilder<TestEventX> entryBuilder)
-        {
-            var entry = entryBuilder.Build();
-            using (var w = sut.CreateEntryWriterFor(entry))
-                entry.WriteTo(w);
-
-            Assert.Throws<InvalidOperationException>(
-                () => sut.CreateEntryWriterFor(entry));
-        }
-
-        [Theory, AutoAtomData]
         public void ClientCanReadWrittenFeed(
             AtomEventsInMemory sut,
             AtomFeedBuilder<TestEventX> feedBuilder)
@@ -207,23 +133,6 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.True(
                 expected.SetEquals(sut.Feeds),
                 "Written feeds should be enumerated.");
-        }
-
-        [Theory, AutoAtomData]
-        public void EntriesReturnWrittenEntries(
-            AtomEventsInMemory sut,
-            IEnumerable<AtomEntryBuilder<TestEventX>> entryBuilders)
-        {
-            var entries = entryBuilders.Select(b => b.Build());
-            foreach (var e in entries)
-                using (var w = sut.CreateEntryWriterFor(e))
-                    e.WriteTo(w);
-
-            var expected = new HashSet<string>(
-                entries.Select(w => w.ToXmlString()));
-            Assert.True(
-                expected.SetEquals(sut.Entries),
-                "Written entries should be enumerated.");
         }
     }
 }

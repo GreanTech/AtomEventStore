@@ -19,24 +19,6 @@ namespace Grean.AtomEventStore
             this.directory = directory;
         }
 
-        public XmlReader CreateEntryReaderFor(Uri href)
-        {
-            if (href == null)
-                throw new ArgumentNullException("href");
-
-            var fileName = this.CreateFileName(href);
-            return XmlReader.Create(fileName);
-        }
-
-        public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
-        {
-            if (atomEntry == null)
-                throw new ArgumentNullException("atomEntry");
-
-            var fileName = this.CreateFileName(atomEntry.Links);
-            return XmlWriter.Create(fileName);
-        }
-
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             if (href == null)

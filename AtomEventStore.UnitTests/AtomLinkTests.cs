@@ -241,5 +241,83 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = sut.WithRel("via");
             Assert.Equal(expected, actual);
         }
+
+        [Theory, AutoAtomData]
+        public void CreatePreviousLinkReturnsCorrectResult(
+            AtomLink link)
+        {
+            AtomLink actual = AtomLink.CreatePreviousLink(link.Href);
+
+            var expected = link.WithRel("previous");
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousLinkReturnsTrueForPreviousLink(
+            Uri href)
+        {
+            bool actual = AtomLink.CreatePreviousLink(href).IsPreviousLink;
+            Assert.True(actual, "Should be previous link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void IsPreviousLinkReturnsFalsForNonPreviousLink(
+            AtomLink sut)
+        {
+            Assert.NotEqual("previous", sut.Rel);
+            var actual = sut.IsPreviousLink;
+            Assert.False(actual, "Should not be previous link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void ToPreviousLinkReturnsCorrectResult(
+            AtomLink sut)
+        {
+            Assert.NotEqual("previous", sut.Rel);
+
+            AtomLink actual = sut.ToPreviousLink();
+
+            var expected = sut.WithRel("previous");
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void CreateNextLinkReturnsCorrectResult(
+            AtomLink link)
+        {
+            AtomLink actual = AtomLink.CreateNextLink(link.Href);
+
+            var expected = link.WithRel("next");
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void IsNextLinkReturnsTrueForNextLink(
+            Uri href)
+        {
+            bool actual = AtomLink.CreateNextLink(href).IsNextLink;
+            Assert.True(actual, "Should be next link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void IsNextLinkReturnsFalsForNonNextLink(
+            AtomLink sut)
+        {
+            Assert.NotEqual("next", sut.Rel);
+            var actual = sut.IsNextLink;
+            Assert.False(actual, "Should not be next link.");
+        }
+
+        [Theory, AutoAtomData]
+        public void ToNextLinkReturnsCorrectResult(
+            AtomLink sut)
+        {
+            Assert.NotEqual("next", sut.Rel);
+
+            AtomLink actual = sut.ToNextLink();
+
+            var expected = sut.WithRel("next");
+            Assert.Equal(expected, actual);
+        }
     }
 }

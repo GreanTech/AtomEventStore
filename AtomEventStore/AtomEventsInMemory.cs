@@ -19,31 +19,6 @@ namespace Grean.AtomEventStore
             this.entries = new Dictionary<Uri, StringBuilder>();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AtomEntry", Justification = "This is a bug in the Code Analysis rule: http://bit.ly/17M7Jom")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "XmlWriter", Justification = "This is a bug in the Code Analysis rule: http://bit.ly/17M7Jom")]
-        public XmlWriter CreateEntryWriterFor(AtomEntry atomEntry)
-        {
-            if (atomEntry == null)
-                throw new ArgumentNullException("atomEntry");
-
-            var href = GetHrefFrom(atomEntry.Links);
-            if (this.entries.ContainsKey(href))
-                throw new InvalidOperationException(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        "Will not create a new XmlWriter for the supplied AtomEntry, because a an AtomEntry with the ID {0} was already written.",
-                        href.ToString()));
-
-            var sb = new StringBuilder();
-            this.entries.Add(href, sb);
-            return XmlWriter.Create(sb);
-        }
-
-        public XmlReader CreateEntryReaderFor(Uri href)
-        {
-            return CreateReaderOver(this.entries[href].ToString());
-        }
-
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
             if (atomFeed == null)

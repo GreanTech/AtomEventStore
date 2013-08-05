@@ -83,6 +83,7 @@
     <Compile Include="EnvelopeTypeConverter.cs" />
     <Compile Include="ITestEvent.cs" />
     <Compile Include="ITestEventVisitor.cs" />
+    <Compile Include="SpyAtomEventStore.cs" />
     <Compile Include="SubNs\SubSubNs\TestEventS.cs" />
     <Compile Include="TestEventD.cs" />
     <Compile Include="TestEventU.cs" />
