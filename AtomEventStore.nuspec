@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>AtomEventStore</id>
-    <version>0.3.5</version>
+    <version>0.4.0</version>
     <title>Atom Event Store</title>
     <authors>Grean</authors>
     <owners>Grean</owners>
