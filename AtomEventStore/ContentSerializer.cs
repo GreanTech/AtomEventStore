@@ -10,7 +10,7 @@ namespace Grean.AtomEventStore
 {
     internal class ContentSerializer
     {
-        internal void Serialize(XmlWriter xmlWriter, object value)
+        public void Serialize(XmlWriter xmlWriter, object value)
         {
             WriteComplexObject(xmlWriter, value);
         }
