@@ -60,75 +60,9 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
-            WriteComplexObject(xmlWriter, this.item);
+            ContentSerializer.WriteComplexObject(xmlWriter, this.item);
 
             xmlWriter.WriteEndElement();
-        }
-
-        private static void WriteComplexObject(XmlWriter xmlWriter, object value)
-        {
-            var type = value.GetType();
-            var xmlNamespace = Urnify(type.Namespace);
-
-            xmlWriter.WriteStartElement(Xmlify(type), xmlNamespace);
-            foreach (var p in type.GetProperties())
-            {
-                var localName = Xmlify(p.Name);
-                var v = p.GetValue(value);
-
-                xmlWriter.WriteStartElement(localName);
-                WriteValue(xmlWriter, v);
-                xmlWriter.WriteEndElement();
-            }
-
-            var sequence = value as IEnumerable;
-            if (sequence != null)
-            {
-                foreach (var x in sequence)
-                    WriteComplexObject(xmlWriter, x);
-            }
-
-            xmlWriter.WriteEndElement();
-        }
-
-        private static void WriteValue(XmlWriter xmlWriter, object value)
-        {
-            if (value is Guid)
-            {
-                xmlWriter.WriteValue(((UuidIri)((Guid)value)).ToString());
-                return;
-            }
-            if (value is Uri)
-            {
-                xmlWriter.WriteValue(value.ToString());
-                return;
-            }
-            if (value is DateTimeOffset)
-            {
-                xmlWriter.WriteValue(((DateTimeOffset)value).ToString("o"));
-                return;
-            }
-
-            if (IsCustomType(value.GetType()))
-            {
-                WriteComplexObject(xmlWriter, value);
-                return;
-            }
-
-            xmlWriter.WriteValue(value);
-        }
-
-        private static bool IsCustomType(Type type)
-        {
-            return type != typeof(bool)
-                && type != typeof(DateTime)
-                && type != typeof(DateTimeOffset)
-                && type != typeof(decimal)
-                && type != typeof(double)
-                && type != typeof(float)
-                && type != typeof(int)
-                && type != typeof(long)
-                && type != typeof(string);
         }
 
         public static XmlAtomContent Parse(string xml)
@@ -174,7 +108,7 @@ namespace Grean.AtomEventStore
             var ctor = GetMostModestConstructor(itemType);
 
             var namedArguments = (from p in ctor.GetParameters()
-                                  let xpn = Xmlify(p.Name)
+                                  let xpn = ContentSerializer.Xmlify(p.Name)
                                   join x in node.Elements() on xpn equals x.Name.LocalName
                                   select GetObjectFrom(x))
                                  .ToList();
@@ -298,24 +232,9 @@ namespace Grean.AtomEventStore
             return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
         }
 
-        private static string Urnify(string text)
-        {
-            return "urn:" + string.Join(":", text.Split('.').Select(Xmlify));
-        }
-
         private static string UnUrnify(string text)
         {
             return string.Join(".", text.Replace("urn:", "").Split(':').Select(UnXmlify));
-        }
-
-        private static string Xmlify(Type type)
-        {
-            return XmlCasedName.FromType(type).ToString();
-        }
-
-        private static string Xmlify(string text)
-        {
-            return XmlCasedName.FromText(text).ToString();
         }
 
         private static string UnXmlify(string text)
