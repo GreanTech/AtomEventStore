@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    internal class ContentSerializer : IContentSerializer
+    internal class ConventionBasedSerializerOfComplexImmutableClasses : IContentSerializer
     {
         public void Serialize(XmlWriter xmlWriter, object value)
         {

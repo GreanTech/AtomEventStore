@@ -54,7 +54,7 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
-            this.WriteTo(xmlWriter, new ContentSerializer());
+            this.WriteTo(xmlWriter, new ConventionBasedSerializerOfComplexImmutableClasses());
         }
 
         private void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
@@ -113,7 +113,7 @@ namespace Grean.AtomEventStore
             var ctor = GetMostModestConstructor(itemType);
 
             var namedArguments = (from p in ctor.GetParameters()
-                                  let xpn = ContentSerializer.Xmlify(p.Name)
+                                  let xpn = ConventionBasedSerializerOfComplexImmutableClasses.Xmlify(p.Name)
                                   join x in node.Elements() on xpn equals x.Name.LocalName
                                   select GetObjectFrom(x))
                                  .ToList();
