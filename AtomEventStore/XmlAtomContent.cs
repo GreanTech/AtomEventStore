@@ -60,12 +60,12 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
-            this.WriteComplexObject(xmlWriter, this.item);
+            WriteComplexObject(xmlWriter, this.item);
 
             xmlWriter.WriteEndElement();
         }
 
-        private void WriteComplexObject(XmlWriter xmlWriter, object value)
+        private static void WriteComplexObject(XmlWriter xmlWriter, object value)
         {
             var type = value.GetType();
             var xmlNamespace = Urnify(type.Namespace);
@@ -77,7 +77,7 @@ namespace Grean.AtomEventStore
                 var v = p.GetValue(value);
 
                 xmlWriter.WriteStartElement(localName);
-                this.WriteValue(xmlWriter, v);
+                WriteValue(xmlWriter, v);
                 xmlWriter.WriteEndElement();
             }
 
@@ -85,13 +85,13 @@ namespace Grean.AtomEventStore
             if (sequence != null)
             {
                 foreach (var x in sequence)
-                    this.WriteComplexObject(xmlWriter, x);
+                    WriteComplexObject(xmlWriter, x);
             }
 
             xmlWriter.WriteEndElement();
         }
 
-        private void WriteValue(XmlWriter xmlWriter, object value)
+        private static void WriteValue(XmlWriter xmlWriter, object value)
         {
             if (value is Guid)
             {
@@ -111,7 +111,7 @@ namespace Grean.AtomEventStore
 
             if (IsCustomType(value.GetType()))
             {
-                this.WriteComplexObject(xmlWriter, value);
+                WriteComplexObject(xmlWriter, value);
                 return;
             }
 
