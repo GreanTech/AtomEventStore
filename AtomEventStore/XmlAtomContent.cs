@@ -60,7 +60,7 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
-            ContentSerializer.WriteComplexObject(xmlWriter, this.item);
+            new ContentSerializer().WriteComplexObject(xmlWriter, this.item);
 
             xmlWriter.WriteEndElement();
         }

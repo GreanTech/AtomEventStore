@@ -10,7 +10,7 @@ namespace Grean.AtomEventStore
 {
     internal class ContentSerializer
     {
-        internal static void WriteComplexObject(XmlWriter xmlWriter, object value)
+        internal void WriteComplexObject(XmlWriter xmlWriter, object value)
         {
             var type = value.GetType();
             var xmlNamespace = Urnify(type.Namespace);
@@ -22,7 +22,7 @@ namespace Grean.AtomEventStore
                 var v = p.GetValue(value);
 
                 xmlWriter.WriteStartElement(localName);
-                WriteValue(xmlWriter, v);
+                this.WriteValue(xmlWriter, v);
                 xmlWriter.WriteEndElement();
             }
 
@@ -30,13 +30,13 @@ namespace Grean.AtomEventStore
             if (sequence != null)
             {
                 foreach (var x in sequence)
-                    WriteComplexObject(xmlWriter, x);
+                    this.WriteComplexObject(xmlWriter, x);
             }
 
             xmlWriter.WriteEndElement();
         }
 
-        private static void WriteValue(XmlWriter xmlWriter, object value)
+        private void WriteValue(XmlWriter xmlWriter, object value)
         {
             if (value is Guid)
             {
@@ -57,7 +57,7 @@ namespace Grean.AtomEventStore
 
             if (IsCustomType(value.GetType()))
             {
-                WriteComplexObject(xmlWriter, value);
+                this.WriteComplexObject(xmlWriter, value);
                 return;
             }
 
