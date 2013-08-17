@@ -63,7 +63,7 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
-            this.WriteTo(xmlWriter, new ConventionBasedSerializerOfComplexImmutableClasses());
+            this.WriteTo(xmlWriter, null);
         }
 
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
