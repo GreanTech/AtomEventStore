@@ -205,7 +205,7 @@ namespace Grean.AtomEventStore.UnitTests
                     entry.Content.WithItem(@event))).ToList();
             var expected = feed.WithEntries(entries);
 
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
                 AtomFeed actual = AtomFeed.ReadFrom(r);
@@ -230,7 +230,8 @@ namespace Grean.AtomEventStore.UnitTests
         public void SutCanRoundTripToString(AtomFeedBuilder<TestEventY> builder)
         {
             var expected = builder.Build();
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             AtomFeed actual = AtomFeed.Parse(xml);
 

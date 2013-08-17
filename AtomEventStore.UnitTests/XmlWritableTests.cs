@@ -17,7 +17,8 @@ namespace Grean.AtomEventStore.UnitTests
         public void ToXmlStringReturnsCorrectResult(
             TestXmlWritable writable)
         {
-            var actual = writable.ToXmlString();
+            var actual = writable.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb))

@@ -142,7 +142,7 @@ namespace Grean.AtomEventStore.UnitTests
         public void ReadFromReturnsCorrectResult(
             AtomLink expected)
         {
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
@@ -156,7 +156,7 @@ namespace Grean.AtomEventStore.UnitTests
             string relativeUrl)
         {
             var expected = seed.WithHref(new Uri(relativeUrl, UriKind.Relative));
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
@@ -194,7 +194,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutCanRoundTripToString(AtomLink expected)
         {
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
             AtomLink actual = AtomLink.Parse(xml);
             Assert.Equal(expected, actual);
         }

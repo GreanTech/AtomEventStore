@@ -40,7 +40,7 @@ namespace Grean.AtomEventStore
                 {
                     AtomEventStream.CreateSelfLinkFrom(id)
                 })
-                .ToXmlString();
+                .ToXmlString((IContentSerializer)null);
 
             var sr = new StringReader(xml);
             try

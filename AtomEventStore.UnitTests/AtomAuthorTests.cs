@@ -116,7 +116,7 @@ namespace Grean.AtomEventStore.UnitTests
         public void ReadFromReturnsCorrectResult(
             AtomAuthor expected)
         {
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
                 AtomAuthor actual = AtomAuthor.ReadFrom(r);
@@ -127,7 +127,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutCanRoundTripToString(AtomAuthor expected)
         {
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
             AtomAuthor actual = AtomAuthor.Parse(xml);
             Assert.Equal(expected, actual);
         }

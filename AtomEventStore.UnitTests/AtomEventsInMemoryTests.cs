@@ -129,7 +129,7 @@ namespace Grean.AtomEventStore.UnitTests
                     f.WriteTo(w);
 
             var expected = new HashSet<string>(
-                feeds.Select(w => w.ToXmlString()));
+                feeds.Select(w => w.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())));
             Assert.True(
                 expected.SetEquals(sut.Feeds),
                 "Written feeds should be enumerated.");
