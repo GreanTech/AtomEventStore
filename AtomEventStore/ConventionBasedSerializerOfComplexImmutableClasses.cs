@@ -8,10 +8,15 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    internal class ConventionBasedSerializerOfComplexImmutableClasses : IContentSerializer
+    public class ConventionBasedSerializerOfComplexImmutableClasses : IContentSerializer
     {
         public void Serialize(XmlWriter xmlWriter, object value)
         {
+            if (xmlWriter == null)
+                throw new ArgumentNullException("xmlWriter");
+            if (value == null)
+                throw new ArgumentNullException("value");
+
             WriteComplexObject(xmlWriter, value);
         }
 
