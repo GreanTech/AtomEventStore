@@ -15,7 +15,17 @@ namespace Grean.AtomEventStore
         }
 
         public static string ToXmlString(
+            this IXmlWritable xmlWritable,
+            XmlWriterSettings settings)
+        {
+            return xmlWritable.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses(),
+                settings);
+        }
+
+        private static string ToXmlString(
             this IXmlWritable xmlWritable, 
+            IContentSerializer serializer,
             XmlWriterSettings settings)
         {
             if (xmlWritable == null)
