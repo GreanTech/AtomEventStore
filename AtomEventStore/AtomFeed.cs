@@ -157,7 +157,7 @@ namespace Grean.AtomEventStore
 
             this.WriteLinksTo(xmlWriter);
 
-            this.WriteEntriesTo(xmlWriter);
+            this.WriteEntriesTo(xmlWriter, serializer);
 
             xmlWriter.WriteEndElement();
         }
@@ -168,10 +168,10 @@ namespace Grean.AtomEventStore
                 l.WriteTo(xmlWriter);
         }
 
-        private void WriteEntriesTo(XmlWriter xmlWriter)
+        private void WriteEntriesTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             foreach (var e in this.entries)
-                e.WriteTo(xmlWriter);
+                e.WriteTo(xmlWriter, serializer);
         }
 
         public static AtomFeed ReadFrom(XmlReader xmlReader)
