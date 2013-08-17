@@ -47,17 +47,17 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
-            this.WriteTo(xmlWriter, new ConventionBasedSerializerOfComplexImmutableClasses());
-        }
-
-        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
-        {
             if (xmlWriter == null)
                 throw new ArgumentNullException("xmlWriter");
 
             xmlWriter.WriteStartElement("author", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteElementString("name", this.name);
             xmlWriter.WriteEndElement();
+        }
+
+        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
+        {
+            this.WriteTo(xmlWriter);
         }
 
         public static AtomAuthor ReadFrom(XmlReader xmlReader)
