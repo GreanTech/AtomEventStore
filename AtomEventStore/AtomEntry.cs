@@ -178,7 +178,7 @@ namespace Grean.AtomEventStore
 
             this.WriteLinksTo(xmlWriter);
 
-            this.content.WriteTo(xmlWriter);
+            this.content.WriteTo(xmlWriter, serializer);
 
             xmlWriter.WriteEndElement();
         }
