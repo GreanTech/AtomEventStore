@@ -30,7 +30,7 @@ namespace Grean.AtomEventStore
                 settings);
         }
 
-        private static string ToXmlString(
+        public static string ToXmlString(
             this IXmlWritable xmlWritable, 
             IContentSerializer serializer,
             XmlWriterSettings settings)
