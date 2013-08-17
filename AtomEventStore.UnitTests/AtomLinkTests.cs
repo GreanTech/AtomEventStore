@@ -11,11 +11,19 @@ using Ploeh.SemanticComparison.Fluent;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
+using Ploeh.AutoFixture.Idioms;
 
 namespace Grean.AtomEventStore.UnitTests
 {
     public class AtomLinkTests
     {
+        [Theory, AutoAtomData]
+        public void VerifyGuardClauses(GuardClauseAssertion assertion)
+        {
+            assertion.Verify(
+                typeof(AtomLink).GetMembers().Where(m => m.Name != "WriteTo"));
+        }
+
         [Theory, AutoAtomData]
         public void RelIsCorrect([Frozen]string expected, AtomLink sut)
         {

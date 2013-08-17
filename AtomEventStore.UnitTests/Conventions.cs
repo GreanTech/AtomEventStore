@@ -27,7 +27,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             return !t.IsInterface
                 && !t.IsGenericTypeDefinition
-                && !IsStatic(t);
+                && !IsStatic(t)
+                && t != typeof(AtomLink); // Covered by AtomLinkTests
         }
 
         private static bool IsStatic(Type t)
