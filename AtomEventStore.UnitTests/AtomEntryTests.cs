@@ -161,7 +161,9 @@ namespace Grean.AtomEventStore.UnitTests
                     .WithLinks(links);
 
                 // Exercise system
-                sut.WriteTo(w);
+                sut.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 // Verify outcome
                 w.Flush();
