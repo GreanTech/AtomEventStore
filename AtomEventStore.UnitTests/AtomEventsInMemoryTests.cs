@@ -19,7 +19,9 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = feedBuilder.Build();
 
             using (var w = sut.CreateFeedWriterFor(expected))
-                expected.WriteTo(w);
+                expected.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
                 var actual = AtomFeed.ReadFrom(r);
@@ -38,9 +40,13 @@ namespace Grean.AtomEventStore.UnitTests
             var other = feedBuilder2.Build();
 
             using (var w = sut.CreateFeedWriterFor(expected))
-                expected.WriteTo(w);
+                expected.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
             using (var w = sut.CreateFeedWriterFor(other))
-                other.WriteTo(w);
+                other.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
@@ -60,9 +66,13 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = feedBuilder2.Build();
 
             using (var w = sut.CreateFeedWriterFor(other))
-                other.WriteTo(w);
+                other.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
             using (var w = sut.CreateFeedWriterFor(expected))
-                expected.WriteTo(w);
+                expected.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
@@ -126,7 +136,9 @@ namespace Grean.AtomEventStore.UnitTests
             var feeds = feedBuilders.Select(b => b.Build());
             foreach (var f in feeds)
                 using (var w = sut.CreateFeedWriterFor(f))
-                    f.WriteTo(w);
+                    f.WriteTo(
+                        w,
+                        new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = new HashSet<string>(
                 feeds.Select(w => w.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())));
