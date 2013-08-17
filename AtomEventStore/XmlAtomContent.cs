@@ -52,11 +52,6 @@ namespace Grean.AtomEventStore
             return this.item.GetHashCode();
         }
 
-        public void WriteTo(XmlWriter xmlWriter)
-        {
-            this.WriteTo(xmlWriter, new ConventionBasedSerializerOfComplexImmutableClasses());
-        }
-
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
