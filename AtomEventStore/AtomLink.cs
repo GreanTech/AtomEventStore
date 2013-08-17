@@ -63,11 +63,6 @@ namespace Grean.AtomEventStore
 
         public void WriteTo(XmlWriter xmlWriter)
         {
-            this.WriteTo(xmlWriter, null);
-        }
-
-        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
-        {
             if (xmlWriter == null)
                 throw new ArgumentNullException("xmlWriter");
 
@@ -75,6 +70,11 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteAttributeString("href", this.href.ToString());
             xmlWriter.WriteAttributeString("rel", this.rel);
             xmlWriter.WriteEndElement();
+        }
+
+        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
+        {
+            this.WriteTo(xmlWriter);
         }
 
         public static AtomLink Parse(string xml)
