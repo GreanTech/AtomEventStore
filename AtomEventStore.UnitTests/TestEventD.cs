@@ -26,6 +26,11 @@ namespace Grean.AtomEventStore.UnitTests
             get { return this.dateTime; }
         }
 
+        public TestEventD WithDateTime(DateTimeOffset newDateTime)
+        {
+            return new TestEventD(this.number, newDateTime);
+        }
+
         public override bool Equals(object obj)
         {
             var other = obj as TestEventD;
