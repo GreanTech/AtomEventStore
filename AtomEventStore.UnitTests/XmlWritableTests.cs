@@ -84,6 +84,11 @@ namespace Grean.AtomEventStore.UnitTests
                 xmlWriter.WriteElementString(this.elementName, this.elementValue);
                 xmlWriter.WriteEndElement();
             }
+
+            public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
+            {
+                this.WriteTo(xmlWriter);
+            }
         }
     }
 }

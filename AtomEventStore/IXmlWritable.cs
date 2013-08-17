@@ -8,6 +8,6 @@ namespace Grean.AtomEventStore
 {
     public interface IXmlWritable
     {
-        void WriteTo(XmlWriter xmlWriter);
+        void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer);
     }
 }
