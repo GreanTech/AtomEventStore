@@ -42,7 +42,9 @@ namespace Grean.AtomEventStore.UnitTests
                 OmitXmlDeclaration = true
             };
 
-            var actual = writable.ToXmlString(settings);
+            var actual = writable.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses(),
+                settings);
 
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb, settings))
