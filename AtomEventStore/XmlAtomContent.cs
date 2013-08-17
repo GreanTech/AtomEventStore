@@ -98,10 +98,14 @@ namespace Grean.AtomEventStore
                 xmlWriter.WriteValue(((UuidIri)((Guid)value)).ToString());
                 return;
             }
-
             if (value is Uri)
             {
                 xmlWriter.WriteValue(value.ToString());
+                return;
+            }
+            if (value is DateTimeOffset)
+            {
+                xmlWriter.WriteValue(((DateTimeOffset)value).ToString("o"));
                 return;
             }
 

@@ -48,7 +48,7 @@ namespace Grean.AtomEventStore.UnitTests
                             pi.Name != "pageSize")
                             return new NoSpecimen(request);
 
-                        return this.r.Next(1, 17);
+                        return this.r.Next(2, 17);
                     }
                 }
             }

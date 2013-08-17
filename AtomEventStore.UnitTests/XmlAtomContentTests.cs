@@ -423,6 +423,41 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void SutCanSerializeEvenWithZeroedOutSubSeconds(
+            DateTimeOffset dtSeed,
+            XmlAtomContent seed,
+            TestEventD ted)
+        {
+            /* The use of this particular constructor overload results in a
+             * loss of precision, since ticks below the millisecond granularity
+             * are lost. This causes ToString("o") to print trailing zeroes,
+             * and reproduces a non-deterministically failing test, that
+             * sometimes would fail because the actual implementation didn't 
+             * print the trailing zeroes. */
+            var dt = new DateTimeOffset(
+                dtSeed.Year,
+                dtSeed.Month,
+                dtSeed.Day,
+                dtSeed.Hour,
+                dtSeed.Minute,
+                dtSeed.Second,
+                dtSeed.Millisecond,
+                dtSeed.Offset);
+            var sut = seed.WithItem(ted.WithDateTime(dt));
+
+            var actual = sut.ToXmlString();
+
+            var expected = XDocument.Parse(
+                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
+                "  <test-event-d xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                "    <number>" + ted.Number + "</number>" +
+                "    <date-time>" + dt.ToString("o") + "</date-time>" +
+                "  </test-event-d>" +
+                "</content>");
+            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
+        }
+
+        [Theory, AutoAtomData]
         public void SutCanRoundTripEventWithDateTimeOffset(
             XmlAtomContent seed,
             TestEventD ted)
