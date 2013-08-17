@@ -61,6 +61,7 @@ namespace Grean.AtomEventStore
         private readonly UuidIri id;
         private readonly IAtomEventStorage storage;
         private readonly int pageSize;
+        private readonly IContentSerializer serializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AtomEventStream{T}" />
@@ -100,6 +101,8 @@ namespace Grean.AtomEventStore
             this.id = id;
             this.storage = storage;
             this.pageSize = pageSize;
+            this.serializer =
+                new ConventionBasedSerializerOfComplexImmutableClasses();
         }
 
         /// <summary>
@@ -171,16 +174,16 @@ namespace Grean.AtomEventStore
                         this.CreateNewIndex(entry, index.Links, previousId, now);
 
                     using (var w = this.storage.CreateFeedWriterFor(previousFeed))
-                        previousFeed.WriteTo(w);
+                        previousFeed.WriteTo(w, this.serializer);
                     using (var w = this.storage.CreateFeedWriterFor(newIndex))
-                        newIndex.WriteTo(w);
+                        newIndex.WriteTo(w, this.serializer);
                 }
                 else
                 {
                     var newIndex = 
                         this.AddEntryTo(index, entry, now);    
                     using (var w = this.storage.CreateFeedWriterFor(newIndex))
-                        newIndex.WriteTo(w);
+                        newIndex.WriteTo(w, this.serializer);
                 }
             });
         }
