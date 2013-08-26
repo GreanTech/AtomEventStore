@@ -87,7 +87,20 @@ namespace Grean.AtomEventStore
 
         public static XmlAtomContent ReadFrom(XmlReader xmlReader)
         {
-            var serializer = new ConventionBasedSerializerOfComplexImmutableClasses();
+            return ReadFrom(
+                xmlReader,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
+        }
+
+        public static XmlAtomContent ReadFrom(
+            XmlReader xmlReader,
+            IContentSerializer serializer)
+        {
+            if (xmlReader == null)
+                throw new ArgumentNullException("xmlReader");
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             return serializer.Deserialize(xmlReader);
         }
     }
