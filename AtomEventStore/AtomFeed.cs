@@ -224,6 +224,16 @@ namespace Grean.AtomEventStore
 
         public static AtomFeed Parse(string xml)
         {
+            return Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
+        }
+
+        public static AtomFeed Parse(string xml, IContentSerializer serializer)
+        {
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             var sr = new StringReader(xml);
             try
             {
