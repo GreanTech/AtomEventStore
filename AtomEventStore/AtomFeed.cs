@@ -171,6 +171,18 @@ namespace Grean.AtomEventStore
 
         public static AtomFeed ReadFrom(XmlReader xmlReader)
         {
+            return ReadFrom(
+                xmlReader,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
+        }
+
+        public static AtomFeed ReadFrom(
+            XmlReader xmlReader,
+            IContentSerializer serializer)
+        {
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
             var resolver = new XmlNamespaceManager(new NameTable());
