@@ -193,7 +193,7 @@ namespace Grean.AtomEventStore
             var indexAddress =
                 new Uri(((Guid)this.id).ToString(), UriKind.Relative);
             using (var r = this.storage.CreateFeedReaderFor(indexAddress))
-                return AtomFeed.ReadFrom(r);
+                return AtomFeed.ReadFrom(r, this.serializer);
         }
 
         private static AtomEntry CreateEntry(T @event, DateTimeOffset now)
@@ -386,7 +386,7 @@ namespace Grean.AtomEventStore
                 return null;
 
             using (var r = this.storage.CreateFeedReaderFor(previousLink.Href))
-                return AtomFeed.ReadFrom(r);
+                return AtomFeed.ReadFrom(r, this.serializer);
         }
 
         /// <summary>
