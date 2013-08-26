@@ -67,13 +67,6 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteEndElement();
         }
 
-        public static XmlAtomContent Parse(string xml)
-        {
-            return Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-        }
-
         public static XmlAtomContent Parse(
             string xml,
             IContentSerializer serializer)

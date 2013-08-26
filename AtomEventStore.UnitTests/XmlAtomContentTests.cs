@@ -137,7 +137,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            XmlAtomContent actual = XmlAtomContent.Parse(xml);
+            XmlAtomContent actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -176,7 +178,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -210,7 +214,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -253,7 +259,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -287,7 +295,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -326,7 +336,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -372,7 +384,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -415,7 +429,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -485,7 +501,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -519,7 +537,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
