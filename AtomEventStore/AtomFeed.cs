@@ -210,7 +210,7 @@ namespace Grean.AtomEventStore
                 title,
                 DateTimeOffset.Parse(updated, CultureInfo.InvariantCulture),
                 AtomAuthor.ReadFrom(author),
-                entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree())),
+                entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree(), serializer)),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
         }
 
