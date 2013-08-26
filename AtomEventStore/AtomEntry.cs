@@ -242,13 +242,6 @@ namespace Grean.AtomEventStore
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 
-        public static AtomEntry Parse(string xml)
-        {
-            return Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-        }
-
         public static AtomEntry Parse(string xml, IContentSerializer serializer)
         {
             if (serializer == null)
