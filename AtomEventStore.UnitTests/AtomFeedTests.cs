@@ -214,7 +214,9 @@ namespace Grean.AtomEventStore.UnitTests
             using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
-                AtomFeed actual = AtomFeed.ReadFrom(r);
+                AtomFeed actual = AtomFeed.ReadFrom(
+                    r,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
         }

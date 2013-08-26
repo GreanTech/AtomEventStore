@@ -24,7 +24,9 @@ namespace Grean.AtomEventStore.UnitTests
                     new ConventionBasedSerializerOfComplexImmutableClasses());
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
-                var actual = AtomFeed.ReadFrom(r);
+                var actual = AtomFeed.ReadFrom(
+                    r,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
@@ -50,7 +52,9 @@ namespace Grean.AtomEventStore.UnitTests
 
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
-                var actual = AtomFeed.ReadFrom(r);
+                var actual = AtomFeed.ReadFrom(
+                    r,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
@@ -76,7 +80,9 @@ namespace Grean.AtomEventStore.UnitTests
 
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
-                var actual = AtomFeed.ReadFrom(r);
+                var actual = AtomFeed.ReadFrom(
+                    r,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
@@ -95,7 +101,9 @@ namespace Grean.AtomEventStore.UnitTests
 
             using (var r = sut.CreateFeedReaderFor(expectedSelfLink.Href))
             {
-                var actual = AtomFeed.ReadFrom(r);
+                var actual = AtomFeed.ReadFrom(
+                    r,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 Assert.Equal(id, actual.Id);
                 Assert.Equal("Index of event stream " + (Guid)id, actual.Title);
