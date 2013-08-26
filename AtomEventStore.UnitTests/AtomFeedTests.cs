@@ -239,7 +239,9 @@ namespace Grean.AtomEventStore.UnitTests
             var xml = expected.ToXmlString(
                 new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            AtomFeed actual = AtomFeed.Parse(xml);
+            AtomFeed actual = AtomFeed.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual, new AtomFeedComparer());
         }
