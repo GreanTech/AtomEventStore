@@ -141,10 +141,12 @@ namespace Grean.AtomEventStore
                 newLinks);
         }
 
-        public void WriteTo(XmlWriter xmlWriter)
+        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
                 throw new ArgumentNullException("xmlWriter");
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
 
             xmlWriter.WriteStartElement("entry", "http://www.w3.org/2005/Atom");
 
@@ -171,7 +173,7 @@ namespace Grean.AtomEventStore
 
             this.WriteLinksTo(xmlWriter);
 
-            this.content.WriteTo(xmlWriter);
+            this.content.WriteTo(xmlWriter, serializer);
 
             xmlWriter.WriteEndElement();
         }
@@ -182,8 +184,13 @@ namespace Grean.AtomEventStore
                 l.WriteTo(xmlWriter);
         }
 
-        public static AtomEntry ReadFrom(XmlReader xmlReader)
+        public static AtomEntry ReadFrom(
+            XmlReader xmlReader,
+            IContentSerializer serializer)
         {
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
             var resolver = new XmlNamespaceManager(new NameTable());
@@ -216,7 +223,7 @@ namespace Grean.AtomEventStore
                 DateTimeOffset.Parse(published, CultureInfo.InvariantCulture),
                 DateTimeOffset.Parse(updated, CultureInfo.InvariantCulture),
                 AtomAuthor.ReadFrom(author),
-                XmlAtomContent.ReadFrom(content),
+                XmlAtomContent.ReadFrom(content, serializer),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
         }
 
@@ -228,15 +235,18 @@ namespace Grean.AtomEventStore
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 
-        public static AtomEntry Parse(string xml)
+        public static AtomEntry Parse(string xml, IContentSerializer serializer)
         {
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             var sr = new StringReader(xml);
             try
             {
                 using (var r = XmlReader.Create(sr))
                 {
                     sr = null;
-                    return AtomEntry.ReadFrom(r);
+                    return AtomEntry.ReadFrom(r, serializer);
                 }
             }
             finally

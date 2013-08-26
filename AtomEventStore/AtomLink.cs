@@ -72,6 +72,11 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteEndElement();
         }
 
+        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
+        {
+            this.WriteTo(xmlWriter);
+        }
+
         public static AtomLink Parse(string xml)
         {
             var sr = new StringReader(xml);

@@ -17,7 +17,8 @@ namespace Grean.AtomEventStore.UnitTests
         public void ToXmlStringReturnsCorrectResult(
             TestXmlWritable writable)
         {
-            var actual = writable.ToXmlString();
+            var actual = writable.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb))
@@ -41,7 +42,9 @@ namespace Grean.AtomEventStore.UnitTests
                 OmitXmlDeclaration = true
             };
 
-            var actual = writable.ToXmlString(settings);
+            var actual = writable.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses(),
+                settings);
 
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb, settings))
@@ -80,6 +83,11 @@ namespace Grean.AtomEventStore.UnitTests
                 xmlWriter.WriteStartElement(this.documentName);
                 xmlWriter.WriteElementString(this.elementName, this.elementValue);
                 xmlWriter.WriteEndElement();
+            }
+
+            public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
+            {
+                this.WriteTo(xmlWriter);
             }
         }
     }

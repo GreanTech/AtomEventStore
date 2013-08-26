@@ -52,94 +52,35 @@ namespace Grean.AtomEventStore
             return this.item.GetHashCode();
         }
 
-        public void WriteTo(XmlWriter xmlWriter)
+        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
                 throw new ArgumentNullException("xmlWriter");
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
 
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
 
-            this.WriteComplexObject(xmlWriter, this.item);
+            serializer.Serialize(xmlWriter, this.item);
 
             xmlWriter.WriteEndElement();
         }
 
-        private void WriteComplexObject(XmlWriter xmlWriter, object value)
+        public static XmlAtomContent Parse(
+            string xml,
+            IContentSerializer serializer)
         {
-            var type = value.GetType();
-            var xmlNamespace = Urnify(type.Namespace);
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
 
-            xmlWriter.WriteStartElement(Xmlify(type), xmlNamespace);
-            foreach (var p in type.GetProperties())
-            {
-                var localName = Xmlify(p.Name);
-                var v = p.GetValue(value);
-
-                xmlWriter.WriteStartElement(localName);
-                this.WriteValue(xmlWriter, v);
-                xmlWriter.WriteEndElement();
-            }
-
-            var sequence = value as IEnumerable;
-            if (sequence != null)
-            {
-                foreach (var x in sequence)
-                    this.WriteComplexObject(xmlWriter, x);
-            }
-
-            xmlWriter.WriteEndElement();
-        }
-
-        private void WriteValue(XmlWriter xmlWriter, object value)
-        {
-            if (value is Guid)
-            {
-                xmlWriter.WriteValue(((UuidIri)((Guid)value)).ToString());
-                return;
-            }
-            if (value is Uri)
-            {
-                xmlWriter.WriteValue(value.ToString());
-                return;
-            }
-            if (value is DateTimeOffset)
-            {
-                xmlWriter.WriteValue(((DateTimeOffset)value).ToString("o"));
-                return;
-            }
-
-            if (IsCustomType(value.GetType()))
-            {
-                this.WriteComplexObject(xmlWriter, value);
-                return;
-            }
-
-            xmlWriter.WriteValue(value);
-        }
-
-        private static bool IsCustomType(Type type)
-        {
-            return type != typeof(bool)
-                && type != typeof(DateTime)
-                && type != typeof(DateTimeOffset)
-                && type != typeof(decimal)
-                && type != typeof(double)
-                && type != typeof(float)
-                && type != typeof(int)
-                && type != typeof(long)
-                && type != typeof(string);
-        }
-
-        public static XmlAtomContent Parse(string xml)
-        {
             var sr = new StringReader(xml);
             try
             {
                 using (var r = XmlReader.Create(sr))
                 {
                     sr = null;
-                    return XmlAtomContent.ReadFrom(r);
+                    return XmlAtomContent.ReadFrom(r, serializer);
                 }
             }
             finally
@@ -149,289 +90,16 @@ namespace Grean.AtomEventStore
             }
         }
 
-        public static XmlAtomContent ReadFrom(XmlReader xmlReader)
+        public static XmlAtomContent ReadFrom(
+            XmlReader xmlReader,
+            IContentSerializer serializer)
         {
             if (xmlReader == null)
                 throw new ArgumentNullException("xmlReader");
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
 
-            xmlReader.MoveToContent();
-            var x = (XElement)XElement.ReadFrom(xmlReader);
-            var item = ReadFrom(x.Elements().Single());
-            return new XmlAtomContent(item);
-        }
-
-        private static object ReadFrom(XElement node)
-        {
-            if (!node.HasElements)
-                return node.Value;
-
-            var elementName = node.Name.LocalName;
-            var xmlNamespace = node.Name.NamespaceName;
-
-            var dotNetNamespace = UnUrnify(xmlNamespace);
-            var itemType = new XmlCasedName(elementName).ToTypeIn(dotNetNamespace);
-
-            var ctor = GetMostModestConstructor(itemType);
-
-            var namedArguments = (from p in ctor.GetParameters()
-                                  let xpn = Xmlify(p.Name)
-                                  join x in node.Elements() on xpn equals x.Name.LocalName
-                                  select GetObjectFrom(x))
-                                 .ToList();
-            var paramsValues = (from x in node.Elements()
-                                where !namedArguments.Select(a => a.Name).Contains(x.Name.LocalName)
-                                select GetParamsObjectFrom(x))
-                               .ToArray();
-
-            if (itemType.IsGenericTypeDefinition)
-            {
-                var matchingArgumentType = GetMatchingArgument(namedArguments, paramsValues, itemType, ctor);
-
-                itemType = itemType.MakeGenericType(matchingArgumentType);
-                ctor = GetMostModestConstructor(itemType);
-            }
-
-            List<object> sortedArguments = new List<object>();
-            foreach (var p in ctor.GetParameters())
-            {
-                if (Attribute.IsDefined(p, typeof(ParamArrayAttribute)))
-                {
-                    var elementType = p.ParameterType.GetElementType();
-                    var arr = Array.CreateInstance(elementType, paramsValues.Length);
-                    paramsValues.Select(a => a.Value).ToArray().CopyTo(arr, 0);
-                    sortedArguments.Add(arr);
-                }
-                else
-                {
-                    var argValue = namedArguments.Single(kvp => UnXmlify(kvp.Name).Equals(p.Name, StringComparison.OrdinalIgnoreCase));
-                    sortedArguments.Add(ChangeType(argValue.Value, p.ParameterType));
-                }
-            }
-
-            var item = ctor.Invoke(sortedArguments.ToArray());
-            return item;
-        }
-
-        private class Argument
-        {
-            public readonly string Name;
-            public readonly object Value;
-
-            public Argument(string name, object value)
-            {
-                this.Name = name;
-                this.Value = value;
-            }
-        }
-
-        private static ConstructorInfo GetMostModestConstructor(Type itemType)
-        {
-            return (from c in itemType.GetConstructors()
-                    let args = c.GetParameters()
-                    orderby args.Length
-                    select c).First();
-        }
-
-        private static Argument GetObjectFrom(XElement node)
-        {
-            if (!node.HasElements)
-                return new Argument(node.Name.LocalName, node.Value);
-
-            var value = ReadFrom(node.Elements().Single());
-            return new Argument(node.Name.LocalName, value);
-        }
-
-        private static Argument GetParamsObjectFrom(XElement node)
-        {
-            var value = ReadFrom(node);
-            return new Argument(node.Name.LocalName, value);
-        }
-
-        private static Type GetMatchingArgument(List<Argument> namedArguments, Argument[] paramsValues, Type itemType, ConstructorInfo ctor)
-        {
-            return GetDirectMatchingArgument(namedArguments, itemType, ctor).Concat(
-                GetArrayMatchingArgument(paramsValues))
-                .First();
-        }
-
-        private static IEnumerable<Type> GetDirectMatchingArgument(List<Argument> arguments, Type itemType, ConstructorInfo ctor)
-        {
-            var openGenericType = itemType.GetGenericArguments().Single();
-            var genericCtorParamter = ctor.GetParameters()
-                .SingleOrDefault(p => p.ParameterType == openGenericType);
-            if (genericCtorParamter == null)
-                yield break;
-
-            var matchingArgument = arguments
-                .Single(kvp => UnXmlify(kvp.Name).Equals(genericCtorParamter.Name, StringComparison.OrdinalIgnoreCase))
-                .Value;
-            yield return matchingArgument.GetType();
-        }
-
-        private static IEnumerable<Type> GetArrayMatchingArgument(IEnumerable<Argument> paramsValues)
-        {
-            var interfaces = from a in paramsValues
-                             select GetBaseTypes(a.Value.GetType());
-
-            var commonInterfaces = interfaces.Aggregate((x, y) => x.Intersect(y).ToArray());
-            var commonInterface = commonInterfaces.FirstOrDefault();
-            if (commonInterface == null)
-                yield break;
-
-            yield return commonInterface;
-        }
-
-        private static IEnumerable<Type> GetBaseTypes(Type type)
-        {
-            return new[] { type }.Concat(type.GetInterfaces());
-        }
-
-        private static object ChangeType(object value, Type type)
-        {
-            if (type == typeof(Guid))
-                return (Guid)UuidIri.Parse(value.ToString());
-            if (type == typeof(Uri))
-                return new Uri(value.ToString());
-            if (type == typeof(DateTimeOffset))
-                return DateTimeOffset.Parse(value.ToString(), CultureInfo.InvariantCulture);
-
-            return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
-        }
-
-        private static string Urnify(string text)
-        {
-            return "urn:" + string.Join(":", text.Split('.').Select(Xmlify));
-        }
-
-        private static string UnUrnify(string text)
-        {
-            return string.Join(".", text.Replace("urn:", "").Split(':').Select(UnXmlify));
-        }
-
-        private static string Xmlify(Type type)
-        {
-            return XmlCasedName.FromType(type).ToString();
-        }
-
-        private static string Xmlify(string text)
-        {
-            return XmlCasedName.FromText(text).ToString();
-        }
-
-        private static string UnXmlify(string text)
-        {
-            return new XmlCasedName(text).ToPascalCase();
-        }
-
-        private class XmlCasedName
-        {
-            private readonly string value;
-
-            public XmlCasedName(string value)
-            {
-                this.value = value;
-            }
-
-            public static XmlCasedName FromType(Type type)
-            {
-                if (type.IsGenericType)
-                {
-                    var nonGenericName = type.Name.Replace("`1", "");
-                    return XmlCasedName.FromText(nonGenericName);
-                }
-
-                return XmlCasedName.FromText(type.Name);
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "This rule concerns itself with certain international characters that can't properly make a round-trip if lower-cased. However, this entire algorihtm (explicitly) uses the invariant culture, where this shouldn't be a problem. In any case, the reason for lower-casing isn't to perform normalization, but explicitly in order to convert to lower case - that's the desired outcome.")]
-            public static XmlCasedName FromText(string text)
-            {
-                return new XmlCasedName(text
-                    .Take(1).Select(c => Char.ToLower(c, CultureInfo.InvariantCulture))
-                    .Concat(text.Skip(1))
-                    .Aggregate("", (s, c) => Char.IsUpper(c) ? s + "-" + c : s + c)
-                    .ToLower(CultureInfo.InvariantCulture));
-            }
-
-            public static XmlCasedName operator +(XmlCasedName xmlName, string text)
-            {
-                return xmlName + XmlCasedName.FromText(text);
-            }
-
-            public static XmlCasedName operator +(XmlCasedName a, XmlCasedName b)
-            {
-                return new XmlCasedName(a.value + "-" + b.value);
-            }
-
-            public string ToPascalCase()
-            {
-                return this.value.Split('-')
-                    .Select(s => new string(s.Take(1).Select(Char.ToUpper).Concat(s.Skip(1)).ToArray()))
-                    .Aggregate((x, y) => x + y);
-            }
-
-            public Type ToTypeIn(string dotNetNamespace)
-            {
-                var typeName = this.GetTypeName();
-
-                var type = Type.GetType(
-                    typeName + ", " + dotNetNamespace,
-                    ResolveAssembly,
-                    ResolveType);
-
-                return type;
-            }
-
-            private string GetTypeName()
-            {
-                return this.ToPascalCase();
-            }
-
-            private static Assembly ResolveAssembly(AssemblyName assemblyName)
-            {
-                Assembly foundAssembly = null;
-                var nameCandidate = (AssemblyName)assemblyName.Clone();
-                while (foundAssembly == null)
-                {
-                    try
-                    {
-                        foundAssembly = Assembly.Load(nameCandidate);
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        var dotIndex = nameCandidate.Name.LastIndexOf('.');
-                        if (dotIndex < 0)
-                            throw;
-                        nameCandidate.Name = nameCandidate.Name.Substring(0, dotIndex);
-                    }
-                }
-
-                return foundAssembly;
-            }
-
-            private static Type ResolveType(
-                Assembly assembly,
-                string typeName,
-                bool ignoreCase)
-            {
-                if (assembly == null)
-                    return null;
-                return assembly.GetExportedTypes()
-                    .Where(t =>
-                        (t.Name == typeName && !IsStatic(t)) ||
-                        t.Name == typeName + "`1")
-                    .Single();
-            }
-
-            private static bool IsStatic(Type type)
-            {
-                return type.IsAbstract && type.IsSealed;
-            }
-
-            public override string ToString()
-            {
-                return this.value;
-            }
+            return serializer.Deserialize(xmlReader);
         }
     }
 }

@@ -86,7 +86,9 @@ namespace Grean.AtomEventStore.UnitTests
                 var sut = content.WithItem(tex);
 
                 // Exercise system
-                sut.WriteTo(w);
+                sut.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 // Verify outcome
                 w.Flush();
@@ -118,10 +120,10 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventX tex)
         {
             var expected = seed.WithItem(tex);
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
-                XmlAtomContent actual = XmlAtomContent.ReadFrom(r);
+                XmlAtomContent actual = XmlAtomContent.ReadFrom(r, new ConventionBasedSerializerOfComplexImmutableClasses());
                 Assert.Equal(expected, actual);
             }
         }
@@ -132,9 +134,12 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventX tex)
         {
             var expected = seed.WithItem(tex);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            XmlAtomContent actual = XmlAtomContent.Parse(xml);
+            XmlAtomContent actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -146,7 +151,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(env);
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -169,9 +175,12 @@ namespace Grean.AtomEventStore.UnitTests
             Envelope<TestEventY> env)
         {
             var expected = seed.WithItem(env);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -183,7 +192,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(teu);
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -201,9 +211,12 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventU teu)
         {
             var expected = seed.WithItem(teu);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -215,7 +228,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(env);
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -242,9 +256,12 @@ namespace Grean.AtomEventStore.UnitTests
             Envelope<Wrapper<TestEventX>> env)
         {
             var expected = seed.WithItem(env);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -256,7 +273,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(tes);
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -274,9 +292,12 @@ namespace Grean.AtomEventStore.UnitTests
             SubNs.SubSubNs.TestEventS tes)
         {
             var expected = seed.WithItem(tes);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -288,7 +309,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(env);
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -311,9 +333,12 @@ namespace Grean.AtomEventStore.UnitTests
             Envelope<SubNs.SubSubNs.TestEventS> env)
         {
             var expected = seed.WithItem(env);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -327,7 +352,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(new Changeset<ITestEvent>(id, tex, tey));
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -355,9 +381,12 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventX tex2)
         {
             var expected = seed.WithItem(new Changeset<ITestEvent>(id, tex1, tey, tex2));
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -370,7 +399,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(new Changeset<Wrapper<TestEventX>>(id, w));
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -396,9 +426,12 @@ namespace Grean.AtomEventStore.UnitTests
             Wrapper<TestEventX> w)
         {
             var expected = seed.WithItem(new Changeset<Wrapper<TestEventX>>(id, w));
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -410,7 +443,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(ted);
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -445,7 +479,8 @@ namespace Grean.AtomEventStore.UnitTests
                 dtSeed.Offset);
             var sut = seed.WithItem(ted.WithDateTime(dt));
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -463,9 +498,12 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventD ted)
         {
             var expected = seed.WithItem(ted);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }
@@ -477,7 +515,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var sut = seed.WithItem(tes);
 
-            var actual = sut.ToXmlString();
+            var actual = sut.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -495,9 +534,12 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventSealed tes)
         {
             var expected = seed.WithItem(tes);
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var actual = XmlAtomContent.Parse(xml);
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual);
         }

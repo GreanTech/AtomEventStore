@@ -128,7 +128,7 @@ namespace Grean.AtomEventStore
                 newLinks);
         }
 
-        public void WriteTo(XmlWriter xmlWriter)
+        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
                 throw new ArgumentNullException("xmlWriter");
@@ -152,7 +152,7 @@ namespace Grean.AtomEventStore
 
             this.WriteLinksTo(xmlWriter);
 
-            this.WriteEntriesTo(xmlWriter);
+            this.WriteEntriesTo(xmlWriter, serializer);
 
             xmlWriter.WriteEndElement();
         }
@@ -163,14 +163,19 @@ namespace Grean.AtomEventStore
                 l.WriteTo(xmlWriter);
         }
 
-        private void WriteEntriesTo(XmlWriter xmlWriter)
+        private void WriteEntriesTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             foreach (var e in this.entries)
-                e.WriteTo(xmlWriter);
+                e.WriteTo(xmlWriter, serializer);
         }
 
-        public static AtomFeed ReadFrom(XmlReader xmlReader)
+        public static AtomFeed ReadFrom(
+            XmlReader xmlReader,
+            IContentSerializer serializer)
         {
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
             var resolver = new XmlNamespaceManager(new NameTable());
@@ -198,7 +203,7 @@ namespace Grean.AtomEventStore
                 title,
                 DateTimeOffset.Parse(updated, CultureInfo.InvariantCulture),
                 AtomAuthor.ReadFrom(author),
-                entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree())),
+                entries.Select(x => AtomEntry.ReadFrom(x.ReadSubtree(), serializer)),
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
         }
 
@@ -210,15 +215,18 @@ namespace Grean.AtomEventStore
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 
-        public static AtomFeed Parse(string xml)
+        public static AtomFeed Parse(string xml, IContentSerializer serializer)
         {
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             var sr = new StringReader(xml);
             try
             {
                 using (var r = XmlReader.Create(sr))
                 {
                     sr = null;
-                    return AtomFeed.ReadFrom(r);
+                    return AtomFeed.ReadFrom(r, serializer);
                 }
             }
             finally

@@ -54,7 +54,7 @@ namespace Grean.AtomEventStore
                                     ((Guid)id).ToString(),
                                     UriKind.Relative))
                         })
-                    .ToXmlString());
+                    .ToXmlString((IContentSerializer)null));
             }
         }
 

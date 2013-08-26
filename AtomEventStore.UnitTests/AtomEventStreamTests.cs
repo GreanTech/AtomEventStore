@@ -119,7 +119,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             sut.AppendAsync(expectedEvent).Wait();
 
-            var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
+            var writtenFeed = storage.Feeds.Select(ParseAtomFeed).Single();
             var expectedFeed = new AtomFeedLikeness(before, sut.Id, expectedEvent);
             Assert.True(
                 expectedFeed.Equals(writtenFeed),
@@ -138,7 +138,7 @@ namespace Grean.AtomEventStore.UnitTests
             sut.AppendAsync(event1).Wait();
             sut.AppendAsync(event2).Wait();
 
-            var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
+            var writtenFeed = storage.Feeds.Select(ParseAtomFeed).Single();
             var expectedFeed =
                 new AtomFeedLikeness(before, sut.Id, event2, event1);
             Assert.True(
@@ -157,7 +157,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
-            var writtenFeed = storage.Feeds.Select(AtomFeed.Parse).Single();
+            var writtenFeed = storage.Feeds.Select(ParseAtomFeed).Single();
             var expectedFeed = new AtomFeedLikeness(
                 before,
                 sut.Id,
@@ -179,7 +179,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenIndex = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == sut.Id);
             var expectedIndex = new AtomFeedLikeness(
                 before,
@@ -202,7 +202,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenIndex = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == sut.Id);
             Assert.Equal(
                 1,
@@ -221,7 +221,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenIndex = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == sut.Id);
             Assert.Equal(
                 0,
@@ -240,7 +240,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenIndex = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == sut.Id);
             UuidIri previousPageId = 
                 Guid.Parse(
@@ -249,7 +249,7 @@ namespace Grean.AtomEventStore.UnitTests
                         .Href.ToString());
             Assert.True(
                 storage.Feeds
-                    .Select(AtomFeed.Parse)
+                    .Select(ParseAtomFeed)
                     .Any(f => f.Id == previousPageId),
                 "The previous feed should have been stored.");
         }
@@ -266,7 +266,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenIndex = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == sut.Id);
             UuidIri previousPageId =
                 Guid.Parse(
@@ -274,7 +274,7 @@ namespace Grean.AtomEventStore.UnitTests
                         .Single(AtomEventStream.IsPreviousFeedLink)
                         .Href.ToString());
             var actualPreviousPage = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == previousPageId);
             var expectedPreviousPage = new AtomFeedLikeness(
                 before,
@@ -319,7 +319,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenIndex = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == sut.Id);
             UuidIri previousPageId =
                 Guid.Parse(
@@ -327,7 +327,7 @@ namespace Grean.AtomEventStore.UnitTests
                         .Single(AtomEventStream.IsPreviousFeedLink)
                         .Href.ToString());
             var middlePage = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == previousPageId);
             Assert.Equal(
                 1,
@@ -346,7 +346,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenIndex = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == sut.Id);
             UuidIri previousPageId =
                 Guid.Parse(
@@ -354,7 +354,7 @@ namespace Grean.AtomEventStore.UnitTests
                         .Single(AtomEventStream.IsPreviousFeedLink)
                         .Href.ToString());
             var previousPage = storage.Feeds
-                .Select(AtomFeed.Parse)
+                .Select(ParseAtomFeed)
                 .Single(f => f.Id == previousPageId);
             Assert.Equal(
                 0,
@@ -574,6 +574,13 @@ namespace Grean.AtomEventStore.UnitTests
             var feed = Assert.IsAssignableFrom<AtomFeed>(
                 spyStore.ObservedArguments.Last());
             Assert.Equal(sut.Id, feed.Id);
-        }        
+        }
+
+        private static AtomFeed ParseAtomFeed(string xml)
+        {
+            return AtomFeed.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
+        }
     }
 }

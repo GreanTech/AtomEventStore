@@ -9,13 +9,16 @@ namespace Grean.AtomEventStore
 {
     public static class XmlWritable
     {
-        public static string ToXmlString(this IXmlWritable xmlWritable)
+        public static string ToXmlString(
+            this IXmlWritable xmlWritable,
+            IContentSerializer serializer)
         {
-            return xmlWritable.ToXmlString(new XmlWriterSettings());
+            return xmlWritable.ToXmlString(serializer, new XmlWriterSettings());
         }
 
         public static string ToXmlString(
-            this IXmlWritable xmlWritable, 
+            this IXmlWritable xmlWritable,
+            IContentSerializer serializer,
             XmlWriterSettings settings)
         {
             if (xmlWritable == null)
@@ -24,7 +27,7 @@ namespace Grean.AtomEventStore
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb, settings))
             {
-                xmlWritable.WriteTo(w);
+                xmlWritable.WriteTo(w, serializer);
                 w.Flush();
                 return sb.ToString();
             }

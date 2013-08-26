@@ -11,11 +11,19 @@ using Ploeh.SemanticComparison.Fluent;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
+using Ploeh.AutoFixture.Idioms;
 
 namespace Grean.AtomEventStore.UnitTests
 {
     public class AtomAuthorTests
     {
+        [Theory, AutoAtomData]
+        public void VerifyGuardClauses(GuardClauseAssertion assertion)
+        {
+            assertion.Verify(
+                typeof(AtomAuthor).GetMembers().Where(m => m.Name != "WriteTo"));
+        }
+
         [Theory, AutoAtomData]
         public void NameIsCorrectWhenModestConstructorIsUsed(
             [Frozen]string expected,
@@ -108,7 +116,7 @@ namespace Grean.AtomEventStore.UnitTests
         public void ReadFromReturnsCorrectResult(
             AtomAuthor expected)
         {
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
                 AtomAuthor actual = AtomAuthor.ReadFrom(r);
@@ -119,7 +127,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutCanRoundTripToString(AtomAuthor expected)
         {
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
             AtomAuthor actual = AtomAuthor.Parse(xml);
             Assert.Equal(expected, actual);
         }

@@ -148,7 +148,9 @@ namespace Grean.AtomEventStore.UnitTests
                 var sut = feed.WithEntries(entries);
 
                 // Exercise system
-                sut.WriteTo(w);
+                sut.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 // Verify outcome
                 w.Flush();
@@ -177,14 +179,18 @@ namespace Grean.AtomEventStore.UnitTests
         private static string ToXml(AtomLink link)
         {
             return link
-                .ToXmlString(new XmlWriterSettings { OmitXmlDeclaration = true })
+                .ToXmlString(
+                    new ConventionBasedSerializerOfComplexImmutableClasses(),
+                    new XmlWriterSettings { OmitXmlDeclaration = true })
                 .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
 
         private static string ToXml(AtomEntry entry)
         {
             return entry
-                .ToXmlString(new XmlWriterSettings { OmitXmlDeclaration = true })
+                .ToXmlString(
+                    new ConventionBasedSerializerOfComplexImmutableClasses(),
+                    new XmlWriterSettings { OmitXmlDeclaration = true })
                 .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
 
@@ -205,10 +211,12 @@ namespace Grean.AtomEventStore.UnitTests
                     entry.Content.WithItem(@event))).ToList();
             var expected = feed.WithEntries(entries);
 
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
-                AtomFeed actual = AtomFeed.ReadFrom(r);
+                AtomFeed actual = AtomFeed.ReadFrom(
+                    r,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
         }
@@ -230,9 +238,12 @@ namespace Grean.AtomEventStore.UnitTests
         public void SutCanRoundTripToString(AtomFeedBuilder<TestEventY> builder)
         {
             var expected = builder.Build();
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            AtomFeed actual = AtomFeed.Parse(xml);
+            AtomFeed actual = AtomFeed.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual, new AtomFeedComparer());
         }

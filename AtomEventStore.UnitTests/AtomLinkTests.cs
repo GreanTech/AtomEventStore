@@ -11,11 +11,19 @@ using Ploeh.SemanticComparison.Fluent;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
+using Ploeh.AutoFixture.Idioms;
 
 namespace Grean.AtomEventStore.UnitTests
 {
     public class AtomLinkTests
     {
+        [Theory, AutoAtomData]
+        public void VerifyGuardClauses(GuardClauseAssertion assertion)
+        {
+            assertion.Verify(
+                typeof(AtomLink).GetMembers().Where(m => m.Name != "WriteTo"));
+        }
+
         [Theory, AutoAtomData]
         public void RelIsCorrect([Frozen]string expected, AtomLink sut)
         {
@@ -134,7 +142,7 @@ namespace Grean.AtomEventStore.UnitTests
         public void ReadFromReturnsCorrectResult(
             AtomLink expected)
         {
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
@@ -148,7 +156,7 @@ namespace Grean.AtomEventStore.UnitTests
             string relativeUrl)
         {
             var expected = seed.WithHref(new Uri(relativeUrl, UriKind.Relative));
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
@@ -186,7 +194,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutCanRoundTripToString(AtomLink expected)
         {
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
             AtomLink actual = AtomLink.Parse(xml);
             Assert.Equal(expected, actual);
         }

@@ -55,6 +55,11 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteEndElement();
         }
 
+        public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
+        {
+            this.WriteTo(xmlWriter);
+        }
+
         public static AtomAuthor ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();

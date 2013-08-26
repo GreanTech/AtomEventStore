@@ -161,7 +161,9 @@ namespace Grean.AtomEventStore.UnitTests
                     .WithLinks(links);
 
                 // Exercise system
-                sut.WriteTo(w);
+                sut.WriteTo(
+                    w,
+                    new ConventionBasedSerializerOfComplexImmutableClasses());
 
                 // Verify outcome
                 w.Flush();
@@ -204,10 +206,10 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventX tex)
         {
             var expected = seed.WithContent(seed.Content.WithItem(tex));
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
-                AtomEntry actual = AtomEntry.ReadFrom(r);
+                AtomEntry actual = AtomEntry.ReadFrom(r, new ConventionBasedSerializerOfComplexImmutableClasses());
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
         }
@@ -218,10 +220,10 @@ namespace Grean.AtomEventStore.UnitTests
             TestEventY tey)
         {
             var expected = seed.WithContent(seed.Content.WithItem(tey));
-            using (var sr = new StringReader(expected.ToXmlString()))
+            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
-                AtomEntry actual = AtomEntry.ReadFrom(r);
+                AtomEntry actual = AtomEntry.ReadFrom(r, new ConventionBasedSerializerOfComplexImmutableClasses());
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
         }
@@ -243,9 +245,12 @@ namespace Grean.AtomEventStore.UnitTests
         public void SutCanRoundTripToString(AtomEntryBuilder<TestEventY> builder)
         {
             var expected = builder.Build();
-            var xml = expected.ToXmlString();
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            AtomEntry actual = AtomEntry.Parse(xml);
+            AtomEntry actual = AtomEntry.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
 
             Assert.Equal(expected, actual, new AtomEntryComparer());
         }

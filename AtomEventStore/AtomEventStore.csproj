@@ -58,12 +58,15 @@
     <Compile Include="AtomFeed.cs" />
     <Compile Include="AtomEventsInMemory.cs" />
     <Compile Include="AtomLink.cs" />
+    <Compile Include="ConventionBasedSerializerOfComplexImmutableClasses.cs" />
     <Compile Include="IAtomEventStorage.cs" />
+    <Compile Include="IContentSerializer.cs" />
     <Compile Include="IXmlWritable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AtomEventStream.cs" />
     <Compile Include="UuidIri.cs" />
     <Compile Include="XmlAtomContent.cs" />
+    <Compile Include="XmlCasedName.cs" />
     <Compile Include="XmlWritable.cs" />
   </ItemGroup>
   <ItemGroup>
