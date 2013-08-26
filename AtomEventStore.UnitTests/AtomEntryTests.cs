@@ -209,7 +209,7 @@ namespace Grean.AtomEventStore.UnitTests
             using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
-                AtomEntry actual = AtomEntry.ReadFrom(r);
+                AtomEntry actual = AtomEntry.ReadFrom(r, new ConventionBasedSerializerOfComplexImmutableClasses());
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
         }
@@ -223,7 +223,7 @@ namespace Grean.AtomEventStore.UnitTests
             using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
             using (var r = XmlReader.Create(sr))
             {
-                AtomEntry actual = AtomEntry.ReadFrom(r);
+                AtomEntry actual = AtomEntry.ReadFrom(r, new ConventionBasedSerializerOfComplexImmutableClasses());
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
         }

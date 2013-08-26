@@ -184,13 +184,6 @@ namespace Grean.AtomEventStore
                 l.WriteTo(xmlWriter);
         }
 
-        public static AtomEntry ReadFrom(XmlReader xmlReader)
-        {
-            return ReadFrom(
-                xmlReader,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-        }
-
         public static AtomEntry ReadFrom(
             XmlReader xmlReader,
             IContentSerializer serializer)
