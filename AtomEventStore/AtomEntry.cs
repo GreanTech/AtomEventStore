@@ -260,7 +260,7 @@ namespace Grean.AtomEventStore
                 using (var r = XmlReader.Create(sr))
                 {
                     sr = null;
-                    return AtomEntry.ReadFrom(r);
+                    return AtomEntry.ReadFrom(r, serializer);
                 }
             }
             finally
