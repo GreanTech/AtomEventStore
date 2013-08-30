@@ -75,6 +75,12 @@ namespace Grean.AtomEventStore
         /// The maxkum page size; that is: the maximum number of instances of
         /// T stored in a single Atom feed page.
         /// </param>
+        /// <param name="contentSerializer">
+        /// The serializer used to serialize and deserialize items to a format
+        /// compatible with Atom. The object supplied via this constructor
+        /// parameter is subsequently available via the
+        /// <see cref="ContentSerializer" /> property.
+        /// </param>
         /// <remarks>
         /// <para>
         /// The <paramref name="id" /> is the ID of a single event stream. Each
@@ -90,6 +96,7 @@ namespace Grean.AtomEventStore
         /// </para>
         /// </remarks>
         /// <seealso cref="AtomEventStream{T}" />
+        /// <seealso cref="ContentSerializer" />
         /// <seealso cref="AtomEventsInMemory" />
         /// <seealso cref="AtomEventsInFiles" />
         /// <seealso cref="IAtomEventStorage" />
@@ -282,7 +289,7 @@ namespace Grean.AtomEventStore
         /// The id of the event stream, as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int, IContentSerializer)" />
         public UuidIri Id
         {
             get { return this.id; }
@@ -295,7 +302,7 @@ namespace Grean.AtomEventStore
         /// The underlying storage mechanism, as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int, IContentSerializer)" />
         public IAtomEventStorage Storage
         {
             get { return this.storage; }
@@ -308,7 +315,7 @@ namespace Grean.AtomEventStore
         /// The maximum page size, measured in numbers of entries per Atom feed
         /// page. This value is supplied via the constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int, IContentSerializer)" />
         /// <seealso cref="AtomEventStream{T}" />
         /// <seealso cref="AppendAsync(T)" />
         public int PageSize
