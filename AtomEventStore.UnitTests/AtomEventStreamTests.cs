@@ -35,13 +35,6 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void Test(Generator<AtomEventStream<TestEventX>> g)
-        {
-            var pageSizes = g.Select(s => s.PageSize).Take(256);
-            Assert.NotEmpty(pageSizes.Where(i => i != 1));
-        }
-
-        [Theory, AutoAtomData]
         public void CreateSelfLinkFromReturnsCorrectResult(
             UuidIri id)
         {
