@@ -23,6 +23,7 @@ namespace Grean.AtomEventStore.UnitTests
             public AtomEventsCustomization()
                 : base(
                     new PageSizeCustomization(),
+                    new ContentSerializerCustomization(),
                     new DirectoryCustomization(),
                     new StreamCustomization(),
                     new AutoMoqCustomization())
@@ -50,6 +51,17 @@ namespace Grean.AtomEventStore.UnitTests
 
                         return this.r.Next(2, 17);
                     }
+                }
+            }
+
+            private class ContentSerializerCustomization : ICustomization
+            {
+                public void Customize(IFixture fixture)
+                {
+                    fixture.Customizations.Add(
+                        new TypeRelay(
+                            typeof(IContentSerializer),
+                            typeof(ConventionBasedSerializerOfComplexImmutableClasses)));
                 }
             }
 

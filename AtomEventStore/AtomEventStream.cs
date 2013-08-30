@@ -96,13 +96,13 @@ namespace Grean.AtomEventStore
         public AtomEventStream(
             UuidIri id,
             IAtomEventStorage storage,
-            int pageSize)
+            int pageSize,
+            IContentSerializer contentSerializer)
         {
             this.id = id;
             this.storage = storage;
             this.pageSize = pageSize;
-            this.serializer =
-                new ConventionBasedSerializerOfComplexImmutableClasses();
+            this.serializer = contentSerializer;
         }
 
         /// <summary>
