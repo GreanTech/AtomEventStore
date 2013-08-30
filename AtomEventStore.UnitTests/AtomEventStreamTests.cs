@@ -35,6 +35,14 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void ContentSerializerIsCorrect(
+            AtomEventStream<TestEventX> sut)
+        {
+            IContentSerializer actual = sut.ContentSerializer;
+            Assert.NotNull(actual);
+        }
+
+        [Theory, AutoAtomData]
         public void CreateSelfLinkFromReturnsCorrectResult(
             UuidIri id)
         {

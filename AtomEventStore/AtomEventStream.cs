@@ -316,6 +316,11 @@ namespace Grean.AtomEventStore
             get { return this.pageSize; }
         }
 
+        public IContentSerializer ContentSerializer
+        {
+            get { return this.serializer; }
+        }
+
         /// <summary>
         /// Gets the enumerator for the event stream.
         /// </summary>
