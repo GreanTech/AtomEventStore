@@ -75,6 +75,12 @@ namespace Grean.AtomEventStore
         /// The maxkum page size; that is: the maximum number of instances of
         /// T stored in a single Atom feed page.
         /// </param>
+        /// <param name="contentSerializer">
+        /// The serializer used to serialize and deserialize items to a format
+        /// compatible with Atom. The object supplied via this constructor
+        /// parameter is subsequently available via the
+        /// <see cref="ContentSerializer" /> property.
+        /// </param>
         /// <remarks>
         /// <para>
         /// The <paramref name="id" /> is the ID of a single event stream. Each
@@ -90,19 +96,20 @@ namespace Grean.AtomEventStore
         /// </para>
         /// </remarks>
         /// <seealso cref="AtomEventStream{T}" />
+        /// <seealso cref="ContentSerializer" />
         /// <seealso cref="AtomEventsInMemory" />
         /// <seealso cref="AtomEventsInFiles" />
         /// <seealso cref="IAtomEventStorage" />
         public AtomEventStream(
             UuidIri id,
             IAtomEventStorage storage,
-            int pageSize)
+            int pageSize,
+            IContentSerializer contentSerializer)
         {
             this.id = id;
             this.storage = storage;
             this.pageSize = pageSize;
-            this.serializer =
-                new ConventionBasedSerializerOfComplexImmutableClasses();
+            this.serializer = contentSerializer;
         }
 
         /// <summary>
@@ -282,7 +289,7 @@ namespace Grean.AtomEventStore
         /// The id of the event stream, as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int, IContentSerializer)" />
         public UuidIri Id
         {
             get { return this.id; }
@@ -295,7 +302,7 @@ namespace Grean.AtomEventStore
         /// The underlying storage mechanism, as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int, IContentSerializer)" />
         public IAtomEventStorage Storage
         {
             get { return this.storage; }
@@ -308,12 +315,37 @@ namespace Grean.AtomEventStore
         /// The maximum page size, measured in numbers of entries per Atom feed
         /// page. This value is supplied via the constructor.
         /// </value>
-        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int, IContentSerializer)" />
         /// <seealso cref="AtomEventStream{T}" />
         /// <seealso cref="AppendAsync(T)" />
         public int PageSize
         {
             get { return this.pageSize; }
+        }
+
+        /// <summary>
+        /// Gets the content serializer.
+        /// </summary>
+        /// <value>
+        /// The content serializer, which is used to serialize and deserialize
+        /// the elements of the stream to and from the Atom 'content' element
+        /// within an Atom entry. This object is supplied via the constructor.
+        /// </value>
+        /// <remarks>
+        /// <para>
+        /// The serializer is used to serialize elements in order to persist 
+        /// them. This happens when you append items to the stream. Likewise,
+        /// when you read items from the stream, <see cref="Storage" /> is used
+        /// to read the contents, and the serializer is subsequently used to
+        /// deserialize the previously serialized content.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="Storage" />
+        /// <seealso cref="AppendAsync(T)" />
+        /// <seealso cref="AtomEventStream{T}(UuidIri, IAtomEventStorage, int, IContentSerializer)" />
+        public IContentSerializer ContentSerializer
+        {
+            get { return this.serializer; }
         }
 
         /// <summary>
