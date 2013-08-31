@@ -64,7 +64,10 @@ namespace Grean.AtomEventStore
             }
             if (value is DateTimeOffset)
             {
-                xmlWriter.WriteValue(((DateTimeOffset)value).ToString("o"));
+                xmlWriter.WriteValue(
+                    ((DateTimeOffset)value).ToString(
+                        "o",
+                        CultureInfo.InvariantCulture));
                 return;
             }
 
