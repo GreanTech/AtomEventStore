@@ -61,6 +61,7 @@
     <Compile Include="ConventionBasedSerializerOfComplexImmutableClasses.cs" />
     <Compile Include="IAtomEventStorage.cs" />
     <Compile Include="IContentSerializer.cs" />
+    <Compile Include="ITypeResolver.cs" />
     <Compile Include="IXmlWritable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AtomEventStream.cs" />

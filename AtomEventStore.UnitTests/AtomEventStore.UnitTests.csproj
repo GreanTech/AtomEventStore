@@ -93,7 +93,7 @@
     <Compile Include="UuidIriTests.cs" />
     <Compile Include="Wrapper.cs" />
     <Compile Include="XmlAtomContentTests.cs" />
-    <Compile Include="XmlAttributedTestEvent.cs" />
+    <Compile Include="XmlAttributedTestEventX.cs" />
     <Compile Include="XmlContentSerializerTests.cs" />
     <Compile Include="XmlWritableTests.cs" />
   </ItemGroup>

@@ -8,6 +8,9 @@ using Grean.AtomEventStore;
 using Xunit;
 using System.Xml;
 using System.Xml.Linq;
+using System.IO;
+using Ploeh.AutoFixture.Xunit;
+using Moq;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -22,7 +25,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SerializeCorrectlySerializesAttributedClassInstance(
             XmlContentSerializer sut,
-            XmlAttributedTestEvent xate)
+            XmlAttributedTestEventX xate)
         {
             var sb = new StringBuilder();
             using(var w = XmlWriter.Create(sb))
@@ -37,6 +40,33 @@ namespace Grean.AtomEventStore.UnitTests
                     "  <text>" + xate.Text + "</text>" +
                     "</test-event>");
                 Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
+            }
+        }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundTripAttributedClassInstance(
+            [Frozen]Mock<ITypeResolver> resolverStub,
+            XmlContentSerializer sut,
+            XmlAttributedTestEventX xatex)
+        {
+            resolverStub
+                .Setup(r => r.Resolve("test-event", "http://grean:rocks"))
+                .Returns(xatex.GetType());
+
+            using(var ms = new MemoryStream())
+            using (var w = XmlWriter.Create(ms))
+            {
+                sut.Serialize(w, xatex);
+                w.Flush();
+                ms.Position = 0;
+                using(var r = XmlReader.Create(ms))
+                {
+                    var content = sut.Deserialize(r);
+
+                    var actual = Assert.IsAssignableFrom<XmlAttributedTestEventX>(content.Item);
+                    Assert.Equal(xatex.Number, actual.Number);
+                    Assert.Equal(xatex.Text, actual.Text);
+                }
             }
         }
     }
