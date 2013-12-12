@@ -67,6 +67,7 @@
     <Compile Include="UuidIri.cs" />
     <Compile Include="XmlAtomContent.cs" />
     <Compile Include="XmlCasedName.cs" />
+    <Compile Include="XmlContentSerializer.cs" />
     <Compile Include="XmlWritable.cs" />
   </ItemGroup>
   <ItemGroup>
