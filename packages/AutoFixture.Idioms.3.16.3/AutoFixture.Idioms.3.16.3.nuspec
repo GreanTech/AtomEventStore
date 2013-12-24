@@ -2,11 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>AutoFixture.Idioms</id>
-    <version>3.0.7</version>
+    <version>3.16.3</version>
     <title>AutoFixture Idioms</title>
     <authors>Mark Seemann</authors>
     <owners>Mark Seemann</owners>
-    <licenseUrl>http://autofixture.codeplex.com/license</licenseUrl>
+    <licenseUrl>https://github.com/AutoFixture/AutoFixture/blob/master/LICENCE.txt</licenseUrl>
     <projectUrl>https://github.com/AutoFixture/AutoFixture</projectUrl>
     <iconUrl>http://i3.codeplex.com/Download?ProjectName=autofixture&amp;DownloadId=278049</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -14,7 +14,8 @@
     <summary>Extension to AutoFixture that contains unit testing idioms.</summary>
     <language>en-US</language>
     <dependencies>
-      <dependency id="autofixture" version="3.0.7" />
+      <dependency id="autofixture" version="3.16.3" />
+      <dependency id="Albedo" version="0.1" />
     </dependencies>
   </metadata>
 </package>

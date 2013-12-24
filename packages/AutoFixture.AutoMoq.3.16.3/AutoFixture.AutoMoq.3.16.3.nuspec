@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>AutoFixture.AutoMoq</id>
-    <version>3.0.7</version>
+    <version>3.16.3</version>
     <title>AutoFixture with Auto Mocking using Moq</title>
     <authors>Mark Seemann</authors>
     <owners>Mark Seemann</owners>
-    <licenseUrl>http://autofixture.codeplex.com/license</licenseUrl>
+    <licenseUrl>https://github.com/AutoFixture/AutoFixture/blob/master/LICENCE.txt</licenseUrl>
     <projectUrl>https://github.com/AutoFixture/AutoFixture</projectUrl>
     <iconUrl>http://i3.codeplex.com/Download?ProjectName=autofixture&amp;DownloadId=278049</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -14,11 +14,8 @@
     <summary>Turns AutoFixture into an Auto-Mocking Container based on Moq.</summary>
     <language>en-US</language>
     <dependencies>
-      <dependency id="autofixture" version="3.0.7" />
+      <dependency id="autofixture" version="3.16.3" />
       <dependency id="moq" version="3.1" />
     </dependencies>
-    <references>
-      <reference file="Ploeh.AutoFixture.AutoMoq.dll" />
-    </references>
   </metadata>
 </package>

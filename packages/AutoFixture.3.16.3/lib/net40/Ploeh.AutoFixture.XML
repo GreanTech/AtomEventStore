@@ -233,6 +233,443 @@
             <value>The builder originally supplied via the constructor.</value>
             <seealso cref="M:Ploeh.AutoFixture.BehaviorRoot.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder)"/>
         </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.IRecursionHandler">
+            <summary>
+            Handles a recursive request.
+            </summary>
+            <remarks>
+            <para>
+            When AutoFixture is asked to create instances of complex custom types,
+            it uses Reflection to figure out which constructor arguments and
+            property values to assign. If the custom types contains circular
+            references, this will cause an infinite recursion. To prevent that,
+            <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/> monitors requests in order to detect this
+            type of situation. If RecursionGuard detects this situation, it calls
+            <see cref="M:Ploeh.AutoFixture.Kernel.IRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})"/> on a composed IRecursionHandler.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.IRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Handles a recursive request.
+            </summary>
+            <param name="request">The request causing the recursion.</param>
+            <param name="recordedRequests">
+            Previously recorded, and yet unhandled, requests.
+            </param>
+            <returns>An object intended to break the recursion.</returns>
+            <remarks>
+            <para>
+            This method is called when AutoFixture detects an infinite
+            recursion. The <paramref name="request" /> is the request that
+            triggered the recursion detection;
+            <paramref name="recordedRequests" /> contains all previous, but
+            still unhandled requests: the current call stack, if you will.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder">
+            <summary>
+            Decorates an <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> with a node which tracks specimen requests, and
+            when <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> is detected, throws an <see cref="T:Ploeh.AutoFixture.ObjectCreationException"/>, which
+            includes a description of the request path.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder.#ctor(Ploeh.AutoFixture.Kernel.TracingBuilder)">
+            <summary>
+            Creates a new <see cref="T:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder"/> using the
+            supplied <see cref="T:Ploeh.AutoFixture.Kernel.TracingBuilder"/> to track specimen requests.
+            </summary>
+            <param name="tracer"></param>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Creates a new specimen based on a request by delegating to its decorated builder.
+            </summary>
+            <param name="request">The request that describes what to create.</param>
+            <param name="context">A context that can be used to create other specimens.</param>
+            <returns>
+            The requested specimen if possible; otherwise a <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance.
+            </returns>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder.Compose(System.Collections.Generic.IEnumerable{Ploeh.AutoFixture.Kernel.ISpecimenBuilder})">
+            <summary>Composes the supplied builders.</summary>
+            <param name="builders">The builders to compose.</param>
+            <returns>
+            A new <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilderNode"/> instance containing
+            <paramref name="builders"/> as child nodes.
+            </returns>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the collection.
+            </summary>
+            <returns>
+            A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to
+            iterate through the collection.
+            </returns>
+        </member>
+        <member name="P:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder.Tracer">
+            <summary>
+            Gets the <see cref="T:Ploeh.AutoFixture.Kernel.TracingBuilder"/> decorated by this instance.
+            </summary>
+        </member>
+        <member name="P:Ploeh.AutoFixture.Kernel.TerminatingWithPathSpecimenBuilder.SpecimenRequests">
+            <summary>
+            Gets the observed specimen requests, in the order they were requested.
+            </summary>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.ObservableCollectionSpecification">
+            <summary>
+            Encapsulates logic that determines whether a request is a request for a
+            <see cref="T:System.Collections.ObjectModel.ObservableCollection`1"/>.
+            </summary>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.IRequestSpecification">
+            <summary>
+            A Specification that evaluates requests.
+            </summary>
+            <remarks>
+            <para>
+            This is a codification of the Specification patter for requests. This interface can (and
+            should) be used in any place where you need to filter requests for specimens.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.IRequestSpecification.IsSatisfiedBy(System.Object)">
+            <summary>
+            Evaluates a request for a specimen.
+            </summary>
+            <param name="request">The specimen request.</param>
+            <returns>
+            <see langword="true"/> if <paramref name="request"/> is satisfied by the Specification;
+            otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.ObservableCollectionSpecification.IsSatisfiedBy(System.Object)">
+            <summary>
+            Evaluates a request for a specimen to determine whether it's a request for a
+            <see cref="T:System.Collections.ObjectModel.ObservableCollection`1"/>.
+            </summary>
+            <param name="request">The specimen request.</param>
+            <returns>
+            <see langword="true"/> if <paramref name="request"/> is a request for a
+            <see cref="T:System.Collections.ObjectModel.ObservableCollection`1"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="T:Ploeh.AutoFixture.MapCreateManyToEnumerable">
+            <summary>
+            Maps a call to
+            <see cref="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenBuilder)"/> to a
+            call for <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <remarks>
+            <para>
+            Normally,
+            <see cref="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenBuilder)"/> returns
+            its own implementation of <see cref="T:System.Collections.Generic.IEnumerable`1"/>, even if other
+            customizations have changed how IEnumerable&lt;T&gt; are handled. This
+            ensures that CreateMany&lt;T&gt; still returns many instances, even
+            when IEnumerable&lt;T&gt; have been changed to return an empty
+            sequence.
+            </para>
+            <para>
+            If you want to change this default behaviour, you can use this
+            customization.
+            </para>
+            </remarks>
+            <seealso cref="T:Ploeh.AutoFixture.Kernel.MultipleToEnumerableRelay"/>
+        </member>
+        <member name="T:Ploeh.AutoFixture.ICustomization">
+            <summary>
+            Encapsulates a customization of an <see cref="T:Ploeh.AutoFixture.IFixture"/>.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.ICustomization.Customize(Ploeh.AutoFixture.IFixture)">
+            <summary>
+            Customizes the specified fixture.
+            </summary>
+            <param name="fixture">The fixture to customize.</param>
+        </member>
+        <member name="M:Ploeh.AutoFixture.MapCreateManyToEnumerable.Customize(Ploeh.AutoFixture.IFixture)">
+            <summary>
+            Customizes the specified fixture.
+            </summary>
+            <param name="fixture">The fixture to customize.</param>
+            <exception cref="T:System.ArgumentNullException">
+            fixture is null
+            </exception>
+            <remarks>
+            <para>
+            Customizes a <see cref="T:Ploeh.AutoFixture.IFixture"/> so that
+            <see cref="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenBuilder)"/>
+            exhibits the same behaviour as a request to create
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </para>
+            </remarks>
+            <seealso cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.MultipleToEnumerableRelay">
+            <summary>
+            Relays a <see cref="T:Ploeh.AutoFixture.Kernel.MultipleRequest"/> to a request for
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <seealso cref="M:Ploeh.AutoFixture.Kernel.MultipleToEnumerableRelay.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)"/>
+            <seealso cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.MultipleToEnumerableRelay.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Creates a new specimen based on a request.
+            </summary>
+            <param name="request">
+            The request that describes what to create.
+            </param>
+            <param name="context">
+            A context that can be used to create other specimens.
+            </param>
+            <returns>
+            The requested specimen if possible; otherwise a
+            <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            context is null
+            </exception>
+            <remarks>
+            <para>
+            The <paramref name="request"/> can be any object, but will often
+            be a <see cref="T:System.Type"/> or other
+            <see cref="T:System.Reflection.MemberInfo"/> instances. This 
+            particular implementation only handles
+            <see cref="T:Ploeh.AutoFixture.Kernel.MultipleRequest"/> instances.
+            <see cref="P:Ploeh.AutoFixture.Kernel.MultipleRequest.Request"/> must either be a Type
+            instance, or a <see cref="T:Ploeh.AutoFixture.Kernel.SeededRequest"/> with a Type as its
+            <see cref="P:Ploeh.AutoFixture.Kernel.SeededRequest.Request"/>. If the request doesn't
+            satisfy these conditions, a <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance is
+            returned.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.NoConstructorsSpecification">
+            <summary>
+            A specification that evaluates whether a request is a request for a type without public constructors.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.NoConstructorsSpecification.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Kernel.NoConstructorsSpecification"/> class.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.NoConstructorsSpecification.IsSatisfiedBy(System.Object)">
+            <summary>
+            Evaluates a request for a specimen.
+            </summary>
+            <param name="request">The specimen request.</param>
+            <returns>
+            <see langword="true"/> if <paramref name="request"/> is a <see cref="T:System.Type"/> that represents a type without public constructors;
+            otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.NullRecursionHandler">
+            <summary>
+            Breaks a recursion by returning <see langword="null"/>.
+            </summary>
+            <remarks>
+            <para>
+            Some type designs contain circular references, for example in the form
+            of parent/child relationships. Often the circular reference design
+            involves a mutable property where a client can assign a parent to a
+            child, or vice versa. Such a property may accept
+            <see langword="null"/> as input, effectively breaking the circular
+            reference. As an example, setting a Parent property to
+            <see langword="null"/> may indicate that the instance represents a
+            root node.
+            </para>
+            </remarks>
+            <seealso cref="M:Ploeh.AutoFixture.Kernel.NullRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})"/>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.NullRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Handles a recursive request by returning <see langword="null"/>.
+            </summary>
+            <param name="request">The request causing the recursion.</param>
+            <param name="recordedRequests">
+            Previously recorded, and yet unhandled, requests.
+            </param>
+            <returns>
+            <see langword="null"/>.
+            </returns>
+            <remarks>
+            <para>
+            This method is called when AutoFixture detects an infinite
+            recursion. The <paramref name="request"/> is the request that
+            triggered the recursion detection;
+            <paramref name="recordedRequests"/> contains all previous, but
+            still unhandled requests: the current call stack, if you will.
+            </para>
+            <para>
+            This implementation breaks the recursion by returning null. This is
+            not always the appropriate response, because the property or method
+            argument requested may contain a Guard Clause preventing null from
+            being accepted. However, if the member in question accepts null as
+            valid input, returning null to break the recursion may be an
+            appropriate response.
+            </para>
+            </remarks>
+            <seealso cref="T:Ploeh.AutoFixture.Kernel.NullRecursionHandler"/>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.OmitOnRecursionHandler">
+            <summary>
+            Breaks a recursion by instructing AutoFixture to ignore the current
+            request.
+            </summary>
+            <seealso cref="M:Ploeh.AutoFixture.Kernel.OmitOnRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})"/>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.OmitOnRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Handles a recursive request by instructing AutoFixture to ignore
+            <paramref name="request"/>
+            </summary>
+            <param name="request">The request causing the recursion.</param>
+            <param name="recordedRequests">
+            Previously recorded, and yet unhandled, requests.
+            </param>
+            <returns>
+            A new <see cref="T:Ploeh.AutoFixture.Kernel.OmitSpecimen"/> instance.
+            </returns>
+            <remarks>
+            <para>
+            This method is called when AutoFixture detects an infinite
+            recursion. The <paramref name="request"/> is the request that
+            triggered the recursion detection;
+            <paramref name="recordedRequests"/> contains all previous, but
+            still unhandled requests: the current call stack, if you will.
+            </para>
+            <para>
+            This implementation instructs AutoFixture to ignore the request by
+            returning an <see cref="T:Ploeh.AutoFixture.Kernel.OmitSpecimen"/> instance.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.ThrowingRecursionHandler">
+            <summary>
+            Breaks a recursion by throwing a descriptive exception.
+            </summary>
+            <seealso cref="M:Ploeh.AutoFixture.Kernel.ThrowingRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})"/>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.ThrowingRecursionHandler.HandleRecursiveRequest(System.Object,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Handles a recursive request.
+            </summary>
+            <param name="request">The request causing the recursion.</param>
+            <param name="recordedRequests">
+            Previously recorded, and yet unhandled, requests.
+            </param>
+            <returns>
+            An object intended to break the recursion.
+            </returns>
+            <exception cref="T:Ploeh.AutoFixture.ObjectCreationException">Always</exception>
+            <remarks>
+            <para>
+            This method is called when AutoFixture detects an infinite
+            recursion. The <paramref name="request"/> is the request that
+            triggered the recursion detection;
+            <paramref name="recordedRequests"/> contains all previous, but
+            still unhandled requests: the current call stack, if you will.
+            </para>
+            <para>
+            This implementation always throws a descriptive exception,
+            instructing the user that the requested type contains a circular
+            reference, and that this is bad API design. The message also
+            contains instructions on how to move on.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.ValueTypeSpecification">
+            <summary>
+            A specification that evaluates whether a request is a request for a value type such as a structure.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.ValueTypeSpecification.IsSatisfiedBy(System.Object)">
+            <summary>
+            Evaluates a request for a specimen.
+            </summary>
+            <param name="request">The specimen request.</param>
+            <returns>
+            <see langword="true"/> if <paramref name="request"/> is a <see cref="T:System.Type"/> that represents a structure;
+            otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="T:Ploeh.AutoFixture.Kernel.MutableValueTypeWarningThrower">
+            <summary>
+            Throws an <see cref="T:Ploeh.AutoFixture.ObjectCreationException"/> when one tries to create Structure without explicit parametrized constructor.
+            Possibly notifying about bad design (mutable value type).
+            </summary>
+            <remarks>
+            <para>
+            This <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> can be used with proper filtering <see cref="T:Ploeh.AutoFixture.Kernel.IRequestSpecification"/> to throw exceptions only on
+            structures without constructors. Will throw an exception instead of letting the
+            containing builder return a <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance when it can't satisfy a
+            request or generic exception being thrown.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.MutableValueTypeWarningThrower.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Throws an <see cref="T:Ploeh.AutoFixture.ObjectCreationException"/>.
+            </summary>
+            <param name="request">The request that describes what to create.</param>
+            <param name="context">
+            A context that can be used to create other specimens. Not used.
+            </param>
+            <returns>
+            This method never returns. It always throws an <see cref="T:Ploeh.AutoFixture.ObjectCreationException"/>.
+            </returns>
+        </member>
+        <member name="T:Ploeh.AutoFixture.NoAutoPropertiesCustomization">
+            <summary>
+            A customization that will turn off the auto population of properties on the target type
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.NoAutoPropertiesCustomization.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.NoAutoPropertiesCustomization"/> class.
+            </summary>
+            <param name="targetType">The <see cref="T:System.Type"/> to disable auto population of properties.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="targetType"/> is null.
+            </exception>
+        </member>
+        <member name="M:Ploeh.AutoFixture.NoAutoPropertiesCustomization.Customize(Ploeh.AutoFixture.IFixture)">
+            <summary>
+            Customizes the fixture by creating a <see cref="F:Ploeh.AutoFixture.NoAutoPropertiesCustomization.targetType"/> that has no auto populated properties.
+            </summary>
+            <param name="fixture">The fixture to customize.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="fixture"/> is null.
+            </exception>
+        </member>
+        <member name="T:Ploeh.AutoFixture.RandomBooleanSequenceGenerator">
+            <summary>
+            Creates random value <see langword="true"/> or <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomBooleanSequenceGenerator.#ctor">
+            <summary>
+            Initializes a new instance of the
+            <see cref="T:Ploeh.AutoFixture.RandomBooleanSequenceGenerator"/> class.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomBooleanSequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Returns <see langword="true"/> or <see langword="false"/> randomly.
+            </summary>
+            <param name="request">The request that describes what to create.</param>
+            <param name="context">Not used.</param>
+            <returns>
+            <see langword="true"/> or <see langword="false"/> generated randomly using <see cref="T:System.Random"/>, 
+            if <paramref name="request"/> is a request for a boolean; otherwise, a <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance.
+            </returns>
+        </member>
         <member name="T:Ploeh.AutoFixture.CharSequenceGenerator">
             <summary>
             Creates a sequence of printable ASCII characters (Dec 33-126), starting at '!' (Dec 33).
@@ -329,17 +766,6 @@
             <summary>
             Customizes an <see cref="T:Ploeh.AutoFixture.IFixture"/> by using all contained <see cref="P:Ploeh.AutoFixture.CompositeCustomization.Customizations"/>.
             </summary>
-        </member>
-        <member name="T:Ploeh.AutoFixture.ICustomization">
-            <summary>
-            Encapsulates a customization of an <see cref="T:Ploeh.AutoFixture.IFixture"/>.
-            </summary>
-        </member>
-        <member name="M:Ploeh.AutoFixture.ICustomization.Customize(Ploeh.AutoFixture.IFixture)">
-            <summary>
-            Customizes the specified fixture.
-            </summary>
-            <param name="fixture">The fixture to customize.</param>
         </member>
         <member name="M:Ploeh.AutoFixture.CompositeCustomization.#ctor(System.Collections.Generic.IEnumerable{Ploeh.AutoFixture.ICustomization})">
             <summary>
@@ -2674,6 +3100,27 @@
             An <see cref="T:Ploeh.AutoFixture.Dsl.IPostprocessComposer`1"/> which can be used to
             further customize the post-processing of created specimens.
             </returns>
+            <remarks>
+            <para>
+            Although the default behavior of <see cref="T:Ploeh.AutoFixture.Fixture"/> may make
+            this method seem redundant, the purpose of this method is to enable
+            an explicit opt-in for certain types, in the case where a Fixture
+            instance has been configured to <em>not</em> auto-fille properties
+            by default (e.g. if <see cref="P:Ploeh.AutoFixture.Fixture.OmitAutoProperties"/> is
+            set to <see langword="true"/>).
+            </para>
+            </remarks>
+            <example>
+            In this example, result.Property will be assigned a value, even
+            though this isn't the default behavior of the Fixture instance.
+            <code>
+            var fixture = new Fixture { OmitAutoProperties = true };
+            PropertyHolder&lt;object&gt; result = fixture
+               .Build&lt;PropertyHolder&lt;object&gt;&gt;()
+               .WithAutoProperties()
+               .Create();
+            </code>
+            </example>
         </member>
         <member name="M:Ploeh.AutoFixture.Dsl.CompositeNodeComposer`1.Without``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
             <summary>
@@ -2762,27 +3209,6 @@
             <summary>
             A specification that evaluates whether a request is a request for an abstract type such as an abstract base class or an interface.
             </summary>
-        </member>
-        <member name="T:Ploeh.AutoFixture.Kernel.IRequestSpecification">
-            <summary>
-            A Specification that evaluates requests.
-            </summary>
-            <remarks>
-            <para>
-            This is a codification of the Specification patter for requests. This interface can (and
-            should) be used in any place where you need to filter requests for specimens.
-            </para>
-            </remarks>
-        </member>
-        <member name="M:Ploeh.AutoFixture.Kernel.IRequestSpecification.IsSatisfiedBy(System.Object)">
-            <summary>
-            Evaluates a request for a specimen.
-            </summary>
-            <param name="request">The specimen request.</param>
-            <returns>
-            <see langword="true"/> if <paramref name="request"/> is satisfied by the Specification;
-            otherwise, <see langword="false"/>.
-            </returns>
         </member>
         <member name="M:Ploeh.AutoFixture.Kernel.AbstractTypeSpecification.IsSatisfiedBy(System.Object)">
             <summary>
@@ -2997,16 +3423,86 @@
             <summary>
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/> class.
             </summary>
-            <param name="builder">The intercepting builder to decorate.</param>
+            <param name="builder">The intercepted builder to decorate.</param>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,Ploeh.AutoFixture.Kernel.IRecursionHandler)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>
+            class.
+            </summary>
+            <param name="builder">The intercepted builder to decorate.</param>
+            <param name="recursionHandler">
+            An <see cref="T:Ploeh.AutoFixture.Kernel.IRecursionHandler"/> that will handle a recursion
+            situation, if one is detected.
+            </param>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,Ploeh.AutoFixture.Kernel.IRecursionHandler,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>
+            class.
+            </summary>
+            <param name="builder">The intercepted builder to decorate.</param>
+            <param name="recursionHandler">
+            An <see cref="T:Ploeh.AutoFixture.Kernel.IRecursionHandler"/> that will handle a recursion
+            situation, if one is detected.
+            </param>
+            <param name="recursionDepth">The recursion depth at which the request will be treated as a recursive
+            request</param>
         </member>
         <member name="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,System.Collections.IEqualityComparer)">
             <summary>
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/> class.
             </summary>
-            <param name="builder">The intercepting builder to decorate.</param>
+            <param name="builder">The intercepted builder to decorate.</param>
             <param name="comparer">
-            An IEqualitycomparer implementation to use when comparing requests to determine recursion.
+            An IEqualityComparer implementation to use when comparing requests to determine recursion.
             </param>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,Ploeh.AutoFixture.Kernel.IRecursionHandler,System.Collections.IEqualityComparer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>
+            class.
+            </summary>
+            <param name="builder">The intercepted builder to decorate.</param>
+            <param name="recursionHandler">
+            An <see cref="T:Ploeh.AutoFixture.Kernel.IRecursionHandler"/> that will handle a recursion
+            situation, if one is detected.
+            </param>
+            <param name="comparer">
+            An <see cref="T:System.Collections.IEqualityComparer"/> implementation to use when
+            comparing requests to determine recursion.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            builder
+            or
+            recursionHandler
+            or
+            comparer
+            </exception>
+        </member>
+        <member name="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,Ploeh.AutoFixture.Kernel.IRecursionHandler,System.Collections.IEqualityComparer,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>
+            class.
+            </summary>
+            <param name="builder">The intercepted builder to decorate.</param>
+            <param name="recursionHandler">
+            An <see cref="T:Ploeh.AutoFixture.Kernel.IRecursionHandler"/> that will handle a recursion
+            situation, if one is detected.
+            </param>
+            <param name="comparer">
+            An <see cref="T:System.Collections.IEqualityComparer"/> implementation to use when
+            comparing requests to determine recursion.
+            </param>
+            <param name="recursionDepth">The recursion depth at which the request will be treated as a recursive
+            request</param>
+            <exception cref="T:System.ArgumentNullException">
+            builder
+            or
+            recursionHandler
+            or
+            comparer
+            </exception>
         </member>
         <member name="M:Ploeh.AutoFixture.Kernel.RecursionGuard.HandleRecursiveRequest(System.Object)">
             <summary>
@@ -3071,6 +3567,23 @@
             </summary>
             <seealso cref="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder)"/>
             <seealso cref="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,System.Collections.IEqualityComparer)"/>
+        </member>
+        <member name="P:Ploeh.AutoFixture.Kernel.RecursionGuard.RecursionHandler">
+            <summary>
+            Gets the recursion handler originally supplied as a constructor
+            argument.
+            </summary>
+            <value>
+            The recursion handler used to handle recursion situations.
+            </value>
+            <seealso cref="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,Ploeh.AutoFixture.Kernel.IRecursionHandler)"/>
+            <seealso cref="M:Ploeh.AutoFixture.Kernel.RecursionGuard.#ctor(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,Ploeh.AutoFixture.Kernel.IRecursionHandler,System.Collections.IEqualityComparer)"/>
+        </member>
+        <member name="P:Ploeh.AutoFixture.Kernel.RecursionGuard.RecursionDepth">
+            <summary>
+            The recursion depth at which the request will be treated as a 
+            recursive request
+            </summary>
         </member>
         <member name="P:Ploeh.AutoFixture.Kernel.RecursionGuard.Comparer">
             <summary>Gets the comparer supplied via the constructor.</summary>
@@ -3426,7 +3939,7 @@
         <member name="T:Ploeh.AutoFixture.OmitOnRecursionBehavior">
             <summary>
             Decorates an <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> with a
-            <see cref="T:Ploeh.AutoFixture.Kernel.OmitOnRecursionGuard"/>.
+            <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>.
             </summary>
         </member>
         <member name="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilderTransformation">
@@ -3449,15 +3962,27 @@
             </para>
             </remarks>
         </member>
+        <member name="M:Ploeh.AutoFixture.OmitOnRecursionBehavior.#ctor">
+            <summary>
+            Initializes new instance of the <see cref="T:Ploeh.AutoFixture.OmitOnRecursionBehavior"/> class with default recursion depth.
+            The default recursion depth will omit assignment on first recursion.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.OmitOnRecursionBehavior.#ctor(System.Int32)">
+            <summary>
+            Initializes new instance of the <see cref="T:Ploeh.AutoFixture.OmitOnRecursionBehavior"/> class with specific recursion depth.
+            </summary>
+            <param name="recursionDepth">The recursion depth at which the request will be omitted.</param>
+        </member>
         <member name="M:Ploeh.AutoFixture.OmitOnRecursionBehavior.Transform(Ploeh.AutoFixture.Kernel.ISpecimenBuilder)">
             <summary>
             Decorates the supplied <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> with an
-            <see cref="T:Ploeh.AutoFixture.Kernel.OmitOnRecursionGuard"/>.
+            <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>.
             </summary>
             <param name="builder">The builder to decorate.</param>
             <returns>
             <paramref name="builder"/> decorated with an
-            <see cref="T:Ploeh.AutoFixture.Kernel.OmitOnRecursionGuard"/>.
+            <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>.
             </returns>
         </member>
         <member name="T:Ploeh.AutoFixture.RandomCharSequenceGenerator">
@@ -3521,6 +4046,18 @@
             <see cref="T:System.DateTime"/> value; otherwise, a <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance.
             </returns>
         </member>
+        <member name="T:Ploeh.AutoFixture.RandomBooleanSequenceCustomization">
+            <summary>
+            A customization that changes how <see cref="T:System.Boolean"/> are generated. Uses <see cref="T:Ploeh.AutoFixture.RandomBooleanSequenceGenerator"/>.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomBooleanSequenceCustomization.Customize(Ploeh.AutoFixture.IFixture)">
+            <summary>
+            Customizes specified fixture by adding <see cref="T:Ploeh.AutoFixture.RandomBooleanSequenceGenerator"/> as a default stragety for 
+            creating new <see cref="T:System.Boolean"/>.
+            </summary>
+            <param name="fixture">The fixture to customize.</param>
+        </member>
         <member name="T:Ploeh.AutoFixture.RandomNumericSequenceCustomization">
             <summary>
             A customization that enables numeric specimens to be random and unique.
@@ -3582,9 +4119,75 @@
             The sequence of limits.
             </value>
         </member>
+        <member name="T:Ploeh.AutoFixture.RandomRangedNumberCustomization">
+            <summary>
+            A customization that enables numeric specimens to be random and unique per equivalence set of type and range limits.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomRangedNumberCustomization.Customize(Ploeh.AutoFixture.IFixture)">
+            <summary>
+            Customizes the specified fixture by adding a
+            <see cref="T:Ploeh.AutoFixture.RandomRangedNumberGenerator"/>.
+            </summary>
+            <param name="fixture">The fixture to customize.</param>
+            <exception cref="T:System.ArgumentNullException">
+            fixture is null
+            </exception>
+        </member>
+        <member name="T:Ploeh.AutoFixture.RandomRangedNumberGenerator">
+            <summary>
+            Creates a random sequence for a given type within a given range without repeating in the range until 
+            all values are exhausted. Once exhausted, will automatically reset the set and continue choosing randomly 
+            within the range.  Multiple requests (whether the same or different object) for the same
+            operand type, minimum, and maximum are treated as being drawn from the same set. 
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomRangedNumberGenerator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.RandomRangedNumberGenerator"/> class       
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomRangedNumberGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Creates a random number within the request range.
+            </summary>
+            <param name="request">The request that describes what to create. Other requests for same type and limits 
+            denote the same set. </param>
+            <param name="context">A context that can be used to create other specimens.</param>
+            <returns>
+            The next random number in a range <paramref name="request"/> is a request
+            for a numeric value; otherwise, a <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance.
+            </returns>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomRangedNumberGenerator.SelectGenerator(Ploeh.AutoFixture.Kernel.RangedNumberRequest)">
+            <summary>
+            Choose the RandomNumericSequenceGenerator to fulfill the request.  Will add the request as a new key
+            to generatorMap if the request does not already have a generator for it.  Throws ArgumentException
+            if either of the limits in the request are non-numeric. 
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomRangedNumberGenerator.ConvertLimits(System.Object,System.Object)">
+            <summary>
+            Converts provided minimum and maximum into a long array of size 2.  Throws ArgumentException
+            if either value is non-numeric or otherwise fails conversion. 
+            </summary>
+            <param name="minimum"></param>
+            <param name="maximum"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Ploeh.AutoFixture.RandomRangedNumberGenerator.ConvertLimit(System.Object)">
+            <summary>
+            Converts the provided limit into an Int64.  Throws ArgumentException if limit is a non-numeric type.
+            </summary>
+            <param name="limit"></param>
+            <returns></returns>
+        </member>
         <member name="T:Ploeh.AutoFixture.RangedNumberGenerator">
             <summary>
-            Creates a sequence of ranged numbers, starting at range minimum.
+            Creates a strictly increasing sequence of ranged numbers, starting at range minimum.  
+            Sequence restarts at range minimum when range maximum is exceeded. 
             </summary>
         </member>
         <member name="M:Ploeh.AutoFixture.RangedNumberGenerator.#ctor">
@@ -4869,13 +5472,71 @@
         </member>
         <member name="M:Ploeh.AutoFixture.FixtureRegistrar.Inject``1(Ploeh.AutoFixture.IFixture,``0)">
             <summary>
-            Injects a specific instance for a specific type.
+            Injects a specific instance for a specific type, in order to make
+            that instance a shared instance, no matter how many times the
+            Fixture is asked to create an instance of that type.
             </summary>
             <typeparam name="T">
             The type for which <paramref name="item"/> should be injected.
             </typeparam>
             <param name="fixture">The fixture.</param>
             <param name="item">The item to inject.</param>
+            <remarks>
+            <para>
+            Injecting an instance of a specific type into a
+            <see cref="T:Ploeh.AutoFixture.Fixture"/> effectively 'locks' the type to that
+            specific instance. The injected <paramref name="item"/> becomes a
+            shared instance. No matter how many times the Fixture instance is
+            asked to create an instance of <typeparamref name="T"/>, the
+            shared item is returned.
+            </para>
+            <para>
+            It's possible to inject a sub-type of T into the Fixture. As long
+            as the item can be converted to T (i.e. as long at the code
+            compiles), you can inject a sub-type of T into the Fixture. This
+            can for example be used to lock an interface to a specific instance
+            of a concrete type.
+            </para>
+            <para>
+            If you are familiar with DI Container lifetime management, the
+            following parallel may be helpful. If not, skip the next paragraph.
+            </para>
+            <para>
+            Most DI Containers come with several built-in lifetime styles. The
+            two most common lifetime styles are Transient (a new instance is
+            created for every request) and Singleton (the same instance is used
+            for all requests) (don't confuse the Singleton lifetime style with
+            the Singleton design pattern; they are related, but different). By
+            default, Fixture uses the Transient lifetime style: it creates a
+            new instance for every request. However, using the Inject method,
+            effectively changes the lifetime style for that particular type to
+            Singleton.
+            </para>
+            </remarks>
+            <example>
+            This example demonstrates that when injecting an instance of the
+            custom class MyClass into a Fixture instance, that Fixture instance
+            will return the originally injected MyClass instance every time
+            it's asked to create an instance of MyClass.
+            <code>
+            var fixture = new Fixture();
+            var original = new MyClass();
+            fixture.Inject(original);
+            
+            var actual1 = fixture.Create&lt;MyClass&gt;();
+            var actual2 = fixture.Create&lt;MyClass&gt;();
+            
+            // actual1 and actual2 are equal, and equal to original
+            Assert.Same(actual1, actual2);
+            Assert.Same(original, actual1);
+            Assert.Same(original, actual2);
+            </code>
+            </example>
+            <seealso cref="M:Ploeh.AutoFixture.FixtureRegistrar.Register``1(Ploeh.AutoFixture.IFixture,System.Func{``0})"/>
+            <seealso cref="M:Ploeh.AutoFixture.FixtureRegistrar.Register``2(Ploeh.AutoFixture.IFixture,System.Func{``0,``1})"/>
+            <seealso cref="M:Ploeh.AutoFixture.FixtureRegistrar.Register``3(Ploeh.AutoFixture.IFixture,System.Func{``0,``1,``2})"/>
+            <seealso cref="M:Ploeh.AutoFixture.FixtureRegistrar.Register``4(Ploeh.AutoFixture.IFixture,System.Func{``0,``1,``2,``3})"/>
+            <seealso cref="M:Ploeh.AutoFixture.FixtureRegistrar.Register``5(Ploeh.AutoFixture.IFixture,System.Func{``0,``1,``2,``3,``4})"/>
         </member>
         <member name="M:Ploeh.AutoFixture.FixtureRegistrar.Register``1(Ploeh.AutoFixture.IFixture,System.Func{``0})">
             <summary>
@@ -5081,7 +5742,7 @@
             <remarks>
             <para>
             The Build method kicks off a Fluent API which is usually completed by invoking
-            <see cref="M:Ploeh.AutoFixture.SpecimenFactory.CreateAnonymous``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})"/> on the method
+            <see cref="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})"/> on the method
             chain.
             </para>
             </remarks>
@@ -6991,6 +7652,18 @@
             Decorates a <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> with a <see cref="T:Ploeh.AutoFixture.Kernel.NullRecursionGuard"/>.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.NullRecursionBehavior.#ctor">
+            <summary>
+            Initializes new instance of the <see cref="T:Ploeh.AutoFixture.NullRecursionBehavior"/> class with default recursion depth.
+            The default recursion depth will cause null assignment on first recursion.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.NullRecursionBehavior.#ctor(System.Int32)">
+            <summary>
+            Initializes new instance of the <see cref="T:Ploeh.AutoFixture.NullRecursionBehavior"/> class with specific recursion depth.
+            </summary>
+            <param name="recursionDepth">The recursion depth at which the request will be assigned null.</param>
+        </member>
         <member name="M:Ploeh.AutoFixture.NullRecursionBehavior.Transform(Ploeh.AutoFixture.Kernel.ISpecimenBuilder)">
             <summary>
             Decorates the supplied <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> with a
@@ -6998,7 +7671,7 @@
             </summary>
             <param name="builder">The builder to decorate.</param>
             <returns>
-            <paramref name="builder"/> decorated with a <see cref="T:Ploeh.AutoFixture.Kernel.NullRecursionGuard"/>.
+            <paramref name="builder"/> decorated with a <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>.
             </returns>
         </member>
         <member name="T:Ploeh.AutoFixture.Kernel.SeedRequestSpecification">
@@ -7741,9 +8414,9 @@
             var fixture = new Fixture();
             fixture.Customize(new NumericSequencePerTypeCustomization());
             
-            Console.WriteLine("Byte specimen is {0}", fixture.CreateAnonymous&lt;byte&gt;());
-            Console.WriteLine("Int32 specimen is {0}", fixture.CreateAnonymous&lt;int&gt;());
-            Console.WriteLine("Single specimen is {0}", fixture.CreateAnonymous&lt;float&gt;());
+            Console.WriteLine("Byte specimen is {0}", fixture.Create&lt;byte&gt;());
+            Console.WriteLine("Int32 specimen is {0}", fixture.Create&lt;int&gt;());
+            Console.WriteLine("Single specimen is {0}", fixture.Create&lt;float&gt;());
              
             // The output of this program will be:
             // Byte specimen is 1
@@ -7759,6 +8432,38 @@
             </summary>
             <param name="fixture">The fixture to customize.</param>
         </member>
+        <member name="T:Ploeh.AutoFixture.SupportMutableValueTypesCustomization">
+            <summary>
+            A customization that changes how custom <see langword="struct"/> are generated. Uses <see cref="T:Ploeh.AutoFixture.MutableValueTypeGenerator"/>.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.SupportMutableValueTypesCustomization.Customize(Ploeh.AutoFixture.IFixture)">
+            <summary>
+            Customizes specified fixture by adding <see cref="T:Ploeh.AutoFixture.MutableValueTypeGenerator"/> as a default stragety for 
+            creating new custom <see langword="struct"/> that has only default constructor.
+            </summary>
+            <param name="fixture">The fixture to customize.</param>
+        </member>
+        <member name="T:Ploeh.AutoFixture.MutableValueTypeGenerator">
+            <summary>
+            Creates new <see langword="struct"/>.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.MutableValueTypeGenerator.#ctor">
+            <summary>
+            Creates new isntance.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.MutableValueTypeGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Creates a new <see langword="struct"/>.
+            </summary>
+            <param name="request">The request that describes what to create.</param>
+            <param name="context">A context that can be used to create other specimens. Not used</param>
+            <returns>
+            The requested struct if possible; otherwise a <see cref="T:Ploeh.AutoFixture.Kernel.NoSpecimen"/> instance.
+            </returns>
+        </member>
         <member name="T:Ploeh.AutoFixture.ThrowingRecursionBehavior">
             <summary>
             Decorates a <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> with a <see cref="T:Ploeh.AutoFixture.Kernel.ThrowingRecursionGuard"/>.
@@ -7771,7 +8476,7 @@
             </summary>
             <param name="builder">The builder to decorate.</param>
             <returns>
-            <paramref name="builder"/> decorated with a <see cref="T:Ploeh.AutoFixture.Kernel.NullRecursionGuard"/>.
+            <paramref name="builder"/> decorated with a <see cref="T:Ploeh.AutoFixture.Kernel.RecursionGuard"/>.
             </returns>
         </member>
         <member name="T:Ploeh.AutoFixture.Kernel.TraceWriter">
@@ -7836,10 +8541,17 @@
             Creates new <see cref="T:System.Guid"/> instances.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.GuidGenerator.Create">
+            <summary>
+            Creates a new <see cref="T:System.Guid"/> instance.
+            </summary>
+            <returns>A new <see cref="T:System.Guid"/> instance.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.GuidGenerator.CreateAnonymous">
             <summary>
             Creates a new <see cref="T:System.Guid"/> instance.
             </summary>
+            <remarks>Obsolete Please move over to using <see cref="M:Ploeh.AutoFixture.GuidGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
             <returns>A new <see cref="T:System.Guid"/> instance.</returns>
         </member>
         <member name="M:Ploeh.AutoFixture.GuidGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
@@ -8336,6 +9048,16 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.BooleanSwitch"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.BooleanSwitch.Create">
+            <summary>
+            Returns an alternating sequence of <see langword="true"/> and <see langword="false"/>
+            every other time it is invoked.
+            </summary>
+            <returns>
+            <see langword="true"/>, followed by <see langword="false"/> at the next invocation, and
+            so on.
+            </returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.BooleanSwitch.CreateAnonymous">
             <summary>
             Returns an alternating sequence of <see langword="true"/> and <see langword="false"/>
@@ -8345,6 +9067,7 @@
             <see langword="true"/>, followed by <see langword="false"/> at the next invocation, and
             so on.
             </returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.BooleanSwitch.Create">Create()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.BooleanSwitch.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
@@ -8369,11 +9092,18 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.ByteSequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.ByteSequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.ByteSequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
             <returns>The next number in a consequtive sequence.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.ByteSequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.ByteSequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
@@ -8396,11 +9126,18 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Int64SequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.DecimalSequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.DecimalSequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
             <returns>The next number in a consequtive sequence.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.DecimalSequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.DecimalSequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
@@ -8423,11 +9160,18 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.DoubleSequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.DoubleSequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.DoubleSequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
             <returns>The next number in a consequtive sequence.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.DoubleSequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.DoubleSequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
@@ -8480,7 +9224,7 @@
             <remarks>
             <para>
             The Build method kicks off a Fluent API which is usually completed by invoking
-            <see cref="M:Ploeh.AutoFixture.SpecimenFactory.CreateAnonymous``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})"/> on the method
+            <see cref="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})"/> on the method
             chain.
             </para>
             <para>
@@ -8655,11 +9399,18 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Int16SequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.Int16SequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.Int16SequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
             <returns>The next number in a consequtive sequence.</returns>
+            /// <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.Int16SequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.Int16SequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
@@ -8682,10 +9433,17 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Int32SequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.Int32SequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.Int32SequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.Int32SequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
             <returns>The next number in a consequtive sequence.</returns>
         </member>
         <member name="M:Ploeh.AutoFixture.Int32SequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
@@ -8709,10 +9467,17 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.Int64SequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.Int64SequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.Int64SequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.Int64SequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
             <returns>The next number in a consequtive sequence.</returns>
         </member>
         <member name="M:Ploeh.AutoFixture.Int64SequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
@@ -8811,11 +9576,18 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.SByteSequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.SByteSequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.SByteSequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
             <returns>The next number in a consequtive sequence.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.SByteSequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SByteSequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
@@ -8886,11 +9658,18 @@
             Initializes a new instance of the <see cref="T:Ploeh.AutoFixture.SingleSequenceGenerator"/> class.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.SingleSequenceGenerator.Create">
+            <summary>
+            Creates an anonymous number.
+            </summary>
+            <returns>The next number in a consequtive sequence.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.SingleSequenceGenerator.CreateAnonymous">
             <summary>
             Creates an anonymous number.
             </summary>
             <returns>The next number in a consequtive sequence.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.SingleSequenceGenerator.Create">Create()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SingleSequenceGenerator.Create(System.Object,Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
@@ -8909,6 +9688,14 @@
             <see cref="T:Ploeh.AutoFixture.Kernel.ISpecimenBuilder"/> instances.
             </summary>
         </member>
+        <member name="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Creates an anonymous variable of the requested type.
+            </summary>
+            <typeparam name="T">The type of object to create.</typeparam>
+            <param name="context">The context used to resolve the type request.</param>
+            <returns>An anonymous object of type <typeparamref name="T"/>.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateAnonymous``1(Ploeh.AutoFixture.Kernel.ISpecimenContext)">
             <summary>
             Creates an anonymous variable of the requested type.
@@ -8916,6 +9703,7 @@
             <typeparam name="T">The type of object to create.</typeparam>
             <param name="context">The context used to resolve the type request.</param>
             <returns>An anonymous object of type <typeparamref name="T"/>.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Kernel.ISpecimenContext)">Create&lt;T&gt;()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateAnonymous``1(Ploeh.AutoFixture.IFixture)">
             <summary>
@@ -8941,7 +9729,7 @@
             An anonymous object of type <typeparamref name="T"/>.
             </returns>
         </member>
-        <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateAnonymous``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})">
+        <member name="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})">
             <summary>
             Creates an anonymous variable of the requested type.
             </summary>
@@ -8954,6 +9742,28 @@
             </para>
             </remarks>
         </member>
+        <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateAnonymous``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})">
+            <summary>
+            Creates an anonymous variable of the requested type.
+            </summary>
+            <typeparam name="T">The type of object to create.</typeparam>
+            <param name="composer">The composer used to resolve the type request.</param>
+            <returns>An anonymous object of type <typeparamref name="T"/>.</returns>
+            <remarks>Obsolete: "Please move over to using <see cref="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Kernel.ISpecimenContext)">Create{T}</see> as this method will be removed in the next release
+            </remarks>
+        </member>
+        <member name="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Kernel.ISpecimenContext,``0)">
+            <summary>
+            Creates an anonymous object, potentially using the supplied seed as additional
+            information when creating the object.
+            </summary>
+            <typeparam name="T">The type of object to create.</typeparam>
+            <param name="seed">
+            Any data that adds additional information when creating the anonymous object.
+            </param>
+            <param name="context">The context used to resolve the type request.</param>
+            <returns>An anonymous object.</returns>
+        </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateAnonymous``1(Ploeh.AutoFixture.Kernel.ISpecimenContext,``0)">
             <summary>
             Creates an anonymous object, potentially using the supplied seed as additional
@@ -8965,6 +9775,7 @@
             </param>
             <param name="context">The context used to resolve the type request.</param>
             <returns>An anonymous object.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Kernel.ISpecimenContext)">Create{T}()</see> as this method will be removed in the next release</remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.Create``1(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,``0)">
             <summary>
@@ -9000,6 +9811,10 @@
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
             </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
+            </para>
             </remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenContext)">
@@ -9009,6 +9824,21 @@
             <typeparam name="T">The type of objects to create.</typeparam>
             <param name="context">The context used to resolve the type request.</param>
             <returns>A sequence of anonymous object of type <typeparamref name="T"/>.</returns>
+            <remarks>
+            <para>
+            The CreateMany implementation always returns a new instance of
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/>. Even if IEnumerable&lt;T&gt; is
+            Frozen by the <see cref="M:Ploeh.AutoFixture.FixtureFreezer.Freeze``1(Ploeh.AutoFixture.IFixture)"/> method
+            or explicitly assigned with the
+            <see cref="M:Ploeh.AutoFixture.FixtureRegistrar.Inject``1(Ploeh.AutoFixture.IFixture,``0)"/> method, the
+            CreateMany method returns a new, independent instance of
+            IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
+            </para>
+            </remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0})">
             <summary>
@@ -9026,6 +9856,10 @@
             <see cref="M:Ploeh.AutoFixture.FixtureRegistrar.Inject``1(Ploeh.AutoFixture.IFixture,``0)"/> method, the
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
             </para>
             <para>
             The only purpose of this explicit overload is to support type inferencing.
@@ -9055,6 +9889,10 @@
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
             </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
+            </para>
             </remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenContext,``0)">
@@ -9078,6 +9916,10 @@
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
             </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
+            </para>
             </remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenBuilder,System.Int32)">
@@ -9100,6 +9942,10 @@
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
             </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
+            </para>
             </remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenContext,System.Int32)">
@@ -9120,6 +9966,10 @@
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
             </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
+            </para>
             </remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Dsl.IPostprocessComposer{``0},System.Int32)">
@@ -9139,6 +9989,10 @@
             <see cref="M:Ploeh.AutoFixture.FixtureRegistrar.Inject``1(Ploeh.AutoFixture.IFixture,``0)"/> method, the
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
             </para>
             <para>
             The only purpose of this explicit overload is to support type inferencing.
@@ -9169,6 +10023,10 @@
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
             </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
+            </para>
             </remarks>
         </member>
         <member name="M:Ploeh.AutoFixture.SpecimenFactory.CreateMany``1(Ploeh.AutoFixture.Kernel.ISpecimenContext,``0,System.Int32)">
@@ -9192,6 +10050,10 @@
             <see cref="M:Ploeh.AutoFixture.FixtureRegistrar.Inject``1(Ploeh.AutoFixture.IFixture,``0)"/> method, the
             CreateMany method returns a new, independent instance of
             IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behaviour, for example by applying the
+            <see cref="T:Ploeh.AutoFixture.MapCreateManyToEnumerable"/> customization.
             </para>
             </remarks>
         </member>
@@ -9294,6 +10156,21 @@
             <summary>
             Gets the writer to which diagnostics information is written.
             </summary>
+        </member>
+        <member name="T:Ploeh.AutoFixture.TypeFilter">
+            <summary>
+            Contains extension methods for <see cref="T:System.Type"/> class.
+            </summary>
+        </member>
+        <member name="M:Ploeh.AutoFixture.TypeFilter.IsValueTypeButNotPrimitiveOrEnum(System.Type)">
+            <summary>
+            Checks if type is a struct. This will exclude primitive types (int, char etc.) considered as <see cref="P:System.Type.IsPrimitive"/> as well as enums
+            but not .net structs. 
+            </summary>
+            <param name="type">Type that needs to be checked.</param>
+            <returns>
+            <see langword="true"/> if given type is a value type (but not enum or primitive type), <see langword="false"/>.
+            </returns>
         </member>
         <member name="T:Ploeh.AutoFixture.TypeGenerator">
             <summary>
