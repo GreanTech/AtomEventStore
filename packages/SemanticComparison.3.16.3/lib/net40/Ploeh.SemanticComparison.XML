@@ -4,6 +4,34 @@
         <name>Ploeh.SemanticComparison</name>
     </assembly>
     <members>
+        <member name="T:Ploeh.SemanticComparison.FalseSpecification`1">
+            <summary>
+            A <see cref="T:Ploeh.SemanticComparison.ISpecification`1"/> that is always <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="T:Ploeh.SemanticComparison.ISpecification`1">
+            <summary>
+            A Specification that evaluates candidates.
+            </summary>
+            <typeparam name="T">The type of candidate to evaluate.</typeparam>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.ISpecification`1.IsSatisfiedBy(`0)">
+            <summary>
+            Determines whether the candidate is satisfied by the Specification.
+            </summary>
+            <param name="candidate">The request.</param>
+            <returns>
+            <see langword="true" /> if the candidate is satisfied by the
+            Specification; otherwise, <see langword="false" />.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.FalseSpecification`1.IsSatisfiedBy(`0)">
+            <summary>
+            Determines whether a candidate is satisfied by the Specification.
+            </summary>
+            <param name="candidate">The candidate.</param>
+            <returns><see langword="false" /></returns>
+        </member>
         <member name="T:Ploeh.SemanticComparison.Fluent.LikenessSource`1">
             <summary>
             Defines the source-side of a <see cref="T:Ploeh.SemanticComparison.Likeness`2"/>.
@@ -46,6 +74,29 @@
             from the public API when the source value is an instance of an anonymous type.
             </para>
             </remarks>
+        </member>
+        <member name="T:Ploeh.SemanticComparison.IMemberComparer">
+            <summary>
+            Evaluates requests for comparison of a property and field for equality.
+            </summary>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.IMemberComparer.IsSatisfiedBy(System.Reflection.PropertyInfo)">
+            <summary>
+            Evaluates a request for comparison of a property.
+            </summary>
+            <param name="request">The request for comparison of a property.</param>
+            <returns><see langword="true"/> if <paramref name="request"/> is
+            satisfied by the comparison; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.IMemberComparer.IsSatisfiedBy(System.Reflection.FieldInfo)">
+            <summary>
+            Evaluates a request for comparison of a field.
+            </summary>
+            <param name="request">The request for comparison of a field.</param>
+            <returns> <see langword="true"/> if <paramref name="request"/> is
+            satisfied by the comparison; otherwise, <see langword="false"/>.
+            </returns>
         </member>
         <member name="T:Ploeh.SemanticComparison.Likeness`2">
             <summary>
@@ -181,6 +232,97 @@
             <see cref="M:Ploeh.SemanticComparison.Likeness`2.Equals(`1)"/> is invoked.
             </summary>
         </member>
+        <member name="T:Ploeh.SemanticComparison.Likeness`1">
+            <summary>
+            Provides convention-based object equality comparison for use when 
+            comparing two semantically equivalent objects.
+            </summary>
+            <typeparam name="T">
+            The type of the value which will be compared for equality.
+            </typeparam>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.Likeness`1.#ctor(`0)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.SemanticComparison.Likeness`1"/> 
+            class with the supplied value.
+            </summary>
+            <param name="value">The value which will be compared for equality.
+            </param>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.Likeness`1.#ctor(`0,System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.SemanticComparison.Likeness`1"/> 
+            class with the supplied value.
+            </summary>
+            <param name="value">The value which will be compared for equality.
+            </param>
+            <param name="comparer">
+            The comparer to support the comparison of objects for equality.
+            </param>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.Likeness`1.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is semantically
+            equal to the current <see cref="P:Ploeh.SemanticComparison.Likeness`1.Value"/>.
+            </summary>
+            <param name="obj">
+            The object to compare against <see cref="P:Ploeh.SemanticComparison.Likeness`1.Value"/>.
+            </param>
+            <returns>
+            <see langword="true"/> if <paramref name="obj"/> is semantically
+            equal to <see cref="P:Ploeh.SemanticComparison.Likeness`1.Value"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.Likeness`1.GetHashCode">
+            <summary>
+            Serves as a hash function for <see cref="T:Ploeh.SemanticComparison.Likeness`1"/>.
+            </summary>
+            <returns>
+            The hash code for <see cref="P:Ploeh.SemanticComparison.Likeness`1.Value"/>, or 0 if the value is 
+            <see langword="null"/>.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.Likeness`1.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the contained object.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> representation of the contained object.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.Likeness`1.Equals(`0)">
+            <summary>
+            Determines whether the specified object is semantically equal to 
+            the current <see cref="P:Ploeh.SemanticComparison.Likeness`1.Value"/>.
+            </summary>
+            <param name="other">
+            The object to compare against <see cref="P:Ploeh.SemanticComparison.Likeness`1.Value"/>.
+            </param>
+            <returns>
+            <see langword="true"/> if <paramref name="other"/> is semantically
+            equal to <see cref="P:Ploeh.SemanticComparison.Likeness`1.Value"/>; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.Likeness`1.ToResemblance">
+            <summary>
+            Turns the <see cref="T:Ploeh.SemanticComparison.Likeness`1"/> into a Resemblance by 
+            dynamically emitting a derived class that overrides Equals in the 
+            way that the <see cref="T:Ploeh.SemanticComparison.Likeness`1"/> (re)defines equality.
+            </summary>
+            <returns>
+            A dynamically emitted derived class that overrides Equals in the 
+            way that the <see cref="T:Ploeh.SemanticComparison.Likeness`1"/> (re)defines equality.
+            </returns>
+            <exception cref="T:Ploeh.SemanticComparison.ProxyCreationException"></exception>
+        </member>
+        <member name="P:Ploeh.SemanticComparison.Likeness`1.Value">
+            <summary>
+            Gets the supplied value which will be compared for equality.
+            </summary>
+            <value>
+            The supplied value which will be compared for equality.
+            </value>
+        </member>
         <member name="T:Ploeh.SemanticComparison.LikenessException">
             <summary>
             Represents an error where two semantically comparable instances were expected to match, but
@@ -246,6 +388,113 @@
             A new <see cref="T:Ploeh.SemanticComparison.Likeness`2"/> that includes
             <paramref name="evaluator"/>.
             </returns>
+        </member>
+        <member name="T:Ploeh.SemanticComparison.MemberComparer">
+            <summary>
+            Provides custom equality comparison for requests of a property and field.
+            </summary>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.MemberComparer.#ctor(System.Collections.IEqualityComparer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.SemanticComparison.MemberComparer"/> 
+            class with the supplied <see cref="T:System.Collections.IEqualityComparer"/> to support
+            the comparison of properties and fields.
+            </summary>
+            <param name="comparer">
+            The supplied <see cref="T:System.Collections.IEqualityComparer"/>.
+            </param>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.MemberComparer.#ctor(System.Collections.IEqualityComparer,Ploeh.SemanticComparison.ISpecification{System.Reflection.PropertyInfo},Ploeh.SemanticComparison.ISpecification{System.Reflection.FieldInfo})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.SemanticComparison.MemberComparer"/>
+            class with the supplied <see cref="T:System.Collections.IEqualityComparer"/>,
+            <see cref="T:Ploeh.SemanticComparison.ISpecification`1"/>, and
+            <see cref="T:Ploeh.SemanticComparison.ISpecification`1"/> to support the
+            comparison of properties and fields.
+            </summary>
+            <param name="comparer">
+            The supplied <see cref="T:System.Collections.IEqualityComparer"/>.
+            </param>
+            <param name="propertySpecification">
+            The supplied Specification used to control whether or not a property
+            should be compared.
+            </param>
+            <param name="fieldSpecification">
+            The supplied Specification used to control whether or not a field 
+            should be compared.
+            </param>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.MemberComparer.IsSatisfiedBy(System.Reflection.PropertyInfo)">
+            <summary>
+            Evaluates a request for comparison of a property.
+            </summary>
+            <param name="request">The request for comparison of a property.</param>
+            <returns><see langword="true"/>.</returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.MemberComparer.IsSatisfiedBy(System.Reflection.FieldInfo)">
+            <summary>
+            Evaluates a request for comparison of a field.
+            </summary>
+            <param name="request">The request for comparison of a field.</param>
+            <returns><see langword="true"/>.</returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.MemberComparer.Equals(System.Object,System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is 
+            equal to this instance.
+            </summary>
+            <param name="x">The <see cref="T:System.Object"/> to compare with
+            this instance.</param>
+            <param name="y">The y.</param>
+            <returns>
+              <c>true</c> if the specified <see cref="T:System.Object"/> 
+              is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+            <remarks>
+              <para>
+                <paramref name="x"/> and <paramref name="y"/> are considered
+                equal if the supplied <see cref="T:System.Collections.IEqualityComparer"/>'s Equals 
+                method returns <see langword="true"/>.
+              </para>
+            </remarks>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.MemberComparer.GetHashCode(System.Object)">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <param name="obj">The obj.</param>
+            <returns>
+            A hash code for this instance, suitable for use in hashing 
+            algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="P:Ploeh.SemanticComparison.MemberComparer.Comparer">
+            <summary>
+            Gets the supplied <see cref="T:System.Collections.IEqualityComparer"/>.
+            </summary>
+            <value>
+            The supplied <see cref="T:System.Collections.IEqualityComparer"/>.
+            </value>
+        </member>
+        <member name="P:Ploeh.SemanticComparison.MemberComparer.PropertySpecification">
+            <summary>
+            Gets the supplied Specification used to control whether or not a property
+            should be compared.
+            </summary>
+            <value>
+            The supplied Specification used to control whether or not a property should
+            be compared.
+            </value>
+        </member>
+        <member name="P:Ploeh.SemanticComparison.MemberComparer.FieldSpecification">
+            <summary>
+            Gets the supplied Specification used to control whether or not a field
+            should be compared.
+            </summary>
+            <value>
+            The supplied Specification used to control whether or not a field should
+            be compared.
+            </value>
         </member>
         <member name="T:Ploeh.SemanticComparison.MemberInfoNameComparer">
             <summary>
@@ -382,6 +631,112 @@
             <exception cref="T:System.ArgumentNullException">
             The type of <paramref name="obj"/> is a reference type and <paramref name="obj"/> is null.
               </exception>
+        </member>
+        <member name="T:Ploeh.SemanticComparison.SemanticComparer`1">
+            <summary>
+            Provides a class which implements the <see cref="T:System.Collections.Generic.IEqualityComparer`1"/>
+            interface for convention-based object equality comparison for use when 
+            comparing two semantically equivalent objects.
+            </summary>
+            <typeparam name="T">
+            The type of the value which will be compared for equality.
+            </typeparam>
+            <remarks>
+            This class is a boolean 'And' Composite over <see cref="T:Ploeh.SemanticComparison.IMemberComparer"/>
+            instances.
+            </remarks>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.SemanticComparer`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.SemanticComparison.SemanticComparer`1"/>
+            class.
+            </summary>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.SemanticComparer`1.#ctor(System.Collections.Generic.IEnumerable{Ploeh.SemanticComparison.IMemberComparer})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.SemanticComparison.SemanticComparer`1"/>
+            class.
+            </summary>
+            <param name="comparers">
+            The supplied <see cref="T:System.Collections.Generic.IEnumerable`1"/> instances.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            comparers is null
+            </exception>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.SemanticComparer`1.#ctor(Ploeh.SemanticComparison.IMemberComparer[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ploeh.SemanticComparison.SemanticComparer`1"/>
+            class.
+            </summary>
+            <param name="comparers">
+            The supplied array of <see cref="T:Ploeh.SemanticComparison.IMemberComparer"/> instances.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            comparers is null
+            </exception>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.SemanticComparer`1.Equals(`0,`0)">
+            <summary>
+            Determines whether the specified objects are equal.
+            </summary>
+            <param name="x">The first object to compare.</param>
+            <param name="y">The second object to compare.</param>
+            <returns>
+            true if the specified objects are equal; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.SemanticComparer`1.GetHashCode(`0)">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <param name="obj">The obj.</param>
+            <returns>
+            A hash code for this instance, suitable for use in hashing 
+            algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.SemanticComparer`1.System#Collections#IEqualityComparer#Equals(System.Object,System.Object)">
+            <summary>
+            Determines whether the specified objects are equal.
+            </summary>
+            <param name="x">The first object to compare.</param>
+            <param name="y">The second object to compare.</param>
+            <returns>
+            true if the specified objects are equal; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.SemanticComparer`1.System#Collections#IEqualityComparer#GetHashCode(System.Object)">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <param name="obj">The obj.</param>
+            <returns>
+            A hash code for this instance, suitable for use in hashing
+            algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="P:Ploeh.SemanticComparison.SemanticComparer`1.Comparers">
+            <summary>
+            Gets the supplied <see cref="T:System.Collections.Generic.IEnumerable`1"/> 
+            instances.
+            </summary>
+            <value>
+            The supplied <see cref="T:System.Collections.Generic.IEnumerable`1"/>
+            instances.
+            </value>
+        </member>
+        <member name="T:Ploeh.SemanticComparison.TrueSpecification`1">
+            <summary>
+            A <see cref="T:Ploeh.SemanticComparison.ISpecification`1"/> that is always <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="M:Ploeh.SemanticComparison.TrueSpecification`1.IsSatisfiedBy(`0)">
+            <summary>
+            Determines whether a candidate is satisfied by the Specification.
+            </summary>
+            <param name="candidate">The candidate.</param>
+            <returns><see langword="true" /></returns>
         </member>
     </members>
 </doc>
