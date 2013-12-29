@@ -15,7 +15,7 @@
     <tags>EventSourcing Atom</tags>
   </metadata>
   <files>
-    <file src="AtomEventStore.AzureBlob\bin\Release\Grean.AtomEventStore.AzureBlob.dll" target="lib\net45" />
-    <file src="AtomEventStore.AzureBlob\bin\Release\Grean.AtomEventStore.AzureBlob.XML" target="lib\net45" />
+    <file src="Grean.AtomEventStore.AzureBlob.dll" target="lib\net45" />
+    <file src="Grean.AtomEventStore.AzureBlob.XML" target="lib\net45" />
   </files>
 </package>
