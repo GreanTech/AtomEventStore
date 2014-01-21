@@ -98,8 +98,43 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("xmlReader");
             if (serializer == null)
                 throw new ArgumentNullException("serializer");
+            GuardContentElement(xmlReader);
+
+            xmlReader.Read();
 
             return serializer.Deserialize(xmlReader);
+        }
+
+        private static void GuardContentElement(XmlReader xmlReader)
+        {
+            xmlReader.MoveToContent();
+
+            if (xmlReader.LocalName != "content")
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "The containing XML element of an Atom XML content entry must have the local name \"content\", but the name was \"{0}\". The name comparison is case-sensitive.",
+                        xmlReader.LocalName),
+                    "xmlReader");
+            if (xmlReader.NamespaceURI != "http://www.w3.org/2005/Atom")
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "The containing XML element of an Atom XML content entry must have the XML namespace \"http://www.w3.org/2005/Atom\", but the XML namespace was \"{0}\". The namespace comparison is case-sensitive.",
+                        xmlReader.NamespaceURI),
+                    "xmlReader");
+
+            if (!xmlReader.MoveToAttribute("type"))
+                throw new ArgumentException(
+                    "The containing XML element of an Atom XML content entry must have a \"type\" attribute, but none was found. The attribute name comparison is case-sensitive.",
+                    "xmlReader");
+            if (xmlReader.Value != "application/xml")
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "The containing XML element of an Atom XML content entry must have a \"type\" attribute with the value \"application/xml\", but the value was \"{0}\". The value comparison is case-sensitive.",
+                        xmlReader.Value),
+                    "xmlReader");
         }
     }
 }
