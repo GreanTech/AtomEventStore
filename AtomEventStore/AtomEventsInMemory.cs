@@ -11,12 +11,10 @@ namespace Grean.AtomEventStore
     public class AtomEventsInMemory : IAtomEventStorage
     {
         private readonly Dictionary<Uri, StringBuilder> feeds;
-        private readonly Dictionary<Uri, StringBuilder> entries;
 
         public AtomEventsInMemory()
         {
             this.feeds = new Dictionary<Uri, StringBuilder>();
-            this.entries = new Dictionary<Uri, StringBuilder>();
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
@@ -85,14 +83,6 @@ namespace Grean.AtomEventStore
             get
             {
                 return this.feeds.Values.Select(sb => sb.ToString());
-            }
-        }
-
-        public IEnumerable<string> Entries
-        {
-            get
-            {
-                return this.entries.Values.Select(sb => sb.ToString());
             }
         }
     }
