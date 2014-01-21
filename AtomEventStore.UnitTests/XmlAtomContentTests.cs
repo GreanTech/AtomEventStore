@@ -543,5 +543,33 @@ namespace Grean.AtomEventStore.UnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Theory]
+        [InlineAutoAtomData("<Content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">", "</Content>")]
+        [InlineAutoAtomData("<foo type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">", "</foo>")]
+        [InlineAutoAtomData("<content xmlns=\"http://www.w3.org/2005/Atom\">", "</content>")]
+        [InlineAutoAtomData("<content type=\"Application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">", "</content>")]
+        [InlineAutoAtomData("<content type=\"application/json\" xmlns=\"http://www.w3.org/2005/Atom\">", "</content>")]
+        [InlineAutoAtomData("<content type=\"text/xml\" xmlns=\"http://www.w3.org/2005/Atom\">", "</content>")]
+        [InlineAutoAtomData("<content type=\"bar\" xmlns=\"http://www.w3.org/2005/Atom\">", "</content>")]
+        [InlineAutoAtomData("<content type=\"application/xml\" xmlns=\"baz\">", "</content>")]
+        [InlineAutoAtomData("<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/ATOM\">", "</content>")]
+        public void ParseThrowsOnWrongContainingElement(
+            string startElement,
+            string endElement,
+            IContentSerializer dummySerializer)
+        {
+            var xml =
+                startElement +
+                "  <test-event-x xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                "    <number>42</number>" +
+                "    <text>Foo</text>" +
+                "  </test-event-x>" +
+                endElement;
+            Assert.Throws<ArgumentException>(
+                () => XmlAtomContent.Parse(
+                    xml, 
+                    dummySerializer));
+        }
     }
 }
