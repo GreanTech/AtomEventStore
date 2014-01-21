@@ -130,13 +130,6 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void EntriesAreInitiallyEmpty(AtomEventsInMemory sut)
-        {
-            IEnumerable<string> actual = sut.Entries;
-            Assert.Empty(actual);
-        }
-
-        [Theory, AutoAtomData]
         public void FeedsReturnWrittenFeeds(
             AtomEventsInMemory sut,
             IEnumerable<AtomFeedBuilder<TestEventY>> feedBuilders)
