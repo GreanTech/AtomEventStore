@@ -113,9 +113,8 @@ namespace Grean.AtomEventStore
             if (xmlReader == null)
                 throw new ArgumentNullException("xmlReader");
 
-            xmlReader.MoveToContent();
             var x = (XElement)XElement.ReadFrom(xmlReader);
-            var item = ReadFrom(x.Elements().Single());
+            var item = ReadFrom(x);
             return new XmlAtomContent(item);
         }
 

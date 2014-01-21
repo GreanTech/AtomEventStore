@@ -99,6 +99,9 @@ namespace Grean.AtomEventStore
             if (serializer == null)
                 throw new ArgumentNullException("serializer");
 
+            xmlReader.MoveToContent();
+            xmlReader.Read(); // TODO: Check if this is actually the 'content' node
+
             return serializer.Deserialize(xmlReader);
         }
     }
