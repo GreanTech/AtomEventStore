@@ -5,7 +5,7 @@ open Grean.AtomEventStore.UnitTests.FSharp.TestDsl
 open Ploeh.AutoFixture
 open Xunit.Extensions
 
-module AtomeEventStreamFacadeTests =
+module AtomEventStreamFacadeTests =
 
     [<Theory; InMemoryConventions>]
     let SutCorrectlyRoundTripsASingleElement
