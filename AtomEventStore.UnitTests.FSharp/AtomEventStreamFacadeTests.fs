@@ -1,5 +1,7 @@
 ﻿namespace Grean.AtomEventStore.UnitTests.FSharp
 
+open System.Reactive
+open FSharp.Reactive
 open Grean.AtomEventStore
 open Grean.AtomEventStore.UnitTests.FSharp.TestDsl
 open Ploeh.AutoFixture
@@ -28,4 +30,28 @@ module AtomEventStreamFacadeTests =
         let actual = sut |> Seq.toList
 
         let expected = tefs |> List.rev
+        Verify <@ expected = actual @>
+
+    [<Theory; InMemoryConventions>]
+    let SutCorrectlyRoundTripsDiscriminatedUnions
+        (sut : AtomEventStream<obj>)
+        (tef : TestEventF)
+        (teg : TestEventG) =
+
+        let extract = function
+            | F(x) -> x :> obj
+            | G(x) -> x :> obj
+        let duObs = Observer.Create(extract >> sut.OnNext)
+        duObs.OnNext(tef |> F)
+        duObs.OnNext(teg |> G)
+        
+        let infuse (x : obj) =
+            match x with
+            | :? TestEventF as f -> f |> F
+            | :? TestEventG as g -> g |> G
+            | _ -> raise(System.ArgumentException("Unknown event type."))
+        let duSeq = sut |> Seq.map infuse
+        let actual = duSeq |> Seq.toList
+
+        let expected = [teg |> G; tef |> F]
         Verify <@ expected = actual @>
