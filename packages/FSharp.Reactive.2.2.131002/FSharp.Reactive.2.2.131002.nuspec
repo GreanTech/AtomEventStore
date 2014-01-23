@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>FSharp.Reactive</id>
+    <version>2.2.131002</version>
+    <authors>Ryan Riley,  Steffen Forkmann</authors>
+    <owners>Ryan Riley,  Steffen Forkmann</owners>
+    <licenseUrl>http://github.com/panesofglass/FSharp.Reactive/raw/master/LICENSE.txt</licenseUrl>
+    <projectUrl>http://github.com/panesofglass/FSharp.Reactive</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A F#-friendly wrapper for the Reactive Extensions.</description>
+    <language>en-US</language>
+    <tags>fsharp Rx Reactive Extensions Observable</tags>
+    <dependencies>
+      <dependency id="Rx-Linq" version="2.0.21114" />
+    </dependencies>
+  </metadata>
+</package>
