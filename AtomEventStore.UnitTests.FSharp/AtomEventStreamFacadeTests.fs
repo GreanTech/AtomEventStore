@@ -18,7 +18,7 @@ module AtomEventStreamFacadeTests =
         Verify <@ actual.Length = 1 @>
 
     [<Theory; InMemoryConventions>]
-    let SutCurrectlyRoundTripsMultipleElements
+    let SutCorrectlyRoundTripsMultipleElements
         (sut : AtomEventStream<TestEventF>)
         (g : Generator<TestEventF>) =
 
