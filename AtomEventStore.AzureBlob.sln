@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtomEventStore.AzureBlob", "AtomEventStore.AzureBlob\AtomEventStore.AzureBlob.csproj", "{8F7F6CB6-7FC2-4E3B-A794-5913D65E6C9B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtomEventStore", "AtomEventStore\AtomEventStore.csproj", "{A9D6CB62-1949-402A-95EB-007710E98735}"
