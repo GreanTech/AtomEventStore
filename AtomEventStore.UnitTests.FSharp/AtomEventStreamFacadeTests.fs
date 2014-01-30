@@ -1,5 +1,6 @@
 ﻿namespace Grean.AtomEventStore.UnitTests.FSharp
 
+open System
 open System.Reactive
 open FSharp.Reactive
 open Grean.AtomEventStore
@@ -54,4 +55,34 @@ module AtomEventStreamFacadeTests =
         let actual = duSeq |> Seq.toList
 
         let expected = [teg |> G; tef |> F]
+        Verify <@ expected = actual @>
+
+    [<Theory; InMemoryConventions>]
+    let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnions
+        (sut : AtomEventStream<SerializableChangeset>)
+        (tef : TestEventF)
+        (teg : TestEventG)
+        (id : Guid) =
+
+        let toObj changeset =
+            let extract = function
+                | F(x) -> x :> obj
+                | G(x) -> x :> obj
+            let events = changeset.Items |> Seq.map extract |> Seq.toArray
+            { SerializableChangeset.Id = changeset.Id; Items = events }
+        let duObs = Observer.Create(toObj >> sut.OnNext)
+        duObs.OnNext({ Id = id; Items = [| tef |> F; teg |> G |]})
+
+        let ofObj (changeset : SerializableChangeset) =
+            let infuse (x : obj) =
+                match x with
+                | :? TestEventF as f -> f |> F
+                | :? TestEventG as g -> g |> G
+                | _ -> raise(System.ArgumentException("Unknown event type."))
+            let events = changeset.Items |> Array.map infuse
+            { Id = changeset.Id; Items = events }
+        let duSeq = sut |> Seq.map ofObj
+        let actual = duSeq |> Seq.toList
+
+        let expected = [ { Id = id; Items = [| tef |> F; teg |> G |] } ]
         Verify <@ expected = actual @>
