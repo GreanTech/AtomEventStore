@@ -88,6 +88,7 @@
     <Compile Include="AtomLinkTests.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="AtomEventStreamTests.cs" />
+    <Compile Include="XmlAttributedChangeset.cs" />
     <Compile Include="Changeset.cs" />
     <Compile Include="Conventions.cs" />
     <Compile Include="InlineAutoAtomDataAttribute.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="UuidIriTests.cs" />
     <Compile Include="Wrapper.cs" />
     <Compile Include="XmlAtomContentTests.cs" />
+    <Compile Include="XmlAttributedTestEventY.cs" />
     <Compile Include="XmlAttributedTestEventX.cs" />
     <Compile Include="XmlContentSerializerTests.cs" />
     <Compile Include="XmlWritableTests.cs" />
