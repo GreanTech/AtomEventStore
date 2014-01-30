@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    [XmlRoot("test-event", Namespace = "http://grean:rocks")]
+    [XmlRoot("test-event-x", Namespace = "http://grean:rocks")]
     public class XmlAttributedTestEventX
     {
         [XmlElement("number")]
