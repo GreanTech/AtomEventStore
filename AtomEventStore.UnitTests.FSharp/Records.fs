@@ -1,5 +1,6 @@
 ﻿namespace Grean.AtomEventStore.UnitTests.FSharp
 
+open System
 open System.Xml.Serialization
 open Grean.AtomEventStore
 
@@ -19,9 +20,23 @@ type TestEventG = {
     [<XmlElement("flag")>]
     Flag : bool }
 
+[<CLIMutable>]
+[<XmlRoot("changeset", Namespace = "http://grean.dk/atom-event-store/test/2014")>]
+type SerializableChangeset = {
+    [<XmlElement("id")>]
+    Id : Guid
+    [<XmlArray("items")>]
+    [<XmlArrayItem("test-event-f", typeof<TestEventF>)>]
+    [<XmlArrayItem("test-event-g", typeof<TestEventG>)>]
+    Items : obj array }
+
 type TestEvent =
     | F of TestEventF
     | G of TestEventG
+
+type EventChangeset = {
+    Id : Guid
+    Items : TestEvent seq }
 
 exception UnknownTypeRequested of string * string
 
@@ -33,4 +48,6 @@ type TestRecordsResolver() =
                 typeof<TestEventF>
             | ("test-event-g", "http://grean.dk/atom-event-store/test/2014") ->
                 typeof<TestEventG>
+            | ("changeset", "http://grean.dk/atom-event-store/test/2014") ->
+                typeof<SerializableChangeset>
             | _ -> raise(UnknownTypeRequested(localName, xmlNamespace))
