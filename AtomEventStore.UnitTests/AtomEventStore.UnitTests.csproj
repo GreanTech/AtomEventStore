@@ -79,6 +79,7 @@
     <Compile Include="AtomEntryComparer.cs" />
     <Compile Include="AtomEntryTests.cs" />
     <Compile Include="AtomEnvy.cs" />
+    <Compile Include="AtomEventObserverTests.cs" />
     <Compile Include="AtomEventsCustomization.cs" />
     <Compile Include="AtomEventsInFilesTests.cs" />
     <Compile Include="AtomFeedBuilder.cs" />
