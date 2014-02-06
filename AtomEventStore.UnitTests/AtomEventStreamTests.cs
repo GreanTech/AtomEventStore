@@ -448,19 +448,6 @@ namespace Grean.AtomEventStore.UnitTests
             }
         }
 
-        private class HashFreeEqualityComparer<T> : IEqualityComparer<T>
-        {
-            public bool Equals(T x, T y)
-            {
-                return object.Equals(x, y);
-            }
-
-            public int GetHashCode(T obj)
-            {
-                return 0;
-            }
-        }
-
         [Theory, AutoAtomData]
         public void SutIsEnumerable(AtomEventStream<TestEventY> sut)
         {
