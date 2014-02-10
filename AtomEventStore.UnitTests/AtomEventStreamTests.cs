@@ -11,11 +11,21 @@ using Moq;
 using System.Xml;
 using System.IO;
 using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.Idioms;
+using Ploeh.Albedo;
 
 namespace Grean.AtomEventStore.UnitTests
 {
     public class AtomEventStreamTests
     {
+        [Theory, AutoAtomData]
+        public void VerifyGuardClauses(GuardClauseAssertion assertion)
+        {
+            assertion.Verify(
+                typeof(AtomEventStream<TestEventX>).GetMembers()
+                    .Where(m => new Methods<AtomEventStream<TestEventX>>().Select(x => x.OnError(null)) != m));
+        }
+
         [Theory, AutoAtomData]
         public void IdIsCorrect(
             [Frozen]UuidIri expected,

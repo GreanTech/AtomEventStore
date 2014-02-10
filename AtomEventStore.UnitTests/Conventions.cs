@@ -26,10 +26,10 @@ namespace Grean.AtomEventStore.UnitTests
         private static bool Include(Type t)
         {
             return !t.IsInterface
-                && !t.IsGenericTypeDefinition
                 && !IsStatic(t)
-                && t != typeof(AtomLink)    // Covered by AtomLinkTests
-                && t != typeof(AtomAuthor); // Covered by AtomAuthorTests
+                && t != typeof(AtomLink)           // Covered by AtomLinkTests
+                && t != typeof(AtomAuthor)         // Covered by AtomAuthorTests
+                && t != typeof(AtomEventStream<>); // Covered by AtomEventStreamTests
         }
 
         private static bool IsStatic(Type t)
