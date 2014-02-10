@@ -186,5 +186,20 @@ namespace Grean.AtomEventStore
         {
             return this.WithRel("first");
         }
+
+        public static AtomLink CreateLastLink(Uri uri)
+        {
+            return new AtomLink("last", uri);
+        }
+
+        public bool IsLastLink
+        {
+            get { return this.rel == "last"; }
+        }
+
+        public AtomLink ToLastLink()
+        {
+            return this.WithRel("last");
+        }
     }
 }
