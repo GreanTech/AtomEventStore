@@ -106,6 +106,11 @@ namespace Grean.AtomEventStore
             int pageSize,
             IContentSerializer contentSerializer)
         {
+            if (storage == null)
+                throw new ArgumentNullException("storage");
+            if (contentSerializer == null)
+                throw new ArgumentNullException("contentSerializer");
+            
             this.id = id;
             this.storage = storage;
             this.pageSize = pageSize;
@@ -164,6 +169,9 @@ namespace Grean.AtomEventStore
         /// </remarks>
         public Task AppendAsync(T @event)
         {
+            if (@event == null)
+                throw new ArgumentNullException("@event");
+
             return Task.Factory.StartNew(() =>
             {
                 var now = DateTimeOffset.Now;
