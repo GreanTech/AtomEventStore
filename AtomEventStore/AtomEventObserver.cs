@@ -60,24 +60,16 @@ namespace Grean.AtomEventStore
                     firstPage = firstPage
                         .WithLinks(firstPage.Links.Concat(new[] { nextLink }));
 
-                    using (var w = this.storage.CreateFeedWriterFor(index))
-                        index.WriteTo(w, this.serializer);
-
-                    using (var w = this.storage.CreateFeedWriterFor(firstPage))
-                        firstPage.WriteTo(w, this.serializer);
-
-                    using (var w = this.storage.CreateFeedWriterFor(nextPage))
-                        nextPage.WriteTo(w, this.serializer);
+                    this.Write(index);
+                    this.Write(firstPage);
+                    this.Write(nextPage);
                 }
                 else
                 {
                     firstPage = AddEntryTo(firstId, firstPage, entry, now);
 
-                    using (var w = this.storage.CreateFeedWriterFor(index))
-                        index.WriteTo(w, this.serializer);
-
-                    using (var w = this.storage.CreateFeedWriterFor(firstPage))
-                        firstPage.WriteTo(w, this.serializer);
+                    this.Write(index);
+                    this.Write(firstPage);
                 }
             });
         }
@@ -131,6 +123,12 @@ namespace Grean.AtomEventStore
                 new AtomAuthor("Grean"),
                 entries,
                 links);
+        }
+
+        private void Write(AtomFeed feed)
+        {
+            using (var w = this.storage.CreateFeedWriterFor(feed))
+                feed.WriteTo(w, this.serializer);
         }
 
         public UuidIri Id
