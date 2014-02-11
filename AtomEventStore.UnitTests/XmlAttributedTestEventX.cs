@@ -14,5 +14,22 @@ namespace Grean.AtomEventStore.UnitTests
 
         [XmlElement("text")]
         public string Text { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as XmlAttributedTestEventX;
+            if (other == null)
+            return base.Equals(obj);
+
+            return object.Equals(this.Number, other.Number)
+                && object.Equals(this.Text, other.Text);
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                this.Number.GetHashCode() ^
+                this.Text.GetHashCode();
+        }
     }
 }
