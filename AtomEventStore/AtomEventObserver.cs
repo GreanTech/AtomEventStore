@@ -9,11 +9,13 @@ namespace Grean.AtomEventStore
     public class AtomEventObserver<T>
     {
         private readonly UuidIri id;
+        private readonly int pageSize;
         private readonly IAtomEventStorage storage;
         private readonly IContentSerializer serializer;
 
         public AtomEventObserver(
             UuidIri id,
+            int pageSize,
             IAtomEventStorage storage,
             IContentSerializer serializer)
         {
@@ -23,6 +25,7 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("serializer");
 
             this.id = id;
+            this.pageSize = pageSize;
             this.storage = storage;
             this.serializer = serializer;
         }
@@ -33,41 +36,19 @@ namespace Grean.AtomEventStore
             {
                 var now = DateTimeOffset.Now;
 
-                var firstId = UuidIri.NewId();
+                var index = this.ReadIndex();
+                var firstLink = index.Links
+                    .Where(l => l.IsFirstLink)
+                    .DefaultIfEmpty(AtomLink.CreateFirstLink(new Uri(Guid.NewGuid().ToString(), UriKind.Relative)))
+                    .Single();
+                index = index.WithLinks(index.Links.Union(new[] { firstLink }));
 
-                var index = new AtomFeed(
-                    this.id,
-                    "Index of ",
-                    now,
-                    new AtomAuthor("Grean"),
-                    Enumerable.Empty<AtomEntry>(),
-                    new[]
-                    {
-                        AtomLink.CreateSelfLink(
-                            new Uri(
-                                ((Guid)this.id).ToString(),
-                                UriKind.Relative)),
-                        AtomLink.CreateFirstLink(
-                            new Uri(
-                                ((Guid)firstId).ToString(),
-                                UriKind.Relative))
-                    });
+                UuidIri firstId = Guid.Parse(firstLink.Href.ToString());
 
                 var entry = CreateEntry(@event, now);
 
-                var first = new AtomFeed(
-                    firstId,
-                    "Partial event stream",
-                    now,
-                    new AtomAuthor("Grean"),
-                    new[] { entry },
-                    new[]
-                    {
-                        AtomLink.CreateSelfLink(
-                            new Uri(
-                                ((Guid)firstId).ToString(),
-                                UriKind.Relative))
-                    });
+                var first = this.ReadPage(firstLink.Href);
+                first = AddEntryTo(firstId, first, entry, now);
 
                 using (var w = this.storage.CreateFeedWriterFor(index))
                     index.WriteTo(w, this.serializer);
@@ -75,6 +56,19 @@ namespace Grean.AtomEventStore
                 using (var w = this.storage.CreateFeedWriterFor(first))
                     first.WriteTo(w, this.serializer);
             });
+        }
+
+        private AtomFeed ReadIndex()
+        {
+            var indexAddress =
+                new Uri(((Guid)this.id).ToString(), UriKind.Relative);
+            return ReadPage(indexAddress);
+        }
+
+        private AtomFeed ReadPage(Uri address)
+        {
+            using (var r = this.storage.CreateFeedReaderFor(address))
+                return AtomFeed.ReadFrom(r, this.serializer);
         }
 
         private static AtomEntry CreateEntry(T @event, DateTimeOffset now)
@@ -90,9 +84,39 @@ namespace Grean.AtomEventStore
                 new AtomLink[0]);
         }
 
+        private static AtomFeed AddEntryTo(
+            UuidIri id,
+            AtomFeed page,
+            AtomEntry entry,
+            DateTimeOffset now)
+        {
+            var entries = new[] { entry }.Concat(page.Entries);
+            return CreateNewPage(id, entries, page.Links, now);
+        }
+
+        private static AtomFeed CreateNewPage(
+            UuidIri id,
+            IEnumerable<AtomEntry> entries,
+            IEnumerable<AtomLink> links,
+            DateTimeOffset now)
+        {
+            return new AtomFeed(
+                id,
+                "Partial event stream",
+                now,
+                new AtomAuthor("Grean"),
+                entries,
+                links);
+        }
+
         public UuidIri Id
         {
             get { return this.id; }
+        }
+
+        public int PageSize
+        {
+            get { return this.pageSize; }
         }
 
         public IAtomEventStorage Storage
