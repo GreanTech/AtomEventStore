@@ -47,14 +47,38 @@ namespace Grean.AtomEventStore
 
                 var entry = CreateEntry(@event, now);
 
-                var first = this.ReadPage(firstLink.Href);
-                first = AddEntryTo(firstId, first, entry, now);
+                var firstPage = this.ReadPage(firstLink.Href);
 
-                using (var w = this.storage.CreateFeedWriterFor(index))
-                    index.WriteTo(w, this.serializer);
+                if (firstPage.Entries.Count() >= this.pageSize)
+                {
+                    var nextId = UuidIri.NewId();
+                    var nextAddress = new Uri(((Guid)nextId).ToString(), UriKind.Relative);
+                    var nextPage = this.ReadPage(nextAddress);
+                    nextPage = AddEntryTo(nextId, nextPage, entry, now);
 
-                using (var w = this.storage.CreateFeedWriterFor(first))
-                    first.WriteTo(w, this.serializer);
+                    var nextLink = AtomLink.CreateNextLink(nextAddress);
+                    firstPage = firstPage
+                        .WithLinks(firstPage.Links.Concat(new[] { nextLink }));
+
+                    using (var w = this.storage.CreateFeedWriterFor(index))
+                        index.WriteTo(w, this.serializer);
+
+                    using (var w = this.storage.CreateFeedWriterFor(firstPage))
+                        firstPage.WriteTo(w, this.serializer);
+
+                    using (var w = this.storage.CreateFeedWriterFor(nextPage))
+                        nextPage.WriteTo(w, this.serializer);
+                }
+                else
+                {
+                    firstPage = AddEntryTo(firstId, firstPage, entry, now);
+
+                    using (var w = this.storage.CreateFeedWriterFor(index))
+                        index.WriteTo(w, this.serializer);
+
+                    using (var w = this.storage.CreateFeedWriterFor(firstPage))
+                        firstPage.WriteTo(w, this.serializer);
+                }
             });
         }
 

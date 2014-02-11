@@ -80,6 +80,41 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
+            var index = writtenFeeds.SingleOrDefault(f => f.Id == sut.Id);
+            Assert.NotNull(index);
+            var firstLink = index.Links.SingleOrDefault(l => l.IsFirstLink);
+            Assert.NotNull(firstLink);
+            Guid g;
+            Assert.True(Guid.TryParse(firstLink.Href.ToString(), out g));
+            var firstPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
+            Assert.NotNull(firstPage);
+            var nextLink = firstPage.Links.SingleOrDefault(l => l.IsNextLink);
+            Assert.NotNull(nextLink);
+            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
+            var nextPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
+            var expectedPage = new AtomFeedLikeness(
+                before,
+                nextPage.Id,
+                events.AsEnumerable().Reverse().First());
+            Assert.True(
+                expectedPage.Equals(nextPage),
+                "Expected feed must match actual feed.");
+        }
+
         private static AtomFeed ParseAtomFeed(string xml)
         {
             return AtomFeed.Parse(
