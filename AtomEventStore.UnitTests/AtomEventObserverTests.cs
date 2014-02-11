@@ -95,6 +95,28 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
+        [Theory, AutoAtomData]
+        public void AppendAsyncCorrectlyStoreLastLinkOnIndex(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            XmlAttributedTestEventX expectedEvent)
+        {
+            var before = DateTimeOffset.Now;
+
+            sut.AppendAsync(expectedEvent).Wait();
+
+            var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
+            var index = writtenFeeds.SingleOrDefault(f => f.Id == sut.Id);
+            Assert.NotNull(index);
+            var firstLink = index.Links.SingleOrDefault(l => l.IsFirstLink);
+            Assert.NotNull(firstLink);
+            var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
+            Assert.NotNull(lastLink);
+            Assert.Equal(firstLink.Href, lastLink.Href);
+        }
+
         private static AtomFeed FindFirstPage(IEnumerable<AtomFeed> pages, UuidIri id)
         {
             var index = pages.SingleOrDefault(f => f.Id == id);

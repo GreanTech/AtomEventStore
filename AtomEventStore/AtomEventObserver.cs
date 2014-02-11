@@ -67,6 +67,8 @@ namespace Grean.AtomEventStore
                 else
                 {
                     firstPage = AddEntryTo(firstId, firstPage, entry, now);
+                    index = index.WithLinks(
+                        index.Links.Union(new[] { firstLink.ToLastLink() }));
 
                     this.Write(index);
                     this.Write(firstPage);
