@@ -117,6 +117,35 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(firstLink.Href, lastLink.Href);
         }
 
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsCorrectlyUpdatesLastLink(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            var before = DateTimeOffset.Now;
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
+            var index = writtenFeeds.SingleOrDefault(f => f.Id == sut.Id);
+            Assert.NotNull(index);
+            var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
+            Assert.NotNull(lastLink);
+            var firstPage = FindFirstPage(writtenFeeds, sut.Id);
+            var nextLink = firstPage.Links.SingleOrDefault(l => l.IsNextLink);
+            Assert.NotNull(nextLink);
+            Guid g;
+            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
+            var nextPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
+            var expected = nextPage.Links.SingleOrDefault(l => l.IsSelfLink);
+            Assert.NotNull(expected);
+            Assert.Equal(expected.Href, lastLink.Href);
+        }
+
         private static AtomFeed FindFirstPage(IEnumerable<AtomFeed> pages, UuidIri id)
         {
             var index = pages.SingleOrDefault(f => f.Id == id);

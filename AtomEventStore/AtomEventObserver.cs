@@ -59,6 +59,9 @@ namespace Grean.AtomEventStore
                     var nextLink = AtomLink.CreateNextLink(nextAddress);
                     firstPage = firstPage
                         .WithLinks(firstPage.Links.Concat(new[] { nextLink }));
+                    index = index.WithLinks(index.Links
+                        .Where(l => !l.IsLastLink)
+                        .Concat(new[] { nextLink.ToLastLink() }));
 
                     this.Write(index);
                     this.Write(firstPage);
