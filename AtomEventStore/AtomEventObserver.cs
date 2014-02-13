@@ -50,9 +50,7 @@ namespace Grean.AtomEventStore
 
                 var entry = CreateEntry(@event, now);
 
-                UuidIri lastId = Guid.Parse(lastLink.Href.ToString());
                 var lastPage = this.ReadPage(lastLink.Href);
-
                 if(lastPage.Entries.Count() >= this.pageSize)
                 {
                     var nextId = UuidIri.NewId();
@@ -73,6 +71,7 @@ namespace Grean.AtomEventStore
                 }
                 else
                 {
+                    UuidIri lastId = Guid.Parse(lastLink.Href.ToString());
                     lastPage = AddEntryTo(lastId, lastPage, entry, now);
 
                     this.Write(index);
