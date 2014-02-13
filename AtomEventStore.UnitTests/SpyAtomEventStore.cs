@@ -9,7 +9,7 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class SpyAtomEventStore : IAtomEventStorage
     {
-        private readonly IAtomEventStorage store;
+        private readonly AtomEventsInMemory store;
         private readonly List<object> observedArguments;
 
         public SpyAtomEventStore()
@@ -21,6 +21,11 @@ namespace Grean.AtomEventStore.UnitTests
         public IEnumerable<object> ObservedArguments
         {
             get { return this.observedArguments; }
+        }
+
+        public IEnumerable<string> Feeds
+        {
+            get { return this.store.Feeds; }
         }
 
         public XmlReader CreateFeedReaderFor(Uri href)
