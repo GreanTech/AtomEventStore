@@ -81,11 +81,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
-            var nextLink = firstPage.Links.SingleOrDefault(l => l.IsNextLink);
-            Assert.NotNull(nextLink);
-            Guid g;
-            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
-            var nextPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
+            var nextPage = FindNextPage(firstPage, writtenFeeds);
             var expectedPage = new AtomFeedLikeness(
                 before,
                 nextPage.Id,
@@ -136,11 +132,7 @@ namespace Grean.AtomEventStore.UnitTests
             var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
             Assert.NotNull(lastLink);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
-            var nextLink = firstPage.Links.SingleOrDefault(l => l.IsNextLink);
-            Assert.NotNull(nextLink);
-            Guid g;
-            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
-            var nextPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
+            var nextPage = FindNextPage(firstPage, writtenFeeds);
             var expected = nextPage.Links.SingleOrDefault(l => l.IsSelfLink);
             Assert.NotNull(expected);
             Assert.Equal(expected.Href, lastLink.Href);
@@ -161,11 +153,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
-            var nextLink = firstPage.Links.SingleOrDefault(l => l.IsNextLink);
-            Assert.NotNull(nextLink);
-            Guid g;
-            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
-            var nextPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
+            var nextPage = FindNextPage(firstPage, writtenFeeds);
             var expectedPage = new AtomFeedLikeness(
                 before,
                 nextPage.Id,
@@ -190,17 +178,8 @@ namespace Grean.AtomEventStore.UnitTests
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
-            var nextLink = firstPage.Links.SingleOrDefault(l => l.IsNextLink);
-            Assert.NotNull(nextLink);
-            Guid g;
-            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
-            var nextPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
-            Assert.NotNull(nextPage);
-            nextLink = nextPage.Links.SingleOrDefault(l => l.IsNextLink);
-            Assert.NotNull(nextLink);
-            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
-            nextPage = writtenFeeds.SingleOrDefault(f => f.Id == (UuidIri)g);
-            Assert.NotNull(nextPage);
+            var nextPage = FindNextPage(firstPage, writtenFeeds);
+            nextPage = FindNextPage(nextPage, writtenFeeds);
             var expectedPage = new AtomFeedLikeness(
                 before,
                 nextPage.Id,
@@ -221,6 +200,17 @@ namespace Grean.AtomEventStore.UnitTests
             var firstPage = pages.SingleOrDefault(f => f.Id == (UuidIri)g);
             Assert.NotNull(firstPage);
             return firstPage;
+        }
+
+        private static AtomFeed FindNextPage(AtomFeed page, IEnumerable<AtomFeed> pages)
+        {
+            var nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
+            Assert.NotNull(nextLink);
+            Guid g;
+            Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
+            var nextPage = pages.SingleOrDefault(f => f.Id == (UuidIri)g);
+            Assert.NotNull(nextPage);
+            return nextPage;
         }
 
         private static AtomFeed ParseAtomFeed(string xml)
