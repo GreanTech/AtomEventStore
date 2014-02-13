@@ -41,15 +41,19 @@ namespace Grean.AtomEventStore
                     .Where(l => l.IsFirstLink)
                     .DefaultIfEmpty(AtomLink.CreateFirstLink(new Uri(Guid.NewGuid().ToString(), UriKind.Relative)))
                     .Single();
-                index = index.WithLinks(index.Links.Union(new[] { firstLink }));
-
-                UuidIri firstId = Guid.Parse(firstLink.Href.ToString());
+                var lastLink = index.Links
+                    .Where(l => l.IsLastLink)
+                    .DefaultIfEmpty(firstLink.ToLastLink())
+                    .Single();
+                index = index.WithLinks(
+                    index.Links.Union(new[] { firstLink, lastLink }));
 
                 var entry = CreateEntry(@event, now);
 
-                var firstPage = this.ReadPage(firstLink.Href);
+                UuidIri lastId = Guid.Parse(lastLink.Href.ToString());
+                var lastPage = this.ReadPage(lastLink.Href);
 
-                if (firstPage.Entries.Count() >= this.pageSize)
+                if(lastPage.Entries.Count() >= this.pageSize)
                 {
                     var nextId = UuidIri.NewId();
                     var nextAddress = new Uri(((Guid)nextId).ToString(), UriKind.Relative);
@@ -57,24 +61,22 @@ namespace Grean.AtomEventStore
                     nextPage = AddEntryTo(nextId, nextPage, entry, now);
 
                     var nextLink = AtomLink.CreateNextLink(nextAddress);
-                    firstPage = firstPage
-                        .WithLinks(firstPage.Links.Concat(new[] { nextLink }));
+                    var previousPage = lastPage
+                        .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
                     index = index.WithLinks(index.Links
                         .Where(l => !l.IsLastLink)
                         .Concat(new[] { nextLink.ToLastLink() }));
 
                     this.Write(index);
-                    this.Write(firstPage);
+                    this.Write(previousPage);
                     this.Write(nextPage);
                 }
                 else
                 {
-                    firstPage = AddEntryTo(firstId, firstPage, entry, now);
-                    index = index.WithLinks(
-                        index.Links.Union(new[] { firstLink.ToLastLink() }));
+                    lastPage = AddEntryTo(lastId, lastPage, entry, now);
 
                     this.Write(index);
-                    this.Write(firstPage);
+                    this.Write(lastPage);
                 }
             });
         }
