@@ -65,9 +65,9 @@ namespace Grean.AtomEventStore
                         .Where(l => !l.IsLastLink)
                         .Concat(new[] { nextLink.ToLastLink() }));
 
-                    this.Write(index);
-                    this.Write(previousPage);
                     this.Write(nextPage);
+                    this.Write(previousPage);
+                    this.Write(index);
                 }
                 else
                 {
