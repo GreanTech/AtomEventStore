@@ -96,7 +96,7 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyStoreLastLinkOnIndex(
+        public void AppendAsyncCorrectlyStoresLastLinkOnIndex(
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
