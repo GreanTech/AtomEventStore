@@ -48,13 +48,31 @@ namespace Grean.AtomEventStore.UnitTests
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
             AtomEventObserver<XmlAttributedTestEventX> sut,
-            XmlAttributedTestEventX @vent)
+            XmlAttributedTestEventX @event)
         {
-            sut.AppendAsync(@vent).Wait();
+            sut.AppendAsync(@event).Wait();
 
             var feed = Assert.IsAssignableFrom<AtomFeed>(
                 spyStore.ObservedArguments.Last());
             Assert.Equal(sut.Id, feed.Id);
+        }
+
+        [Theory, AutoAtomData]
+        public void AppendAsyncTwoEventsOnlyWritesIndexOnce(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(2).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIds = spyStore.ObservedArguments
+                .OfType<AtomFeed>()
+                .Select(f => f.Id);
+            Assert.Equal(1, writtenIds.Count(id => sut.Id == id));
         }
 
         [Theory, AutoAtomData]
