@@ -43,6 +43,21 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void AppendAsyncFirstEventWritesPageBeforeIndex(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            XmlAttributedTestEventX @vent)
+        {
+            sut.AppendAsync(@vent).Wait();
+
+            var feed = Assert.IsAssignableFrom<AtomFeed>(
+                spyStore.ObservedArguments.Last());
+            Assert.Equal(sut.Id, feed.Id);
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncPageSizeEventsStoresAllEntriesInFirstPage(
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,

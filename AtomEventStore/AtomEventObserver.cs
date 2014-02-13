@@ -74,8 +74,8 @@ namespace Grean.AtomEventStore
                     UuidIri lastId = Guid.Parse(lastLink.Href.ToString());
                     lastPage = AddEntryTo(lastId, lastPage, entry, now);
 
-                    this.Write(index);
                     this.Write(lastPage);
+                    this.Write(index);
                 }
             });
         }
