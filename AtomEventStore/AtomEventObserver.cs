@@ -41,17 +41,20 @@ namespace Grean.AtomEventStore
                     .Where(l => l.IsFirstLink)
                     .DefaultIfEmpty(AtomLink.CreateFirstLink(new Uri(Guid.NewGuid().ToString(), UriKind.Relative)))
                     .Single();
-                var lastLink = index.Links
-                    .Where(l => l.IsLastLink)
-                    .DefaultIfEmpty(firstLink.ToLastLink())
-                    .Single();
+                var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
+                var lastLinkChanged = false;
+                if (lastLink == null)
+                {
+                    lastLink = firstLink.ToLastLink();
+                    lastLinkChanged = true;
+                }
                 index = index.WithLinks(
                     index.Links.Union(new[] { firstLink, lastLink }));
 
                 var entry = CreateEntry(@event, now);
 
                 var lastPage = this.ReadPage(lastLink.Href);
-                if(lastPage.Entries.Count() >= this.pageSize)
+                if (lastPage.Entries.Count() >= this.pageSize)
                 {
                     var nextId = UuidIri.NewId();
                     var nextAddress = new Uri(((Guid)nextId).ToString(), UriKind.Relative);
@@ -75,7 +78,8 @@ namespace Grean.AtomEventStore
                     lastPage = AddEntryTo(lastId, lastPage, entry, now);
 
                     this.Write(lastPage);
-                    this.Write(index);
+                    if (lastLinkChanged)
+                        this.Write(index);
                 }
             });
         }
