@@ -151,6 +151,24 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsOnlyWritesIndexTwice(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenIds = spyStore.ObservedArguments
+                .OfType<AtomFeed>()
+                .Select(f => f.Id);
+            Assert.Equal(2, writtenIds.Count(id => sut.Id == id));
+        }
+
+        [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresLastLinkOnIndex(
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
