@@ -70,10 +70,8 @@ namespace Grean.AtomEventStore
 
                     var nextLink = AtomLink.CreateNextLink(nextAddress);
 
-                    var previousPage = lastPage;
-                    if (!lastPage.Links.Any(l => l.IsNextLink))
-                        previousPage = lastPage
-                            .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
+                    var previousPage = lastPage
+                        .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
 
                     var previousLink = previousPage.Links
                         .Single(l => l.IsSelfLink)
