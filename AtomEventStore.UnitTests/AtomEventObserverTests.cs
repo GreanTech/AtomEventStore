@@ -181,8 +181,7 @@ namespace Grean.AtomEventStore.UnitTests
             sut.AppendAsync(expectedEvent).Wait();
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
-            var index = writtenFeeds.SingleOrDefault(f => f.Id == sut.Id);
-            Assert.NotNull(index);
+            var index = FindIndex(writtenFeeds, sut.Id);
             var firstLink = index.Links.SingleOrDefault(l => l.IsFirstLink);
             Assert.NotNull(firstLink);
             var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
@@ -204,8 +203,7 @@ namespace Grean.AtomEventStore.UnitTests
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
-            var index = writtenFeeds.SingleOrDefault(f => f.Id == sut.Id);
-            Assert.NotNull(index);
+            var index = FindIndex(writtenFeeds, sut.Id);
             var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
             Assert.NotNull(lastLink);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
@@ -266,10 +264,16 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
-        private static AtomFeed FindFirstPage(IEnumerable<AtomFeed> pages, UuidIri id)
+        private static AtomFeed FindIndex(IEnumerable<AtomFeed> pages, UuidIri id)
         {
             var index = pages.SingleOrDefault(f => f.Id == id);
             Assert.NotNull(index);
+            return index;
+        }
+
+        private static AtomFeed FindFirstPage(IEnumerable<AtomFeed> pages, UuidIri id)
+        {
+            var index = FindIndex(pages, id);
             var firstLink = index.Links.SingleOrDefault(l => l.IsFirstLink);
             Assert.NotNull(firstLink);
             Guid g;
