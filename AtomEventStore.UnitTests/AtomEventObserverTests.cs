@@ -311,6 +311,29 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
+        [Theory, AutoAtomData]
+        public void AppendAsyncMoreThanPageSizeEventsAddsNextPageWithPreviousLink(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
+            var firstPage = FindFirstPage(writtenFeeds, sut.Id);
+            var nextPage = FindNextPage(firstPage, writtenFeeds);
+            var previousLink = 
+                nextPage.Links.SingleOrDefault(l => l.IsPreviousLink);
+            Assert.NotNull(previousLink);
+            Assert.Equal(
+                firstPage.Links.Single(l => l.IsSelfLink).Href,
+                previousLink.Href);
+        }
+
         private static AtomFeed FindIndex(IEnumerable<AtomFeed> pages, UuidIri id)
         {
             var index = pages.SingleOrDefault(f => f.Id == id);

@@ -49,7 +49,7 @@ namespace Grean.AtomEventStore
                     lastLinkChanged = true;
                 }
                 var lastPage = this.ReadLastPage(lastLink.Href);
-                if(lastPage.Links.Single(l => l.IsSelfLink).Href != lastLink.Href)
+                if (lastPage.Links.Single(l => l.IsSelfLink).Href != lastLink.Href)
                 {
                     lastLink = lastPage.Links.Single(l => l.IsSelfLink).ToLastLink();
                     lastLinkChanged = true;
@@ -69,10 +69,16 @@ namespace Grean.AtomEventStore
                     nextPage = AddEntryTo(nextId, nextPage, entry, now);
 
                     var nextLink = AtomLink.CreateNextLink(nextAddress);
-                    var previousPage = lastPage;
-                    if (!lastPage.Links.Any(l => l.IsNextLink))
-                        previousPage = lastPage
-                            .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
+
+                    var previousPage = lastPage
+                        .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
+
+                    var previousLink = previousPage.Links
+                        .Single(l => l.IsSelfLink)
+                        .ToPreviousLink();
+
+                    nextPage = nextPage.WithLinks(
+                        nextPage.Links.Concat(new[] { previousLink }));
                     index = index.WithLinks(index.Links
                         .Where(l => !l.IsLastLink)
                         .Concat(new[] { nextLink.ToLastLink() }));
