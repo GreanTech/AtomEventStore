@@ -264,6 +264,53 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
+        [Theory, AutoAtomData]
+        public void AppendAsyncWritesEventToCorrectPageEvenIfLastLinkIsNotUpToDate(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            // Fixture setup
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+            events.ForEach(e => sut.AppendAsync(e).Wait());
+
+            /* Point the 'last' link to the second page, instead of to the last
+             * page. This simulates that when the true last page was created,
+             * the index wasn't correctly updated. This could for example
+             * happen due to a network failure. */
+            var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
+            var index = FindIndex(writtenFeeds, sut.Id);
+            var firstPage = FindFirstPage(writtenFeeds, sut.Id);
+            var nextPage = FindNextPage(firstPage, writtenFeeds);
+            var incorrectLastLink =
+                nextPage.Links.Single(l => l.IsSelfLink).ToLastLink();
+            index = index.WithLinks(index.Links
+                .Where(l => !l.IsLastLink)
+                .Concat(new[] { incorrectLastLink }));
+            using (var w = storage.CreateFeedWriterFor(index))
+                index.WriteTo(w, sut.Serializer);
+
+            var expected = eventGenerator.First();
+
+            // Exercise system
+            sut.AppendAsync(expected).Wait();
+
+            // Verify outcome
+            writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
+            index = FindIndex(writtenFeeds, sut.Id);
+            firstPage = FindFirstPage(writtenFeeds, sut.Id);
+            nextPage = FindNextPage(firstPage, writtenFeeds);
+            nextPage = FindNextPage(nextPage, writtenFeeds);
+
+            Assert.Equal(expected, nextPage.Entries.First().Content.Item);
+            Assert.Equal(
+                nextPage.Links.Single(l => l.IsSelfLink).Href,
+                index.Links.Single(l => l.IsLastLink).Href);
+            // Teardown
+        }
+
         private static AtomFeed FindIndex(IEnumerable<AtomFeed> pages, UuidIri id)
         {
             var index = pages.SingleOrDefault(f => f.Id == id);

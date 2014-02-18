@@ -48,12 +48,19 @@ namespace Grean.AtomEventStore
                     lastLink = firstLink.ToLastLink();
                     lastLinkChanged = true;
                 }
-                index = index.WithLinks(
-                    index.Links.Union(new[] { firstLink, lastLink }));
+                var lastPage = this.ReadLastPage(lastLink.Href);
+                if(lastPage.Links.Single(l => l.IsSelfLink).Href != lastLink.Href)
+                {
+                    lastLink = lastPage.Links.Single(l => l.IsSelfLink).ToLastLink();
+                    lastLinkChanged = true;
+                }
+                index = index.WithLinks(index.Links.Union(new[] { firstLink }));
+                index = index.WithLinks(index.Links
+                    .Where(l => !l.IsLastLink)
+                    .Concat(new[] { lastLink }));
 
                 var entry = CreateEntry(@event, now);
 
-                var lastPage = this.ReadPage(lastLink.Href);
                 if (lastPage.Entries.Count() >= this.pageSize)
                 {
                     var nextId = UuidIri.NewId();
@@ -62,8 +69,10 @@ namespace Grean.AtomEventStore
                     nextPage = AddEntryTo(nextId, nextPage, entry, now);
 
                     var nextLink = AtomLink.CreateNextLink(nextAddress);
-                    var previousPage = lastPage
-                        .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
+                    var previousPage = lastPage;
+                    if (!lastPage.Links.Any(l => l.IsNextLink))
+                        previousPage = lastPage
+                            .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
                     index = index.WithLinks(index.Links
                         .Where(l => !l.IsLastLink)
                         .Concat(new[] { nextLink.ToLastLink() }));
@@ -95,6 +104,19 @@ namespace Grean.AtomEventStore
         {
             using (var r = this.storage.CreateFeedReaderFor(address))
                 return AtomFeed.ReadFrom(r, this.serializer);
+        }
+
+        private AtomFeed ReadLastPage(Uri address)
+        {
+            var page = this.ReadPage(address);
+            var nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
+            while (nextLink != null)
+            {
+                page = this.ReadPage(nextLink.Href);
+                nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
+            }
+
+            return page;
         }
 
         private static AtomEntry CreateEntry(T @event, DateTimeOffset now)
