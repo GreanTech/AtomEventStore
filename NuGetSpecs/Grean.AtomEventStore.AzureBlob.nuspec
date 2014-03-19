@@ -8,6 +8,7 @@
     <owners>Grean</owners>
     <dependencies>
       <dependency id="AtomEventStore" version="0.4.0" />
+      <dependency id="WindowsAzure.Storage" version="2.0.5.1" />
     </dependencies>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Azure Blog Storage persistence library for an event store implementation based on the Atom syndication format.</description>
