@@ -73,7 +73,7 @@ namespace Grean.AtomEventStore.AzureBlob
 
         private CloudBlockBlob CreateBlobReference(Uri href)
         {
-            return this.container.GetBlockBlobReference(href.ToString());
+            return this.container.GetBlockBlobReference(href.ToString() + ".xml");
         }
     }
 }
