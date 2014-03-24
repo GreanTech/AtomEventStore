@@ -59,6 +59,7 @@ namespace Grean.AtomEventStore.AzureBlob
                 throw new ArgumentNullException("atomFeed");
 
             var blobRef = this.CreateBlobReference(atomFeed.Links);
+            blobRef.Properties.ContentType = "application/xml";
             return XmlWriter.Create(
                 blobRef.OpenWrite(),
                 new XmlWriterSettings { CloseOutput = true });
@@ -72,7 +73,7 @@ namespace Grean.AtomEventStore.AzureBlob
 
         private CloudBlockBlob CreateBlobReference(Uri href)
         {
-            return this.container.GetBlockBlobReference(href.ToString());
+            return this.container.GetBlockBlobReference(href.ToString() + ".xml");
         }
     }
 }
