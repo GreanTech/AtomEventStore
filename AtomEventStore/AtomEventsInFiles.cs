@@ -78,7 +78,9 @@ namespace Grean.AtomEventStore
 
         private string CreateFileName(Uri href)
         {
-            return Path.Combine(this.directory.ToString(), href.ToString());
+            return Path.Combine(
+                this.directory.ToString(),
+                href.ToString() + ".xml");
         }
     }
 }
