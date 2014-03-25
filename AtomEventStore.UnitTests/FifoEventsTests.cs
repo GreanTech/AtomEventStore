@@ -77,5 +77,23 @@ namespace Grean.AtomEventStore.UnitTests
                 expected.Cast<object>().SequenceEqual(sut.OfType<object>()),
                 "Events should be yielded in a FIFO order");
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanAppendAndYieldPolymorphicEvents(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen]UuidIri dummyId,
+            AtomEventObserver<IXmlAttributedTestEvent> writer,
+            FifoEvents<IXmlAttributedTestEvent> sut,
+            XmlAttributedTestEventX tex,
+            XmlAttributedTestEventY tey)
+        {
+            writer.AppendAsync(tex).Wait();
+            writer.AppendAsync(tey).Wait();
+
+            var expected = new IXmlAttributedTestEvent[] { tex, tey };
+            Assert.True(expected.SequenceEqual(sut));
+        }
     }
 }

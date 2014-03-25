@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 namespace Grean.AtomEventStore.UnitTests
 {
     [XmlRoot("test-event-y", Namespace = "http://grean:rocks")]
-    public class XmlAttributedTestEventY
+    public class XmlAttributedTestEventY : IXmlAttributedTestEvent
     {
         [XmlElement("number")]
         public decimal Number { get; set; }
@@ -30,6 +30,12 @@ namespace Grean.AtomEventStore.UnitTests
             return
                 this.Number.GetHashCode() ^
                 this.Flag.GetHashCode();
+        }
+
+        public IXmlAttributedTestEventVisitor Accept(
+            IXmlAttributedTestEventVisitor visitor)
+        {
+            return visitor.Visit(this);
         }
     }
 }
