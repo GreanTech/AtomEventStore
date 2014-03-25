@@ -93,6 +93,7 @@
     <Compile Include="AtomEventStreamTests.cs" />
     <Compile Include="FifoEventsTests.cs" />
     <Compile Include="HashFreeEqualityComparer.cs" />
+    <Compile Include="TestEventTypeResolver.cs" />
     <Compile Include="XmlAttributedChangeset.cs" />
     <Compile Include="Changeset.cs" />
     <Compile Include="Conventions.cs" />
