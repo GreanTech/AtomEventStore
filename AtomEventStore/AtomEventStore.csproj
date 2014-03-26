@@ -60,6 +60,7 @@
     <Compile Include="AtomEventsInMemory.cs" />
     <Compile Include="AtomLink.cs" />
     <Compile Include="ConventionBasedSerializerOfComplexImmutableClasses.cs" />
+    <Compile Include="DataContractContentSerializer.cs" />
     <Compile Include="FifoEvents.cs" />
     <Compile Include="IAtomEventStorage.cs" />
     <Compile Include="IContentSerializer.cs" />

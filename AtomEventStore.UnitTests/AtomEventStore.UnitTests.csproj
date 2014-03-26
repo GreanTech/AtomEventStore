@@ -91,6 +91,7 @@
     <Compile Include="AtomLinkTests.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="AtomEventStreamTests.cs" />
+    <Compile Include="DataContractContentSerializerTests.cs" />
     <Compile Include="FifoEventsTests.cs" />
     <Compile Include="HashFreeEqualityComparer.cs" />
     <Compile Include="IXmlAttributedTestEvent.cs" />
