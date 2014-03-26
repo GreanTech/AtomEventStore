@@ -44,6 +44,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -60,6 +61,7 @@
     <Compile Include="AtomEventsInMemory.cs" />
     <Compile Include="AtomLink.cs" />
     <Compile Include="ConventionBasedSerializerOfComplexImmutableClasses.cs" />
+    <Compile Include="DataContractContentSerializer.cs" />
     <Compile Include="FifoEvents.cs" />
     <Compile Include="IAtomEventStorage.cs" />
     <Compile Include="IContentSerializer.cs" />
