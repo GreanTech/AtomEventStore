@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
@@ -14,6 +15,9 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("xmlWriter");
             if (value == null)
                 throw new ArgumentNullException("value");
+
+            var serializer = new DataContractSerializer(value.GetType());
+            serializer.WriteObject(xmlWriter, value);
         }
 
         public XmlAtomContent Deserialize(XmlReader xmlReader)

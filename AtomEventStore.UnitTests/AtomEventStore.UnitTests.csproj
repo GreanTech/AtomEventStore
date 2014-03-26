@@ -59,6 +59,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -92,6 +93,7 @@
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="AtomEventStreamTests.cs" />
     <Compile Include="DataContractContentSerializerTests.cs" />
+    <Compile Include="DataContractTestEventX.cs" />
     <Compile Include="FifoEventsTests.cs" />
     <Compile Include="HashFreeEqualityComparer.cs" />
     <Compile Include="IXmlAttributedTestEvent.cs" />
