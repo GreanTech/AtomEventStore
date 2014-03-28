@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Grean ApS")]
 [assembly: AssemblyProduct("AtomEventStore.AzureBlob")]
-[assembly: AssemblyCopyright("Copyright © Grean ApS 2013")]
+[assembly: AssemblyCopyright("Copyright © Grean ApS 2013, 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
