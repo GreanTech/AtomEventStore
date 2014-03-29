@@ -4,13 +4,14 @@ open System
 open System.Reactive
 open FSharp.Reactive
 open Grean.AtomEventStore
+open Grean.AtomEventStore.UnitTests.FSharp.XmlRecords
 open Grean.AtomEventStore.UnitTests.FSharp.TestDsl
 open Ploeh.AutoFixture
 open Xunit.Extensions
 
-module AtomEventStreamFacadeTests =
+module XmlEventStreamFacadeTests =
 
-    [<Theory; InMemoryConventions>]
+    [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsASingleElement
         (sut : AtomEventStream<TestEventF>)
         (tef : TestEventF) =
@@ -20,7 +21,7 @@ module AtomEventStreamFacadeTests =
 
         Verify <@ actual.Length = 1 @>
 
-    [<Theory; InMemoryConventions>]
+    [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsMultipleElements
         (sut : AtomEventStream<TestEventF>)
         (g : Generator<TestEventF>) =
@@ -33,7 +34,7 @@ module AtomEventStreamFacadeTests =
         let expected = tefs |> List.rev
         Verify <@ expected = actual @>
 
-    [<Theory; InMemoryConventions>]
+    [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsDiscriminatedUnions
         (sut : AtomEventStream<obj>)
         (tef : TestEventF)
@@ -57,7 +58,7 @@ module AtomEventStreamFacadeTests =
         let expected = [teg |> G; tef |> F]
         Verify <@ expected = actual @>
 
-    [<Theory; InMemoryConventions>]
+    [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnions
         (sut : AtomEventStream<SerializableChangeset>)
         (tef : TestEventF)
