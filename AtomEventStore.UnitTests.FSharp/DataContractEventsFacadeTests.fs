@@ -34,7 +34,7 @@ let SutCorrectlyRoundTripsMultipleElements
     Verify <@ expected = actual @>
 
 [<Theory; InMemoryDataContractConventions>]
-let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnions
+let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnion
     (writer : AtomEventObserver<Changeset<TestEvent>>)
     (reader : FifoEvents<Changeset<TestEvent>>)
     (tef : TestEventF)
@@ -44,8 +44,28 @@ let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnions
     let expected = { Id = id; Items = [| tef |> F; teg |> G |] }
 
     writer.AppendAsync(expected).Wait()
-
     let actual = reader |> Seq.toList
 
     Verify <@ actual.Length = 1 @>
     Verify <@ expected = (actual |> Seq.exactlyOne) @>
+
+[<Theory; InMemoryDataContractConventions>]
+let SutCorrectlyRoundTripsMultipleChangesetOfDiscriminatedUnion
+    (writer : AtomEventObserver<Changeset<TestEvent>>)
+    (reader : FifoEvents<Changeset<TestEvent>>)
+    (tef1 : TestEventF)
+    (tef2 : TestEventF)
+    (teg1 : TestEventG)
+    (teg2 : TestEventG)
+    (id1 : Guid)
+    (id2 : Guid) =
+
+    let changeset1 = { Id = id1; Items = [| tef1 |> F; teg1 |> G |] }
+    let changeset2 = { Id = id2; Items = [| teg2 |> G; tef2 |> F |] }
+
+    writer.AppendAsync(changeset1).Wait()
+    writer.AppendAsync(changeset2).Wait()
+    let actual = reader |> Seq.toList
+
+    let expected = [changeset1; changeset2]
+    Verify <@ expected = actual @>
