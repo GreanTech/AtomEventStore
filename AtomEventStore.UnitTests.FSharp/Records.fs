@@ -3,6 +3,8 @@
 open System
 open Grean.AtomEventStore
 
+exception UnknownTypeRequested of string * string
+
 module XmlRecords =    
     open System.Xml.Serialization
 
@@ -40,8 +42,6 @@ module XmlRecords =
         Id : Guid
         Items : TestEvent seq }
 
-    exception UnknownTypeRequested of string * string
-
     type TestRecordsResolver() =
         interface ITypeResolver with
             member this.Resolve(localName, xmlNamespace) =
@@ -52,4 +52,23 @@ module XmlRecords =
                     typeof<TestEventG>
                 | ("changeset", "http://grean.dk/atom-event-store/test/2014") ->
                     typeof<SerializableChangeset>
+                | _ -> raise(UnknownTypeRequested(localName, xmlNamespace))
+
+module DataContractRecords =
+    open System.Runtime.Serialization
+
+    [<CLIMutable>]
+    [<DataContract(Name = "test-event-f", Namespace = "http://grean.dk/atom-event-store/test/2014")>]
+    type TestEventF = {
+        [<DataMember(Name = "number")>]
+        Number : int
+        [<DataMember(Name = "text")>]
+        Text : string }
+
+    type TestRecordsResolver() =
+        interface ITypeResolver with
+            member this.Resolve(localName, xmlNamespace) =
+                match (localName, xmlNamespace) with
+                | ("test-event-f", "http://grean.dk/atom-event-store/test/2014") ->
+                    typeof<TestEventF>
                 | _ -> raise(UnknownTypeRequested(localName, xmlNamespace))
