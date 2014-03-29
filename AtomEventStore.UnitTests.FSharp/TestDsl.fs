@@ -29,14 +29,14 @@ type TestRecordsResolverCustomization() =
                     typeof<ITypeResolver>,
                     typeof<TestRecordsResolver>))
 
-type InMemoryCustomization() =
+type InMemoryXmlCustomization() =
     inherit CompositeCustomization(
         AtomStorageInMemoryCustomization(),
         XmlContentSerializerCustomization(),
         TestRecordsResolverCustomization())
 
-type InMemoryConventions() =
-    inherit AutoDataAttribute(Fixture().Customize(InMemoryCustomization()))
+type InMemoryXmlConventions() =
+    inherit AutoDataAttribute(Fixture().Customize(InMemoryXmlCustomization()))
 
 module TestDsl =
     let Verify = Swensen.Unquote.Assertions.test
