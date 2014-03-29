@@ -4,6 +4,7 @@ open System
 open System.Reactive
 open FSharp.Reactive
 open Grean.AtomEventStore
+open Grean.AtomEventStore.UnitTests.FSharp.XmlRecords
 open Grean.AtomEventStore.UnitTests.FSharp.TestDsl
 open Ploeh.AutoFixture
 open Xunit.Extensions

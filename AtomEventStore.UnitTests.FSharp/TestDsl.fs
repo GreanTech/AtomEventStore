@@ -27,7 +27,7 @@ type TestRecordsResolverCustomization() =
             fixture.Customizations.Add(
                 TypeRelay(
                     typeof<ITypeResolver>,
-                    typeof<TestRecordsResolver>))
+                    typeof<XmlRecords.TestRecordsResolver>))
 
 type InMemoryXmlCustomization() =
     inherit CompositeCustomization(
