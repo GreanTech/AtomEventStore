@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="Records.fs" />
     <Compile Include="TestDsl.fs" />
-    <Compile Include="AtomEventStreamFacadeTests.fs" />
+    <Compile Include="XmlEventStreamFacadeTests.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
   </ItemGroup>
