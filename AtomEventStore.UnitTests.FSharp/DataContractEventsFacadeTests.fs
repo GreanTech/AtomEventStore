@@ -1,5 +1,6 @@
 ﻿module Grean.AtomEventStore.UnitTests.FSharp.DataContractEventsFacadeTests
 
+open System
 open Grean.AtomEventStore
 open Grean.AtomEventStore.UnitTests.FSharp.DataContractRecords
 open Grean.AtomEventStore.UnitTests.FSharp.TestDsl
@@ -31,3 +32,20 @@ let SutCorrectlyRoundTripsMultipleElements
 
     let expected = tefs
     Verify <@ expected = actual @>
+
+[<Theory; InMemoryDataContractConventions>]
+let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnions
+    (writer : AtomEventObserver<Changeset<TestEvent>>)
+    (reader : FifoEvents<Changeset<TestEvent>>)
+    (tef : TestEventF)
+    (teg : TestEventG)
+    (id : Guid) =
+
+    let expected = { Id = id; Items = [| tef |> F; teg |> G |] }
+
+    writer.AppendAsync(expected).Wait()
+
+    let actual = reader |> Seq.toList
+
+    Verify <@ actual.Length = 1 @>
+    Verify <@ expected = (actual |> Seq.exactlyOne) @>
