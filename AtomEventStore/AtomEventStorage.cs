@@ -25,8 +25,19 @@ namespace Grean.AtomEventStore
                     AtomLink.CreateSelfLink(href)
                 })
                 .ToXmlString((IContentSerializer)null);
+
             var sr = new StringReader(xml);
-            return XmlReader.Create(sr);
+            try
+            {
+                return XmlReader.Create(
+                    sr,
+                    new XmlReaderSettings { CloseInput = true });
+            }
+            catch
+            {
+                sr.Dispose();
+                throw;
+            }
         }
 
         private static Guid GetIdFromHref(Uri href)
