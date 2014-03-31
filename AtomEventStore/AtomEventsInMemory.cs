@@ -47,7 +47,7 @@ namespace Grean.AtomEventStore
             var id = GetIdFromHref(href);
             var xml = new AtomFeed(
                 id,
-                "Index of event stream " + (Guid)id,
+                "Index of event stream " + id,
                 DateTimeOffset.Now,
                 new AtomAuthor("Grean"),
                 Enumerable.Empty<AtomEntry>(),
