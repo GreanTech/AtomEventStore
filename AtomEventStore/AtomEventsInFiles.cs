@@ -29,7 +29,7 @@ namespace Grean.AtomEventStore
             if (File.Exists(fileName))
                 return XmlReader.Create(fileName);
 
-            var id = new Guid(href.ToString());
+            var id = GetIdFromHref(href);
             var xml = new AtomFeed(
                 id,
                 "Index of event stream " + id,
@@ -54,6 +54,11 @@ namespace Grean.AtomEventStore
                 sr.Dispose();
                 throw;
             }
+        }
+
+        private static Guid GetIdFromHref(Uri href)
+        {
+            return new Guid(href.ToString());
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)

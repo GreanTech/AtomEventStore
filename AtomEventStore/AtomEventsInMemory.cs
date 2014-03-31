@@ -37,7 +37,7 @@ namespace Grean.AtomEventStore
                 return CreateReaderOver(this.feeds[href].ToString());
             else
             {
-                UuidIri id = new Guid(href.ToString());
+                UuidIri id = GetIdFromHref(href);
                 return CreateReaderOver(
                     new AtomFeed(
                         id,
@@ -57,6 +57,11 @@ namespace Grean.AtomEventStore
         {
             var selfLink = links.Single(l => l.IsSelfLink);
             return selfLink.Href;
+        }
+
+        private static Guid GetIdFromHref(Uri href)
+        {
+            return new Guid(href.ToString());
         }
 
         private static XmlReader CreateReaderOver(string xml)
