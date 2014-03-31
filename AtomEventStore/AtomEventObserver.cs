@@ -39,7 +39,7 @@ namespace Grean.AtomEventStore
                 var index = this.ReadIndex();
                 var firstLink = index.Links
                     .Where(l => l.IsFirstLink)
-                    .DefaultIfEmpty(AtomLink.CreateFirstLink(new Uri(Guid.NewGuid().ToString(), UriKind.Relative)))
+                    .DefaultIfEmpty(AtomLink.CreateFirstLink(CreateNewFeedAddress()))
                     .Single();
                 var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
                 var lastLinkChanged = false;
@@ -97,6 +97,11 @@ namespace Grean.AtomEventStore
                         this.Write(index);
                 }
             });
+        }
+
+        private static Uri CreateNewFeedAddress()
+        {
+            return new Uri(Guid.NewGuid().ToString(), UriKind.Relative);
         }
 
         private AtomFeed ReadIndex()
