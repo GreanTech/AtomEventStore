@@ -40,7 +40,7 @@ namespace Grean.AtomEventStore
             }
         }
 
-        private static Guid GetIdFromHref(Uri href)
+        internal static Guid GetIdFromHref(Uri href)
         {
             /* The assumption here is that the href argument is always going to
              * be a relative URL. So far at least, that's consistent with how
