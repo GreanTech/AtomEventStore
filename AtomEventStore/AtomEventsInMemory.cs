@@ -47,10 +47,7 @@ namespace Grean.AtomEventStore
                         Enumerable.Empty<AtomEntry>(),
                         new[]
                         {
-                            AtomLink.CreateSelfLink(
-                                new Uri(
-                                    ((Guid)id).ToString(),
-                                    UriKind.Relative))
+                            AtomLink.CreateSelfLink(href)
                         })
                     .ToXmlString((IContentSerializer)null));
             }

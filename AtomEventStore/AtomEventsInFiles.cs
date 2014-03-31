@@ -38,7 +38,7 @@ namespace Grean.AtomEventStore
                 Enumerable.Empty<AtomEntry>(),
                 new[]
                 {
-                    AtomEventStream.CreateSelfLinkFrom(id)
+                    AtomLink.CreateSelfLink(href)
                 })
                 .ToXmlString((IContentSerializer)null);
 

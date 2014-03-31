@@ -35,7 +35,7 @@ namespace Grean.AtomEventStore.AzureBlob
                 Enumerable.Empty<AtomEntry>(),
                 new[]
                 {
-                    AtomEventStream.CreateSelfLinkFrom(id)
+                    AtomLink.CreateSelfLink(href)
                 })
                 .ToXmlString((IContentSerializer)null);
 
