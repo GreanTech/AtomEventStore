@@ -36,38 +36,13 @@ namespace Grean.AtomEventStore
             if (this.feeds.ContainsKey(href))
                 return CreateReaderOver(this.feeds[href].ToString());
             else
-            {
-                var xml = CreateNewFeed(href);
-                return CreateReaderOver(xml);
-            }
-        }
-
-        private static string CreateNewFeed(Uri href)
-        {
-            var id = GetIdFromHref(href);
-            var xml = new AtomFeed(
-                id,
-                "Index of event stream " + id,
-                DateTimeOffset.Now,
-                new AtomAuthor("Grean"),
-                Enumerable.Empty<AtomEntry>(),
-                new[]
-                {
-                    AtomLink.CreateSelfLink(href)
-                })
-                .ToXmlString((IContentSerializer)null);
-            return xml;
+                return AtomEventStorage.CreateNewFeed(href);
         }
 
         private static Uri GetHrefFrom(IEnumerable<AtomLink> links)
         {
             var selfLink = links.Single(l => l.IsSelfLink);
             return selfLink.Href;
-        }
-
-        private static Guid GetIdFromHref(Uri href)
-        {
-            return new Guid(href.ToString());
         }
 
         private static XmlReader CreateReaderOver(string xml)

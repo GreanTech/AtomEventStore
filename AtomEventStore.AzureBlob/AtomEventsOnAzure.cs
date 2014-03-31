@@ -26,41 +26,7 @@ namespace Grean.AtomEventStore.AzureBlob
                     blobRef.OpenRead(),
                     new XmlReaderSettings { CloseInput = true });
 
-            var xml = CreateNewFeed(href);
-            var sr = new StringReader(xml);
-            try
-            {
-                return XmlReader.Create(
-                    sr,
-                    new XmlReaderSettings { CloseInput = true });
-            }
-            catch
-            {
-                sr.Dispose();
-                throw;
-            }
-        }
-
-        private static string CreateNewFeed(Uri href)
-        {
-            var id = GetIdFromHref(href);
-            var xml = new AtomFeed(
-                id,
-                "Index of event stream " + id,
-                DateTimeOffset.Now,
-                new AtomAuthor("Grean"),
-                Enumerable.Empty<AtomEntry>(),
-                new[]
-                {
-                    AtomLink.CreateSelfLink(href)
-                })
-                .ToXmlString((IContentSerializer)null);
-            return xml;
-        }
-
-        private static Guid GetIdFromHref(Uri href)
-        {
-            return new Guid(href.ToString());
+            return AtomEventStorage.CreateNewFeed(href);
         }
 
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
