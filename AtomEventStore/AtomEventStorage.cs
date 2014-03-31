@@ -42,7 +42,15 @@ namespace Grean.AtomEventStore
 
         private static Guid GetIdFromHref(Uri href)
         {
-            return new Guid(href.ToString());
+            /* The assumption here is that the href argument is always going to
+             * be a relative URL. So far at least, that's consistent with how
+             * AtomEventStore works.
+             * However, the Segments property only works for absolute URLs. */
+            var fakeBase = new Uri("http://grean.com");
+            var absoluteHref = new Uri(fakeBase, href);
+            // The ID is assumed to be contained in the last segment of the URL
+            var lastSegment = absoluteHref.Segments.Last();
+            return new Guid(lastSegment);
         }
     }
 }

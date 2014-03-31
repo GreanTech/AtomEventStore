@@ -35,5 +35,32 @@ namespace Grean.AtomEventStore.UnitTests
                 .ToXmlString(dummySerializer));
             Assert.Equal(expected, XDocument.Load(actual), new XNodeEqualityComparer());
         }
+
+        [Theory, AutoAtomData]
+        public void CreateNewFeedForSegmentedUrlReturnsCorrectResult(
+            Guid id,
+            Guid segment,
+            IContentSerializer dummySerializer)
+        {
+            var href = new Uri(
+                segment.ToString() + "/" + id.ToString(),
+                UriKind.Relative);
+
+            XmlReader actual = AtomEventStorage.CreateNewFeed(href);
+
+            var expected = XDocument.Parse(
+                new AtomFeed(
+                    id,
+                    "Index of event stream " + id,
+                    DateTimeOffset.Now,
+                    new AtomAuthor("Grean"),
+                    Enumerable.Empty<AtomEntry>(),
+                    new[]
+                    {
+                        AtomLink.CreateSelfLink(href)
+                    })
+                .ToXmlString(dummySerializer));
+            Assert.Equal(expected, XDocument.Load(actual), new XNodeEqualityComparer());
+        }
     }
 }
