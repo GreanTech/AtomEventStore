@@ -13,6 +13,7 @@ namespace Grean.AtomEventStore.AzureBlob
     {
         private readonly CloudBlobContainer container;
 
+        [CLSCompliant(false)]
         public AtomEventsOnAzure(CloudBlobContainer container)
         {
             this.container = container;
