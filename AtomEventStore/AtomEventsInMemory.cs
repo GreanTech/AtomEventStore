@@ -44,7 +44,7 @@ namespace Grean.AtomEventStore
 
         private static string CreateNewFeed(Uri href)
         {
-            UuidIri id = GetIdFromHref(href);
+            var id = GetIdFromHref(href);
             var xml = new AtomFeed(
                 id,
                 "Index of event stream " + (Guid)id,
@@ -52,10 +52,10 @@ namespace Grean.AtomEventStore
                 new AtomAuthor("Grean"),
                 Enumerable.Empty<AtomEntry>(),
                 new[]
-                    {
-                        AtomLink.CreateSelfLink(href)
-                    })
-            .ToXmlString((IContentSerializer)null);
+                {
+                    AtomLink.CreateSelfLink(href)
+                })
+                .ToXmlString((IContentSerializer)null);
             return xml;
         }
 
