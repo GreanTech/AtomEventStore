@@ -26,19 +26,7 @@ namespace Grean.AtomEventStore.AzureBlob
                     blobRef.OpenRead(),
                     new XmlReaderSettings { CloseInput = true });
 
-            var id = GetIdFromHref(href);
-            var xml = new AtomFeed(
-                id,
-                "Index of event stream " + id,
-                DateTimeOffset.Now,
-                new AtomAuthor("Grean"),
-                Enumerable.Empty<AtomEntry>(),
-                new[]
-                {
-                    AtomLink.CreateSelfLink(href)
-                })
-                .ToXmlString((IContentSerializer)null);
-
+            var xml = CreateNewFeed(href);
             var sr = new StringReader(xml);
             try
             {
@@ -51,6 +39,23 @@ namespace Grean.AtomEventStore.AzureBlob
                 sr.Dispose();
                 throw;
             }
+        }
+
+        private static string CreateNewFeed(Uri href)
+        {
+            var id = GetIdFromHref(href);
+            var xml = new AtomFeed(
+                id,
+                "Index of event stream " + id,
+                DateTimeOffset.Now,
+                new AtomAuthor("Grean"),
+                Enumerable.Empty<AtomEntry>(),
+                new[]
+                {
+                    AtomLink.CreateSelfLink(href)
+                })
+                .ToXmlString((IContentSerializer)null);
+            return xml;
         }
 
         private static Guid GetIdFromHref(Uri href)

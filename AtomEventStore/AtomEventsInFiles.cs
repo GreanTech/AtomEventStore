@@ -29,19 +29,7 @@ namespace Grean.AtomEventStore
             if (File.Exists(fileName))
                 return XmlReader.Create(fileName);
 
-            var id = GetIdFromHref(href);
-            var xml = new AtomFeed(
-                id,
-                "Index of event stream " + id,
-                DateTimeOffset.Now,
-                new AtomAuthor("Grean"),
-                Enumerable.Empty<AtomEntry>(),
-                new[]
-                {
-                    AtomLink.CreateSelfLink(href)
-                })
-                .ToXmlString((IContentSerializer)null);
-
+            var xml = CreateNewFeed(href);
             var sr = new StringReader(xml);
             try
             {
@@ -54,6 +42,23 @@ namespace Grean.AtomEventStore
                 sr.Dispose();
                 throw;
             }
+        }
+
+        private static string CreateNewFeed(Uri href)
+        {
+            var id = GetIdFromHref(href);
+            var xml = new AtomFeed(
+                id,
+                "Index of event stream " + id,
+                DateTimeOffset.Now,
+                new AtomAuthor("Grean"),
+                Enumerable.Empty<AtomEntry>(),
+                new[]
+                {
+                    AtomLink.CreateSelfLink(href)
+                })
+                .ToXmlString((IContentSerializer)null);
+            return xml;
         }
 
         private static Guid GetIdFromHref(Uri href)
