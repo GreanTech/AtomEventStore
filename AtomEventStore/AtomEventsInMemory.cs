@@ -36,24 +36,7 @@ namespace Grean.AtomEventStore
             if (this.feeds.ContainsKey(href))
                 return CreateReaderOver(this.feeds[href].ToString());
             else
-            {
-                UuidIri id = new Guid(href.ToString());
-                return CreateReaderOver(
-                    new AtomFeed(
-                        id,
-                        "Index of event stream " + (Guid)id,
-                        DateTimeOffset.Now,
-                        new AtomAuthor("Grean"),
-                        Enumerable.Empty<AtomEntry>(),
-                        new[]
-                        {
-                            AtomLink.CreateSelfLink(
-                                new Uri(
-                                    ((Guid)id).ToString(),
-                                    UriKind.Relative))
-                        })
-                    .ToXmlString((IContentSerializer)null));
-            }
+                return AtomEventStorage.CreateNewFeed(href);
         }
 
         private static Uri GetHrefFrom(IEnumerable<AtomLink> links)

@@ -39,7 +39,7 @@ namespace Grean.AtomEventStore
                 var index = this.ReadIndex();
                 var firstLink = index.Links
                     .Where(l => l.IsFirstLink)
-                    .DefaultIfEmpty(AtomLink.CreateFirstLink(new Uri(Guid.NewGuid().ToString(), UriKind.Relative)))
+                    .DefaultIfEmpty(AtomLink.CreateFirstLink(CreateNewFeedAddress()))
                     .Single();
                 var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
                 var lastLinkChanged = false;
@@ -63,10 +63,9 @@ namespace Grean.AtomEventStore
 
                 if (lastPage.Entries.Count() >= this.pageSize)
                 {
-                    var nextId = UuidIri.NewId();
-                    var nextAddress = new Uri(((Guid)nextId).ToString(), UriKind.Relative);
+                    var nextAddress = CreateNewFeedAddress();
                     var nextPage = this.ReadPage(nextAddress);
-                    nextPage = AddEntryTo(nextId, nextPage, entry, now);
+                    nextPage = AddEntryTo(nextPage, entry, now);
 
                     var nextLink = AtomLink.CreateNextLink(nextAddress);
 
@@ -89,14 +88,18 @@ namespace Grean.AtomEventStore
                 }
                 else
                 {
-                    UuidIri lastId = Guid.Parse(lastLink.Href.ToString());
-                    lastPage = AddEntryTo(lastId, lastPage, entry, now);
+                    lastPage = AddEntryTo(lastPage, entry, now);
 
                     this.Write(lastPage);
                     if (lastLinkChanged)
                         this.Write(index);
                 }
             });
+        }
+
+        private static Uri CreateNewFeedAddress()
+        {
+            return new Uri(Guid.NewGuid().ToString(), UriKind.Relative);
         }
 
         private AtomFeed ReadIndex()
@@ -139,21 +142,22 @@ namespace Grean.AtomEventStore
         }
 
         private static AtomFeed AddEntryTo(
-            UuidIri id,
             AtomFeed page,
             AtomEntry entry,
             DateTimeOffset now)
         {
             var entries = new[] { entry }.Concat(page.Entries);
-            return CreateNewPage(id, entries, page.Links, now);
+            return CreateNewPage(entries, page.Links, now);
         }
 
         private static AtomFeed CreateNewPage(
-            UuidIri id,
             IEnumerable<AtomEntry> entries,
             IEnumerable<AtomLink> links,
             DateTimeOffset now)
         {
+            var selfLink = links.Single(l => l.IsSelfLink);
+            var id = AtomEventStorage.GetIdFromHref(selfLink.Href);
+
             return new AtomFeed(
                 id,
                 "Partial event stream",
