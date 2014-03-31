@@ -18,22 +18,16 @@ namespace Grean.AtomEventStore.UnitTests
             IContentSerializer dummySerializer)
         {
             var href = new Uri(id.ToString(), UriKind.Relative);
+            var before = DateTimeOffset.Now;
 
             XmlReader actual = AtomEventStorage.CreateNewFeed(href);
 
-            var expected = XDocument.Parse(
-                new AtomFeed(
-                    id,
-                    "Index of event stream " + id,
-                    DateTimeOffset.Now,
-                    new AtomAuthor("Grean"),
-                    Enumerable.Empty<AtomEntry>(),
-                    new[]
-                    {
-                        AtomLink.CreateSelfLink(href)
-                    })
-                .ToXmlString(dummySerializer));
-            Assert.Equal(expected, XDocument.Load(actual), new XNodeEqualityComparer());
+            var actualFeed = AtomFeed.ReadFrom(actual, dummySerializer);
+            Assert.Equal<Guid>(id, actualFeed.Id);
+            Assert.True(before <= actualFeed.Updated);
+            Assert.True(actualFeed.Updated <= DateTimeOffset.Now);
+            Assert.Empty(actualFeed.Entries);
+            Assert.Contains(AtomLink.CreateSelfLink(href), actualFeed.Links);
         }
 
         [Theory, AutoAtomData]
@@ -45,22 +39,16 @@ namespace Grean.AtomEventStore.UnitTests
             var href = new Uri(
                 segment.ToString() + "/" + id.ToString(),
                 UriKind.Relative);
+            var before = DateTimeOffset.Now;
 
             XmlReader actual = AtomEventStorage.CreateNewFeed(href);
 
-            var expected = XDocument.Parse(
-                new AtomFeed(
-                    id,
-                    "Index of event stream " + id,
-                    DateTimeOffset.Now,
-                    new AtomAuthor("Grean"),
-                    Enumerable.Empty<AtomEntry>(),
-                    new[]
-                    {
-                        AtomLink.CreateSelfLink(href)
-                    })
-                .ToXmlString(dummySerializer));
-            Assert.Equal(expected, XDocument.Load(actual), new XNodeEqualityComparer());
+            var actualFeed = AtomFeed.ReadFrom(actual, dummySerializer);
+            Assert.Equal<Guid>(id, actualFeed.Id);
+            Assert.True(before <= actualFeed.Updated);
+            Assert.True(actualFeed.Updated <= DateTimeOffset.Now);
+            Assert.Empty(actualFeed.Entries);
+            Assert.Contains(AtomLink.CreateSelfLink(href), actualFeed.Links);
         }
     }
 }
