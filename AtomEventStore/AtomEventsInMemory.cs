@@ -38,18 +38,18 @@ namespace Grean.AtomEventStore
             else
             {
                 UuidIri id = GetIdFromHref(href);
-                return CreateReaderOver(
-                    new AtomFeed(
-                        id,
-                        "Index of event stream " + (Guid)id,
-                        DateTimeOffset.Now,
-                        new AtomAuthor("Grean"),
-                        Enumerable.Empty<AtomEntry>(),
-                        new[]
-                        {
-                            AtomLink.CreateSelfLink(href)
-                        })
-                    .ToXmlString((IContentSerializer)null));
+                var xml = new AtomFeed(
+                    id,
+                    "Index of event stream " + (Guid)id,
+                    DateTimeOffset.Now,
+                    new AtomAuthor("Grean"),
+                    Enumerable.Empty<AtomEntry>(),
+                    new[]
+                    {
+                        AtomLink.CreateSelfLink(href)
+                    })
+                .ToXmlString((IContentSerializer)null);
+                return CreateReaderOver(xml);
             }
         }
 
