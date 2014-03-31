@@ -63,8 +63,7 @@ namespace Grean.AtomEventStore
 
                 if (lastPage.Entries.Count() >= this.pageSize)
                 {
-                    var nextId = UuidIri.NewId();
-                    var nextAddress = new Uri(((Guid)nextId).ToString(), UriKind.Relative);
+                    var nextAddress = CreateNewFeedAddress();
                     var nextPage = this.ReadPage(nextAddress);
                     nextPage = AddEntryTo(nextPage, entry, now);
 
