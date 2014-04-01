@@ -68,7 +68,9 @@ namespace Grean.AtomEventStore
         private AtomFeed ReadIndex()
         {
             var indexAddress =
-                new Uri(((Guid)this.id).ToString(), UriKind.Relative);
+                new Uri(
+                    ((Guid)this.id) + "/" + ((Guid)this.id),
+                    UriKind.Relative);
             return this.ReadPage(indexAddress);
         }
 
