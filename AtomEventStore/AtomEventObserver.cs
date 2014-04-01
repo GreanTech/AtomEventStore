@@ -39,7 +39,7 @@ namespace Grean.AtomEventStore
                 var index = this.ReadIndex();
                 var firstLink = index.Links
                     .Where(l => l.IsFirstLink)
-                    .DefaultIfEmpty(AtomLink.CreateFirstLink(CreateNewFeedAddress()))
+                    .DefaultIfEmpty(AtomLink.CreateFirstLink(this.CreateNewFeedAddress()))
                     .Single();
                 var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
                 var lastLinkChanged = false;
@@ -63,7 +63,7 @@ namespace Grean.AtomEventStore
 
                 if (lastPage.Entries.Count() >= this.pageSize)
                 {
-                    var nextAddress = CreateNewFeedAddress();
+                    var nextAddress = this.CreateNewFeedAddress();
                     var nextPage = this.ReadPage(nextAddress);
                     nextPage = AddEntryTo(nextPage, entry, now);
 
@@ -97,15 +97,18 @@ namespace Grean.AtomEventStore
             });
         }
 
-        private static Uri CreateNewFeedAddress()
+        private Uri CreateNewFeedAddress()
         {
-            return new Uri(Guid.NewGuid().ToString(), UriKind.Relative);
+            var indexedAddress = ((Guid)this.id) + "/" + Guid.NewGuid();
+            return new Uri(indexedAddress, UriKind.Relative);
         }
 
         private AtomFeed ReadIndex()
         {
             var indexAddress =
-                new Uri(((Guid)this.id).ToString(), UriKind.Relative);
+                new Uri(
+                    ((Guid)this.id) + "/" + ((Guid)this.id),
+                    UriKind.Relative);
             return ReadPage(indexAddress);
         }
 

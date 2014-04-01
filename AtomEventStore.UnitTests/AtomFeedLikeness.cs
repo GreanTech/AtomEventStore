@@ -37,8 +37,30 @@ namespace Grean.AtomEventStore.UnitTests
                 && this.minimumTime <= actual.Updated
                 && actual.Updated <= DateTimeOffset.Now
                 && expectedEntries.SequenceEqual(actual.Entries)
-                && actual.Links.Contains(
-                    AtomEventStream.CreateSelfLinkFrom(this.expectedId));
+                && actual.Links.Any(this.IsExpectedSelfLink);
+        }
+
+        private bool IsExpectedSelfLink(AtomLink link)
+        {
+            if (!link.IsSelfLink)
+                return false;
+            return GetIdFromHref(link.Href) == (Guid)this.expectedId;
+        }
+
+        /* Copied from AtomEventStorage, suggesting a potential piece of API
+         * that may want to become public. However, I'm still adhering to the
+         * Rule of Three. */
+        private static Guid GetIdFromHref(Uri href)
+        {
+            /* The assumption here is that the href argument is always going to
+             * be a relative URL. So far at least, that's consistent with how
+             * AtomEventStore works.
+             * However, the Segments property only works for absolute URLs. */
+            var fakeBase = new Uri("http://grean.com");
+            var absoluteHref = new Uri(fakeBase, href);
+            // The ID is assumed to be contained in the last segment of the URL
+            var lastSegment = absoluteHref.Segments.Last();
+            return new Guid(lastSegment);
         }
 
         public override int GetHashCode()

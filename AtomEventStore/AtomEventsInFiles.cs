@@ -38,6 +38,8 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("atomFeed");
 
             var fileName = this.CreateFileName(atomFeed.Links);
+            var dir = Path.GetDirectoryName(fileName);
+            System.IO.Directory.CreateDirectory(dir);
             return XmlWriter.Create(fileName);
         }
 
