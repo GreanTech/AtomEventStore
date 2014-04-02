@@ -71,7 +71,8 @@ namespace Grean.AtomEventStore
 
         public IEnumerator<UuidIri> GetEnumerator()
         {
-            yield break;
+            foreach (var href in this.feeds.Keys)
+                yield return AtomEventStorage.GetIdFromHref(href);
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
