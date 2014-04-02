@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEventsInMemory : IAtomEventStorage
+    public class AtomEventsInMemory : IAtomEventStorage, IEnumerable<UuidIri>
     {
         private readonly Dictionary<Uri, StringBuilder> feeds;
 
@@ -67,6 +67,16 @@ namespace Grean.AtomEventStore
             {
                 return this.feeds.Values.Select(sb => sb.ToString());
             }
+        }
+
+        public IEnumerator<UuidIri> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -147,5 +147,11 @@ namespace Grean.AtomEventStore.UnitTests
                 expected.SetEquals(sut.Feeds),
                 "Written feeds should be enumerated.");
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsEnumerableOfIds(AtomEventsInMemory sut)
+        {
+            Assert.IsAssignableFrom<IEnumerable<UuidIri>>(sut);
+        }
     }
 }
