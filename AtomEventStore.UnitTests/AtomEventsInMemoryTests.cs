@@ -153,5 +153,12 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.IsAssignableFrom<IEnumerable<UuidIri>>(sut);
         }
+
+        [Theory, AutoAtomData]
+        public void EmptySutIsEmpty(AtomEventsInMemory sut)
+        {
+            Assert.False(sut.Any(), "Empty store should be empty.");
+            Assert.Empty(sut);
+        }
     }
 }

@@ -71,12 +71,12 @@ namespace Grean.AtomEventStore
 
         public IEnumerator<UuidIri> GetEnumerator()
         {
-            throw new NotImplementedException();
+            yield break;
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return this.GetEnumerator();
         }
     }
 }
