@@ -7,6 +7,7 @@ using Xunit;
 using Xunit.Extensions;
 using Grean.AtomEventStore;
 using Moq;
+using Ploeh.AutoFixture;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -188,6 +189,41 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.True(
                 expected.SetEquals(actual),
                 "AtomEventsInMemory should yield index IDs.");
+        }
+
+        [Theory, AutoAtomData]
+        public void SutOnlyEnumeratesIndexedIndexes(
+            AtomEventsInMemory sut,
+            Generator<AtomFeedBuilder<DataContractTestEventX>> feedBuilders,
+            Mock<ITypeResolver> resolverStub)
+        {
+            resolverStub
+                .Setup(r => r.Resolve("test-event-x", "http://grean.rocks/dc"))
+                .Returns(typeof(DataContractTestEventX));
+            var feeds = feedBuilders.Select(b => b.Build()).Take(5).ToList();
+            var indexes = feeds
+                .PickRandom(2)
+                .Select(f => f.WithLinks(f.Links.Select(MakeSelfLinkIndexed)))
+                .ToList();
+
+            var feedsToWrite = feeds
+                .Where(f => !indexes.Any(i => i.Id == f.Id))
+                .Concat(indexes)
+                .ToArray()
+                .Shuffle();
+            foreach (var f in feedsToWrite)
+                using (var w = sut.CreateFeedWriterFor(f))
+                    f.WriteTo(
+                        w,
+                        new DataContractContentSerializer(
+                            resolverStub.Object));
+
+            var actual = sut;
+
+            var expected = new HashSet<UuidIri>(indexes.Select(f => f.Id));
+            Assert.True(
+                expected.SetEquals(actual),
+                "AtomEventsInMemory should only yield index IDs.");
         }
 
         private static AtomLink MakeSelfLinkIndexed(AtomLink link)
