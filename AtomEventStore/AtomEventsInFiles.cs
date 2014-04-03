@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEventsInFiles : IAtomEventStorage
+    public class AtomEventsInFiles : IAtomEventStorage, IEnumerable<UuidIri>
     {
         private readonly DirectoryInfo directory;
 
@@ -59,6 +59,28 @@ namespace Grean.AtomEventStore
             return Path.Combine(
                 this.directory.ToString(),
                 href.ToString() + ".xml");
+        }
+
+        public IEnumerator<UuidIri> GetEnumerator()
+        {
+            return this.directory
+                .EnumerateDirectories()
+                .Select(d => TryParseGuid(d.Name))
+                .Where(t => t.Item1)
+                .Select(t => (UuidIri)t.Item2)
+                .GetEnumerator();
+        }
+
+        private static Tuple<bool, Guid> TryParseGuid(string candidate)
+        {
+            Guid id;
+            var success = Guid.TryParse(candidate, out id);
+            return new Tuple<bool, Guid>(success, id);
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }
