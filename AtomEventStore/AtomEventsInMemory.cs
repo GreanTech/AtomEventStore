@@ -32,17 +32,6 @@ namespace Grean.AtomEventStore
             return XmlWriter.Create(sb);
         }
 
-        public XmlReader CreateFeedReaderFor(Uri href)
-        {
-            if (href == null)
-                throw new ArgumentNullException("href");
-
-            if (this.feeds.ContainsKey(href))
-                return CreateReaderOver(this.feeds[href].ToString());
-            else
-                return AtomEventStorage.CreateNewFeed(href);
-        }
-
         private static Uri GetHrefFrom(IEnumerable<AtomLink> links)
         {
             var selfLink = links.Single(l => l.IsSelfLink);
@@ -64,6 +53,17 @@ namespace Grean.AtomEventStore
                 .ToArray();
             if (segments.Length == 2 && segments[0] == segments[1])
                 this.indexes.Add(atomFeed.Id);
+        }
+
+        public XmlReader CreateFeedReaderFor(Uri href)
+        {
+            if (href == null)
+                throw new ArgumentNullException("href");
+
+            if (this.feeds.ContainsKey(href))
+                return CreateReaderOver(this.feeds[href].ToString());
+            else
+                return AtomEventStorage.CreateNewFeed(href);
         }
 
         private static XmlReader CreateReaderOver(string xml)
