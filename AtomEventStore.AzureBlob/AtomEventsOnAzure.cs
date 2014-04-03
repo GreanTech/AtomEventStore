@@ -9,7 +9,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Grean.AtomEventStore.AzureBlob
 {
-    public class AtomEventsOnAzure : IAtomEventStorage
+    public class AtomEventsOnAzure : IAtomEventStorage, IEnumerable<UuidIri>
     {
         private readonly CloudBlobContainer container;
 
@@ -51,6 +51,31 @@ namespace Grean.AtomEventStore.AzureBlob
         private CloudBlockBlob CreateBlobReference(Uri href)
         {
             return this.container.GetBlockBlobReference(href.ToString() + ".xml");
+        }
+
+        public IEnumerator<UuidIri> GetEnumerator()
+        {
+            return this.container
+                .ListBlobs()
+                .OfType<CloudBlobDirectory>()
+                .Select(d => d.Uri.Segments.Last())
+                .Select(s => s.Trim('/'))
+                .Select(TryParseGuid)
+                .Where(t => t.Item1)
+                .Select(t => (UuidIri)t.Item2)
+                .GetEnumerator();
+        }
+
+        private static Tuple<bool, Guid> TryParseGuid(string candidate)
+        {
+            Guid id;
+            var success = Guid.TryParse(candidate, out id);
+            return new Tuple<bool, Guid>(success, id);
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }

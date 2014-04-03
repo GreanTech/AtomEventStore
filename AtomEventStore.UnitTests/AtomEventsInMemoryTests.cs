@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Extensions;
 using Grean.AtomEventStore;
+using Moq;
+using Ploeh.AutoFixture;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -146,6 +148,112 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.True(
                 expected.SetEquals(sut.Feeds),
                 "Written feeds should be enumerated.");
+        }
+
+        [Theory, AutoAtomData]
+        public void SutIsEnumerableOfIds(AtomEventsInMemory sut)
+        {
+            Assert.IsAssignableFrom<IEnumerable<UuidIri>>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void EmptySutIsEmpty(AtomEventsInMemory sut)
+        {
+            Assert.False(sut.Any(), "Empty store should be empty.");
+            Assert.Empty(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutEnumeratesIndexedIndexes(
+            AtomEventsInMemory sut,
+            IEnumerable<AtomFeedBuilder<DataContractTestEventX>> feedBuilders,
+            Mock<ITypeResolver> resolverStub)
+        {
+            resolverStub
+                .Setup(r => r.Resolve("test-event-x", "http://grean.rocks/dc"))
+                .Returns(typeof(DataContractTestEventX));
+            var feeds = feedBuilders
+                .Select(b => b.Build())
+                .Select(f => f.WithLinks(f.Links.Select(MakeSelfLinkIndexed)))
+                .ToArray();
+            foreach (var f in feeds)
+                using (var w = sut.CreateFeedWriterFor(f))
+                    f.WriteTo(
+                        w,
+                        new DataContractContentSerializer(
+                            resolverStub.Object));
+
+            var actual = sut;
+
+            var expected = new HashSet<UuidIri>(feeds.Select(f => f.Id));
+            Assert.True(
+                expected.SetEquals(actual),
+                "AtomEventsInMemory should yield index IDs.");
+        }
+
+        [Theory, AutoAtomData]
+        public void SutOnlyEnumeratesIndexedIndexes(
+            AtomEventsInMemory sut,
+            Generator<AtomFeedBuilder<DataContractTestEventX>> feedBuilders,
+            Mock<ITypeResolver> resolverStub)
+        {
+            resolverStub
+                .Setup(r => r.Resolve("test-event-x", "http://grean.rocks/dc"))
+                .Returns(typeof(DataContractTestEventX));
+            var feeds = feedBuilders.Select(b => b.Build()).Take(5).ToList();
+            var indexes = feeds
+                .PickRandom(2)
+                .Select(f => f.WithLinks(f.Links.Select(MakeSelfLinkIndexed)))
+                .ToList();
+
+            var feedsToWrite = feeds
+                .Where(f => !indexes.Any(i => i.Id == f.Id))
+                .Concat(indexes)
+                .ToArray()
+                .Shuffle();
+            foreach (var f in feedsToWrite)
+                using (var w = sut.CreateFeedWriterFor(f))
+                    f.WriteTo(
+                        w,
+                        new DataContractContentSerializer(
+                            resolverStub.Object));
+
+            var actual = sut;
+
+            var expected = new HashSet<UuidIri>(indexes.Select(f => f.Id));
+            Assert.True(
+                expected.SetEquals(actual),
+                "AtomEventsInMemory should only yield index IDs.");
+        }
+
+        private static AtomLink MakeSelfLinkIndexed(AtomLink link)
+        {
+            if (link.IsSelfLink)
+            {
+                var segment = GetIdFromHref(link.Href);
+                var indexedHref = segment + "/" + segment;
+                return link.WithHref(new Uri(indexedHref, UriKind.Relative));
+            }
+            else
+                return link;
+        }
+
+        /* This is actually the third time this piece of code has been copied,
+         * so according to the Rule of Three, we should consider refactoring
+         * it. However, since it's such a crappy workaround, and since it has
+         * very strong preconditions, it may be of limited value making it
+         * public. */
+        private static Guid GetIdFromHref(Uri href)
+        {
+            /* The assumption here is that the href argument is always going to
+             * be a relative URL. So far at least, that's consistent with how
+             * AtomEventStore works.
+             * However, the Segments property only works for absolute URLs. */
+            var fakeBase = new Uri("http://grean.com");
+            var absoluteHref = new Uri(fakeBase, href);
+            // The ID is assumed to be contained in the last segment of the URL
+            var lastSegment = absoluteHref.Segments.Last();
+            return new Guid(lastSegment);
         }
     }
 }
