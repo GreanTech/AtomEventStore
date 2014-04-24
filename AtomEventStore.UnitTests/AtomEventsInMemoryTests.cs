@@ -143,10 +143,11 @@ namespace Grean.AtomEventStore.UnitTests
                         w,
                         new ConventionBasedSerializerOfComplexImmutableClasses());
 
-            var expected = new HashSet<string>(
-                feeds.Select(w => w.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())));
+            var actual = sut.Feeds.Select(s => AtomFeed.Parse(s, new ConventionBasedSerializerOfComplexImmutableClasses()));
+
+            var expected = new HashSet<AtomFeed>(feeds, new AtomFeedComparer());
             Assert.True(
-                expected.SetEquals(sut.Feeds),
+                expected.SetEquals(actual),
                 "Written feeds should be enumerated.");
         }
 
@@ -224,6 +225,49 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.True(
                 expected.SetEquals(actual),
                 "AtomEventsInMemory should only yield index IDs.");
+        }
+
+        /* This test attempts to verify that the SUT is thread-safe. Obviously,
+         * this is a naive approach, but better than nothing. It does actually
+         * reproduce a failure mode seen in the wild, at least on the
+         * computer it was written. */
+        [Theory, AutoAtomData]
+        public void SutSeemsToBeThreadSafe(
+            AtomEventsInMemory sut,
+            Generator<AtomFeedBuilder<DataContractTestEventX>> g,
+            Mock<ITypeResolver> resolverStub)
+        {
+            resolverStub
+                .Setup(r => r.Resolve("test-event-x", "http://grean.rocks/dc"))
+                .Returns(typeof(DataContractTestEventX));
+            var feeds = g.Take(500).Select(b => b.Build()).ToArray();
+
+            var tasks = feeds
+                .AsParallel()
+                .Select(f => Task.Factory.StartNew(() =>
+                {
+                    using (var w = sut.CreateFeedWriterFor(f))
+                        f.WriteTo(
+                            w,
+                            new DataContractContentSerializer(
+                                resolverStub.Object));
+                }))
+                .ToArray();
+            var readFeeds = feeds
+                .AsParallel()
+                .Select(f => f.Locate())
+                .Select(uri =>
+                {
+                    using (var r = sut.CreateFeedReaderFor(uri))
+                        return AtomFeed.ReadFrom(
+                            r,
+                            new DataContractContentSerializer(
+                                resolverStub.Object));
+                })
+                .ToArray();
+            Task.WaitAll(tasks);
+
+            Assert.Equal(feeds.Length, readFeeds.Length);
         }
 
         private static AtomLink MakeSelfLinkIndexed(AtomLink link)
