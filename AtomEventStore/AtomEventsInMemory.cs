@@ -32,7 +32,7 @@ namespace Grean.AtomEventStore
             var id = GetHrefFrom(atomFeed.Links);
             var sb = new StringBuilder();
             return new CallBackXmlWriter(
-                new StringWriter(sb),
+                new StringWriter(sb, CultureInfo.InvariantCulture),
                 () =>
                 {
                     this.rwLock.EnterWriteLock();
