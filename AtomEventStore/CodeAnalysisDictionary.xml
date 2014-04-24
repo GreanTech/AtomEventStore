@@ -9,6 +9,7 @@
       <Word>rel</Word>
       <Word>uuid</Word>
       <Word>iri</Word>
+      <Word>fifo</Word>
     </Recognized>
     <Deprecated>
       <Term PreferredAlternate=""></Term>
