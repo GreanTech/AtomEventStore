@@ -7,6 +7,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class AtomEventsInFiles : IAtomEventStorage, IEnumerable<UuidIri>
     {
         private readonly DirectoryInfo directory;

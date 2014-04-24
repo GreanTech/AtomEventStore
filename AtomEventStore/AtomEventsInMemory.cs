@@ -9,6 +9,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class AtomEventsInMemory : IAtomEventStorage, IEnumerable<UuidIri>, IDisposable
     {
         private readonly ReaderWriterLockSlim rwLock;
@@ -22,6 +23,7 @@ namespace Grean.AtomEventStore
             this.indexes = new List<UuidIri>();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "According to the documentation of this code analysis rule, it's OK to suppress a warning if 'the method that raised the warning returns an IDisposable object wraps your object', which is exactly the case here.")]
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
             if (atomFeed == null)
@@ -88,6 +90,7 @@ namespace Grean.AtomEventStore
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "According to the documentation of this code analysis rule, it's OK to suppress a warning if 'the method that raised the warning returns an IDisposable object wraps your object', which is exactly the case here.")]
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             if (href == null)

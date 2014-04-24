@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class FifoEvents<T> : IEnumerable<T>
     {
         private readonly UuidIri id;
