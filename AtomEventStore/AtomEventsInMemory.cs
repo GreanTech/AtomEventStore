@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEventsInMemory : IAtomEventStorage, IEnumerable<UuidIri>
+    public class AtomEventsInMemory : IAtomEventStorage, IEnumerable<UuidIri>, IDisposable
     {
         private readonly ReaderWriterLockSlim rwLock;
         private readonly Dictionary<Uri, StringBuilder> feeds;
@@ -155,6 +155,18 @@ namespace Grean.AtomEventStore
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                this.rwLock.Dispose();
         }
     }
 }
