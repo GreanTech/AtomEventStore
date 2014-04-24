@@ -170,7 +170,7 @@ namespace Grean.AtomEventStore
         public Task AppendAsync(T @event)
         {
             if (@event == null)
-                throw new ArgumentNullException("@event");
+                throw new ArgumentNullException("event");
 
             return Task.Factory.StartNew(() =>
             {
