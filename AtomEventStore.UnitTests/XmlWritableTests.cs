@@ -28,23 +28,22 @@ namespace Grean.AtomEventStore.UnitTests
             }
             var expected = XDocument.Parse(sb.ToString());
             Assert.Equal(
-                expected, 
+                expected,
                 XDocument.Parse(actual),
                 new XNodeEqualityComparer());
         }
 
         [Theory, AutoAtomData]
         public void ToXmlStringWithSettingsReturnsCorrectResult(
-            TestXmlWritable writable)
+            TestXmlWritable writable,
+            IContentSerializer dummySerializer)
         {
             var settings = new XmlWriterSettings
             {
                 OmitXmlDeclaration = true
             };
 
-            var actual = writable.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses(),
-                settings);
+            var actual = writable.ToXmlString(dummySerializer, settings);
 
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb, settings))
