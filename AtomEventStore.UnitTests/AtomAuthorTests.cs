@@ -114,9 +114,10 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromReturnsCorrectResult(
-            AtomAuthor expected)
+            AtomAuthor expected,
+            IContentSerializer dummySerializer)
         {
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+            using (var sr = new StringReader(expected.ToXmlString(dummySerializer)))
             using (var r = XmlReader.Create(sr))
             {
                 AtomAuthor actual = AtomAuthor.ReadFrom(r);
