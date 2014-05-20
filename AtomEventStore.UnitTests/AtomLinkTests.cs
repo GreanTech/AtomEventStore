@@ -194,10 +194,11 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanRoundTripToString(AtomLink expected)
+        public void SutCanRoundTripToString(
+            AtomLink expected,
+            IContentSerializer dummySerializer)
         {
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var xml = expected.ToXmlString(dummySerializer);
             AtomLink actual = AtomLink.Parse(xml);
             Assert.Equal(expected, actual);
         }
