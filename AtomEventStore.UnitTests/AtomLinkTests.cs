@@ -140,9 +140,10 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromReturnsCorrectResult(
-            AtomLink expected)
+            AtomLink expected,
+            IContentSerializer dummySerializer)
         {
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+            using (var sr = new StringReader(expected.ToXmlString(dummySerializer)))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
@@ -153,10 +154,11 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void ReadFromWhenHrefIsRelativeReturnsCorrectResult(
             AtomLink seed,
-            string relativeUrl)
+            string relativeUrl,
+            IContentSerializer dummySerializer)
         {
             var expected = seed.WithHref(new Uri(relativeUrl, UriKind.Relative));
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+            using (var sr = new StringReader(expected.ToXmlString(dummySerializer)))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
@@ -192,10 +194,11 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanRoundTripToString(AtomLink expected)
+        public void SutCanRoundTripToString(
+            AtomLink expected,
+            IContentSerializer dummySerializer)
         {
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var xml = expected.ToXmlString(dummySerializer);
             AtomLink actual = AtomLink.Parse(xml);
             Assert.Equal(expected, actual);
         }

@@ -93,7 +93,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void ReadNonPersistedFeedReturnsCorrectFeed(
             AtomEventsInMemory sut,
-            UuidIri id)
+            UuidIri id,
+            IContentSerializer dummySerializer)
         {
             var expectedSelfLink = AtomLink.CreateSelfLink(
                 new Uri(
@@ -103,9 +104,7 @@ namespace Grean.AtomEventStore.UnitTests
 
             using (var r = sut.CreateFeedReaderFor(expectedSelfLink.Href))
             {
-                var actual = AtomFeed.ReadFrom(
-                    r,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                var actual = AtomFeed.ReadFrom(r, dummySerializer);
 
                 Assert.Equal(id, actual.Id);
                 Assert.Equal("Index of event stream " + (Guid)id, actual.Title);
