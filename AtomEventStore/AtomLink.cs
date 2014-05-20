@@ -111,8 +111,12 @@ namespace Grean.AtomEventStore
                 throw new ArgumentException("The supplied XML reader contains an atom:link element without an href attribute. An atom:link element must have an href attribute.", "xmlReader");
 
             var rel = navigator
-                .Select("/atom:link/@rel", resolver).Cast<XPathNavigator>()
-                .Single().Value;
+                .Select("/atom:link/@rel", resolver)
+                .Cast<XPathNavigator>()
+                .Select(x => x.Value)
+                .SingleOrDefault();
+            if (rel == null)
+                throw new ArgumentException("The supplied XML reader contains an atom:link element without a rel attribute. An atom:link element must have a rel attribute.", "xmlReader");
 
             return new AtomLink(rel, new Uri(href, UriKind.RelativeOrAbsolute));
         }
