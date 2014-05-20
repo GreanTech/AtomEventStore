@@ -140,9 +140,10 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromReturnsCorrectResult(
-            AtomLink expected)
+            AtomLink expected,
+            IContentSerializer dummySerializer)
         {
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+            using (var sr = new StringReader(expected.ToXmlString(dummySerializer)))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
