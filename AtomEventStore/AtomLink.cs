@@ -103,8 +103,13 @@ namespace Grean.AtomEventStore
             resolver.AddNamespace("atom", "http://www.w3.org/2005/Atom");
 
             var href = navigator
-                .Select("/atom:link/@href", resolver).Cast<XPathNavigator>()
-                .Single().Value;
+                .Select("/atom:link/@href", resolver)
+                .Cast<XPathNavigator>()
+                .Select(x => x.Value)
+                .SingleOrDefault();
+            if (href == null)
+                throw new ArgumentException("The supplied XML reader contains an atom:link element without an href attribute. An atom:link element must have an href attribute.", "xmlReader");
+
             var rel = navigator
                 .Select("/atom:link/@rel", resolver).Cast<XPathNavigator>()
                 .Single().Value;
