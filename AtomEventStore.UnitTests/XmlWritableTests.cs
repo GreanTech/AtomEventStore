@@ -15,10 +15,10 @@ namespace Grean.AtomEventStore.UnitTests
     {
         [Theory, AutoAtomData]
         public void ToXmlStringReturnsCorrectResult(
-            TestXmlWritable writable)
+            TestXmlWritable writable,
+            IContentSerializer dummySerializer)
         {
-            var actual = writable.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var actual = writable.ToXmlString(dummySerializer);
 
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb))
