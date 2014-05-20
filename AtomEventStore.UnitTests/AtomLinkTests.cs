@@ -154,10 +154,11 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void ReadFromWhenHrefIsRelativeReturnsCorrectResult(
             AtomLink seed,
-            string relativeUrl)
+            string relativeUrl,
+            IContentSerializer dummySerializer)
         {
             var expected = seed.WithHref(new Uri(relativeUrl, UriKind.Relative));
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+            using (var sr = new StringReader(expected.ToXmlString(dummySerializer)))
             using (var r = XmlReader.Create(sr))
             {
                 AtomLink actual = AtomLink.ReadFrom(r);
