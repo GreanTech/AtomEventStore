@@ -166,6 +166,25 @@ namespace Grean.AtomEventStore.UnitTests
             }
         }
 
+        [Theory]
+        [InlineAutoAtomData("href")]
+        [InlineAutoAtomData("rel")]
+        public void ReadFromXmlWithoutHrefThrows(
+            string attribute,
+            AtomLink seed,
+            IContentSerializer dummySerializer)
+        {
+            XNamespace atom = "http://www.w3.org/2005/Atom";
+            var xml = XDocument.Parse(seed.ToXmlString(dummySerializer));
+            xml.Root.Attribute(attribute).Remove();
+            using(var r = xml.CreateReader())
+            {
+                var e = Assert.Throws<ArgumentException>(
+                    () => AtomLink.ReadFrom(r));
+                Assert.Contains(attribute, e.Message);
+            }
+        }
+
         [Theory, AutoAtomData]
         public void CreateSelfLinkReturnsCorrectResult(
             AtomLink link)
