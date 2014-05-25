@@ -33,9 +33,15 @@ namespace Grean.AtomEventStore
             var page = this.ReadFirst();
             while (page != null)
             {
+                var entries = page.Entries.Reverse().ToArray();
+                if (!entries.Any())
+                    yield break;
+
+                yield return (T)entries.First().Content.Item;
+
                 var t = Task.Factory.StartNew(() => this.ReadNext(page));
 
-                foreach (var entry in page.Entries.Reverse())
+                foreach (var entry in entries.Skip(1))
                     yield return (T)entry.Content.Item;
 
                 page = t.Result;
