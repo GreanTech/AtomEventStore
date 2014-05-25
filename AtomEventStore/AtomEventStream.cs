@@ -388,9 +388,14 @@ namespace Grean.AtomEventStore
             var page = this.ReadIndex();
             while (page != null)
             {
+                if (!page.Entries.Any())
+                    yield break;
+
+                yield return Cast(page.Entries.First().Content.Item);
+
                 var t = Task.Factory.StartNew(() => this.GetPreviousPage(page));
 
-                foreach (var entry in page.Entries)
+                foreach (var entry in page.Entries.Skip(1))
                     yield return Cast(entry.Content.Item);
 
                 page = t.Result;
