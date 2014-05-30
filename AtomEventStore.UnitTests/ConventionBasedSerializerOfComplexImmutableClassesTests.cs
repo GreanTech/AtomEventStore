@@ -69,5 +69,21 @@ namespace Grean.AtomEventStore.UnitTests
                 "</content>");
             Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
         }
+
+        [Theory, AutoAtomData]
+        public void SutCanRoundTripItemWithUri(
+            XmlAtomContent seed,
+            TestEventU teu)
+        {
+            var expected = seed.WithItem(teu);
+            var xml = expected.ToXmlString(
+                new ConventionBasedSerializerOfComplexImmutableClasses());
+
+            var actual = XmlAtomContent.Parse(
+                xml,
+                new ConventionBasedSerializerOfComplexImmutableClasses());
+
+            Assert.Equal(expected, actual);
+        }
     }
 }
