@@ -72,16 +72,14 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanRoundTripItemWithUri(
+            ConventionBasedSerializerOfComplexImmutableClasses sut,
             XmlAtomContent seed,
             TestEventU teu)
         {
             var expected = seed.WithItem(teu);
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var xml = expected.ToXmlString(sut);
 
-            var actual = XmlAtomContent.Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var actual = XmlAtomContent.Parse(xml, sut);
 
             Assert.Equal(expected, actual);
         }
