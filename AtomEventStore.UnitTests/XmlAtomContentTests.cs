@@ -144,22 +144,6 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        [Theory, AutoAtomData]
-        public void SutCanRoundTripSealedEvent(
-            XmlAtomContent seed,
-            TestEventSealed tes)
-        {
-            var expected = seed.WithItem(tes);
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            var actual = XmlAtomContent.Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            Assert.Equal(expected, actual);
-        }
-
         [Theory]
         [InlineAutoAtomData("<Content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">", "</Content>")]
         [InlineAutoAtomData("<foo type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">", "</foo>")]
