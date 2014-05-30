@@ -145,22 +145,6 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanRoundTripEventWithDateTimeOffset(
-            XmlAtomContent seed,
-            TestEventD ted)
-        {
-            var expected = seed.WithItem(ted);
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            var actual = XmlAtomContent.Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            Assert.Equal(expected, actual);
-        }
-
-        [Theory, AutoAtomData]
         public void SutCanSerializeSealedEvent(
             XmlAtomContent seed,
             TestEventSealed tes)
