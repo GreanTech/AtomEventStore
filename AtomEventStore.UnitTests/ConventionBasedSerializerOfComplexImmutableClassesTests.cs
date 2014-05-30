@@ -52,13 +52,13 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanSerializeItemWithUri(
+            ConventionBasedSerializerOfComplexImmutableClasses sut,
             XmlAtomContent seed,
             TestEventU teu)
         {
-            var sut = seed.WithItem(teu);
+            var content = seed.WithItem(teu);
 
-            var actual = sut.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var actual = content.ToXmlString(sut);
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
