@@ -248,14 +248,14 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanSerializeNestedEnumerable(
+            ConventionBasedSerializerOfComplexImmutableClasses sut,
             XmlAtomContent seed,
             Guid id,
             Wrapper<TestEventX> w)
         {
-            var sut = seed.WithItem(new Changeset<Wrapper<TestEventX>>(id, w));
+            var content = seed.WithItem(new Changeset<Wrapper<TestEventX>>(id, w));
 
-            var actual = sut.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var actual = content.ToXmlString(sut);
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
