@@ -311,6 +311,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanSerializeEvenWithZeroedOutSubSeconds(
+            ConventionBasedSerializerOfComplexImmutableClasses sut,
             DateTimeOffset dtSeed,
             XmlAtomContent seed,
             TestEventD ted)
@@ -330,10 +331,9 @@ namespace Grean.AtomEventStore.UnitTests
                 dtSeed.Second,
                 dtSeed.Millisecond,
                 dtSeed.Offset);
-            var sut = seed.WithItem(ted.WithDateTime(dt));
+            var content = seed.WithItem(ted.WithDateTime(dt));
 
-            var actual = sut.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var actual = content.ToXmlString(sut);
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
