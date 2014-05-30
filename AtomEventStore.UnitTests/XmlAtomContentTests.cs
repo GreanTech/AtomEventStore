@@ -145,22 +145,6 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanRoundTripCompositeFromSeveralNamespaces(
-            XmlAtomContent seed,
-            Envelope<SubNs.SubSubNs.TestEventS> env)
-        {
-            var expected = seed.WithItem(env);
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            var actual = XmlAtomContent.Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            Assert.Equal(expected, actual);
-        }
-
-        [Theory, AutoAtomData]
         public void SutCanSerializeEnumerable(
             XmlAtomContent seed,
             Guid id,
