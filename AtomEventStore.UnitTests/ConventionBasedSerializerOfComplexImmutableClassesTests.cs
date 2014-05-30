@@ -291,13 +291,13 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanSerializeEventWithDateTimeOffset(
+            ConventionBasedSerializerOfComplexImmutableClasses sut,
             XmlAtomContent seed,
             TestEventD ted)
         {
-            var sut = seed.WithItem(ted);
+            var content = seed.WithItem(ted);
 
-            var actual = sut.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var actual = content.ToXmlString(sut);
 
             var expected = XDocument.Parse(
                 "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
