@@ -145,26 +145,6 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanSerializeEventWithDateTimeOffset(
-            XmlAtomContent seed,
-            TestEventD ted)
-        {
-            var sut = seed.WithItem(ted);
-
-            var actual = sut.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            var expected = XDocument.Parse(
-                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
-                "  <test-event-d xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
-                "    <number>" + ted.Number + "</number>" +
-                "    <date-time>" + ted.DateTime.ToString("o") + "</date-time>" +
-                "  </test-event-d>" +
-                "</content>");
-            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
-        }
-
-        [Theory, AutoAtomData]
         public void SutCanSerializeEvenWithZeroedOutSubSeconds(
             DateTimeOffset dtSeed,
             XmlAtomContent seed,
