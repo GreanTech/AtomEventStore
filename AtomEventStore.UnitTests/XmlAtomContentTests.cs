@@ -145,35 +145,6 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanSerializeDoublyNestedItem(
-            XmlAtomContent seed,
-            Envelope<Wrapper<TestEventX>> env)
-        {
-            var sut = seed.WithItem(env);
-
-            var actual = sut.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            var expected = XDocument.Parse(
-                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
-                "  <envelope xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
-                "    <id>urn:uuid:" + env.Id + "</id>" +
-                "    <item>" +
-                "      <wrapper>" +
-                "        <item>" +
-                "          <test-event-x>" +
-                "            <number>" + env.Item.Item.Number + "</number>" +
-                "            <text>" + env.Item.Item.Text + "</text>" +
-                "          </test-event-x>" +
-                "        </item>" +
-                "      </wrapper>" +
-                "    </item>" +
-                "  </envelope>" +
-                "</content>");
-            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
-        }
-
-        [Theory, AutoAtomData]
         public void SutCanRoundTripDoublyNestedItem(
             XmlAtomContent seed,
             Envelope<Wrapper<TestEventX>> env)
