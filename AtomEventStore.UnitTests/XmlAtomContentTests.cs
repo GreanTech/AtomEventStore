@@ -145,31 +145,6 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanSerializeCompositeFromSeveralNamespaces(
-            XmlAtomContent seed,
-            Envelope<SubNs.SubSubNs.TestEventS> env)
-        {
-            var sut = seed.WithItem(env);
-
-            var actual = sut.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
-
-            var expected = XDocument.Parse(
-                "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
-                "  <envelope xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
-                "    <id>urn:uuid:" + env.Id + "</id>" +
-                "    <item>" +
-                "      <test-event-s xmlns=\"urn:grean:atom-event-store:unit-tests:sub-ns:sub-sub-ns\">" +
-                "        <number>" + env.Item.Number + "</number>" +
-                "        <text>" + env.Item.Text + "</text>" +
-                "      </test-event-s>" +
-                "    </item>" +
-                "  </envelope>" +
-                "</content>");
-            Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
-        }
-
-        [Theory, AutoAtomData]
         public void SutCanRoundTripCompositeFromSeveralNamespaces(
             XmlAtomContent seed,
             Envelope<SubNs.SubSubNs.TestEventS> env)
