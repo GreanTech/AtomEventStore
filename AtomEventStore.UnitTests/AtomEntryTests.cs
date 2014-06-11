@@ -202,16 +202,11 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromReturnsCorrectResult(
-            [Frozen]Mock<ITypeResolver> resolverStub,
             AtomEntry seed,
             XmlAttributedTestEventX tex,
             XmlContentSerializer serializer)
         {
-            resolverStub
-                .Setup(r => r.Resolve("test-event-x", "http://grean:rocks"))
-                .Returns(tex.GetType());
             var expected = seed.WithContent(seed.Content.WithItem(tex));
-
             using (var sr = new StringReader(expected.ToXmlString(serializer)))
             using (var r = XmlReader.Create(sr))
             {
@@ -222,16 +217,11 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromXmlWithTestEventYReturnsCorrectResult(
-            [Frozen]Mock<ITypeResolver> resolverStub,
             AtomEntry seed,
             XmlAttributedTestEventY tey,
             XmlContentSerializer serializer)
         {
-            resolverStub
-                .Setup(r => r.Resolve("test-event-y", "http://grean:rocks"))
-                .Returns(tey.GetType());
             var expected = seed.WithContent(seed.Content.WithItem(tey));
-
             using (var sr = new StringReader(expected.ToXmlString(serializer)))
             using (var r = XmlReader.Create(sr))
             {

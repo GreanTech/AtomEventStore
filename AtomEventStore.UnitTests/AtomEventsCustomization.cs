@@ -16,6 +16,7 @@ namespace Grean.AtomEventStore.UnitTests
         public AtomEventsCustomization()
             : base(
                 new PageSizeCustomization(),
+                new TypeResolverCustomization(),
                 new ContentSerializerCustomization(),
                 new DirectoryCustomization(),
                 new StreamCustomization(),
@@ -55,6 +56,77 @@ namespace Grean.AtomEventStore.UnitTests
                     new TypeRelay(
                         typeof(IContentSerializer),
                         typeof(ConventionBasedSerializerOfComplexImmutableClasses)));
+            }
+        }
+
+        private class TypeResolverCustomization : ICustomization
+        {
+            public void Customize(IFixture fixture)
+            {
+                fixture.Customizations.Add(new TypeResolverBuilder());
+            }
+
+            private class TypeResolverBuilder : ISpecimenBuilder
+            {
+                public object Create(object request, ISpecimenContext context)
+                {
+                    var pi = request as ParameterInfo;
+                    if (pi == null || pi.ParameterType != typeof(ITypeResolver))
+                        return new NoSpecimen(request);
+
+                    if (pi.Member.ReflectedType == typeof(XmlContentSerializer))
+                        return new XmlContentTypeResolver();
+
+                    if (pi.Member.ReflectedType == typeof(DataContractContentSerializer))
+                        return new DataContractTypeResolver();
+
+                    return new NoSpecimen(request);
+                }
+
+                private class XmlContentTypeResolver : ITypeResolver
+                {
+                    public Type Resolve(string localName, string xmlNamespace)
+                    {
+                        switch (xmlNamespace)
+                        {
+                            case "http://grean:rocks":
+                                switch (localName)
+                                {
+                                    case "test-event-x":
+                                        return typeof(XmlAttributedTestEventX);
+                                    case "test-event-y":
+                                        return typeof(XmlAttributedTestEventY);
+                                    case "changeset":
+                                        return typeof(XmlAttributedChangeset);
+                                    default:
+                                        throw new ArgumentException("Unexpected local name: " + localName, "localName");
+                                }
+                            default:
+                                throw new ArgumentException("Unexpected XML namespace: " + xmlNamespace, "xmlNamespace");
+                        }
+                    }
+                }
+
+                private class DataContractTypeResolver : ITypeResolver
+                {
+                    public Type Resolve(string localName, string xmlNamespace)
+                    {
+                        switch (xmlNamespace)
+                        {
+                            case "http://grean.rocks/dc":
+                                switch (localName)
+                                {
+                                    case "test-event-x":
+                                        return typeof(DataContractTestEventX);
+                                    default:
+                                        throw new ArgumentException("Unexpected local name: " + localName, "localName");
+                                }
+                            default:
+                                throw new ArgumentException("Unexpected XML namespace: " + xmlNamespace, "xmlNamespace");
+                        }
+                    }
+                }
+
             }
         }
 

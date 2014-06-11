@@ -45,14 +45,9 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanRoundTripAttributedClassInstance(
-            [Frozen]Mock<ITypeResolver> resolverStub,
             DataContractContentSerializer sut,
             DataContractTestEventX dctex)
         {
-            resolverStub
-                .Setup(r => r.Resolve("test-event-x", "http://grean.rocks/dc"))
-                .Returns(dctex.GetType());
-
             using (var ms = new MemoryStream())
             using (var w = XmlWriter.Create(ms))
             {

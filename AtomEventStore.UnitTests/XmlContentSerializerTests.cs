@@ -45,14 +45,9 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanRoundTripAttributedClassInstance(
-            [Frozen]Mock<ITypeResolver> resolverStub,
             XmlContentSerializer sut,
             XmlAttributedTestEventX xatex)
         {
-            resolverStub
-                .Setup(r => r.Resolve("test-event-x", "http://grean:rocks"))
-                .Returns(xatex.GetType());
-
             using (var ms = new MemoryStream())
             using (var w = XmlWriter.Create(ms))
             {
@@ -106,23 +101,12 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void NestedAttributedObjectCanRoundTrip(
-            [Frozen]Mock<ITypeResolver> resolverStub,
             XmlContentSerializer sut,
             XmlAttributedChangeset changeset,
             XmlAttributedTestEventX tex,
             XmlAttributedTestEventY tey)
         {
             changeset.Items = new object[] { tex, tey };
-
-            resolverStub
-                .Setup(r => r.Resolve("changeset", "http://grean:rocks"))
-                .Returns(typeof(XmlAttributedChangeset));
-            resolverStub
-                .Setup(r => r.Resolve("test-event-x", "http://grean:rocks"))
-                .Returns(typeof(XmlAttributedTestEventX));
-            resolverStub
-                .Setup(r => r.Resolve("test-event-y", "http://grean:rocks"))
-                .Returns(typeof(XmlAttributedTestEventY));
 
             using (var ms = new MemoryStream())
             using (var w = XmlWriter.Create(ms))
