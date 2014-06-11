@@ -16,19 +16,16 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void ClientCanReadWrittenFeed(
             AtomEventsInMemory sut,
-            AtomFeedBuilder<TestEventX> feedBuilder)
+            AtomFeedBuilder<XmlAttributedTestEventY> feedBuilder,
+            XmlContentSerializer serializer)
         {
             var expected = feedBuilder.Build();
 
             using (var w = sut.CreateFeedWriterFor(expected))
-                expected.WriteTo(
-                    w,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                expected.WriteTo(w, serializer);
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
-                var actual = AtomFeed.ReadFrom(
-                    r,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                var actual = AtomFeed.ReadFrom(r, serializer);
 
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
