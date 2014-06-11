@@ -133,16 +133,15 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void FeedsReturnWrittenFeeds(
             AtomEventsInMemory sut,
-            IEnumerable<AtomFeedBuilder<TestEventY>> feedBuilders)
+            IEnumerable<AtomFeedBuilder<XmlAttributedTestEventY>> feedBuilders,
+            XmlContentSerializer serializer)
         {
             var feeds = feedBuilders.Select(b => b.Build());
             foreach (var f in feeds)
                 using (var w = sut.CreateFeedWriterFor(f))
-                    f.WriteTo(
-                        w,
-                        new ConventionBasedSerializerOfComplexImmutableClasses());
+                    f.WriteTo(w, serializer);
 
-            var actual = sut.Feeds.Select(s => AtomFeed.Parse(s, new ConventionBasedSerializerOfComplexImmutableClasses()));
+            var actual = sut.Feeds.Select(s => AtomFeed.Parse(s, serializer));
 
             var expected = new HashSet<AtomFeed>(feeds, new AtomFeedComparer());
             Assert.True(
