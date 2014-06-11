@@ -57,26 +57,21 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void ClientCanReadSecondFeed(
             AtomEventsInMemory sut,
-            AtomFeedBuilder<TestEventX> feedBuilder1,
-            AtomFeedBuilder<TestEventY> feedBuilder2)
+            AtomFeedBuilder<XmlAttributedTestEventX> feedBuilder1,
+            AtomFeedBuilder<XmlAttributedTestEventY> feedBuilder2,
+            XmlContentSerializer serializer)
         {
             var other = feedBuilder1.Build();
             var expected = feedBuilder2.Build();
 
             using (var w = sut.CreateFeedWriterFor(other))
-                other.WriteTo(
-                    w,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                other.WriteTo(w, serializer);
             using (var w = sut.CreateFeedWriterFor(expected))
-                expected.WriteTo(
-                    w,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                expected.WriteTo(w, serializer);
 
             using (var r = sut.CreateFeedReaderFor(expected.Locate()))
             {
-                var actual = AtomFeed.ReadFrom(
-                    r,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                var actual = AtomFeed.ReadFrom(r, serializer);
 
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
