@@ -244,15 +244,14 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutCanRoundTripToString(AtomEntryBuilder<TestEventY> builder)
+        public void SutCanRoundTripToString(
+            AtomEntryBuilder<XmlAttributedTestEventY> builder,
+            XmlContentSerializer serializer)
         {
             var expected = builder.Build();
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var xml = expected.ToXmlString(serializer);
 
-            AtomEntry actual = AtomEntry.Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            AtomEntry actual = AtomEntry.Parse(xml, serializer);
 
             Assert.Equal(expected, actual, new AtomEntryComparer());
         }
