@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Ploeh.AutoFixture;
 using System.IO;
+using Moq;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -201,14 +202,20 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromReturnsCorrectResult(
+            [Frozen]Mock<ITypeResolver> resolverStub,
             AtomEntry seed,
-            TestEventX tex)
+            XmlAttributedTestEventX tex,
+            XmlContentSerializer serializer)
         {
+            resolverStub
+                .Setup(r => r.Resolve("test-event-x", "http://grean:rocks"))
+                .Returns(tex.GetType());
             var expected = seed.WithContent(seed.Content.WithItem(tex));
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+
+            using (var sr = new StringReader(expected.ToXmlString(serializer)))
             using (var r = XmlReader.Create(sr))
             {
-                AtomEntry actual = AtomEntry.ReadFrom(r, new ConventionBasedSerializerOfComplexImmutableClasses());
+                AtomEntry actual = AtomEntry.ReadFrom(r, serializer);
                 Assert.Equal(expected, actual, new AtomEntryComparer());
             }
         }
