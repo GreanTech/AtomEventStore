@@ -149,7 +149,8 @@ namespace Grean.AtomEventStore.UnitTests
         public void WriteToXmlWriterWritesCorrectXml(
             AtomEntry entry,
             Generator<AtomLink> linkGenerator,
-            TestEventX tex)
+            DataContractTestEventX tex,
+            DataContractContentSerializer serializer)
         {
             // Fixture setup
             var sb = new StringBuilder();
@@ -161,9 +162,7 @@ namespace Grean.AtomEventStore.UnitTests
                     .WithLinks(links);
 
                 // Exercise system
-                sut.WriteTo(
-                    w,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                sut.WriteTo(w, serializer);
 
                 // Verify outcome
                 w.Flush();
@@ -180,7 +179,7 @@ namespace Grean.AtomEventStore.UnitTests
                     "  <link href=\"" + links[0].Href.ToString() + "\" rel=\"" + links[0].Rel + "\" />" +
                     "  <link href=\"" + links[1].Href.ToString() + "\" rel=\"" + links[1].Rel + "\" />" +
                     "  <content type=\"application/xml\">" +
-                    "    <test-event-x xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                    "    <test-event-x xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://grean.rocks/dc\">" +
                     "      <number>" + tex.Number + "</number>" +
                     "      <text>" + tex.Text + "</text>" +
                     "    </test-event-x>" +
