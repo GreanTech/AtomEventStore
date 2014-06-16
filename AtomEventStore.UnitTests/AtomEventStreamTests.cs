@@ -498,8 +498,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncWritesPreviousPageBeforeIndex(
             [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
-            AtomEventStream<TestEventX> sut,
-            Generator<TestEventX> eventGenerator)
+            AtomEventStream<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var events = eventGenerator.Take(sut.PageSize + 1).ToList();
             
