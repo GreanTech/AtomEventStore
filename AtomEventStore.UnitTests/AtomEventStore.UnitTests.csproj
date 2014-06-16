@@ -92,6 +92,7 @@
     <Compile Include="AtomFeedTests.cs" />
     <Compile Include="AtomEventsInMemoryTests.cs" />
     <Compile Include="AtomLinkTests.cs" />
+    <Compile Include="AtomXmlWriter.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="AtomEventStreamTests.cs" />
     <Compile Include="ConventionBasedSerializerOfComplexImmutableClassesTests.cs" />

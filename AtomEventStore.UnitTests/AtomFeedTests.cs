@@ -134,6 +134,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void WriteToXmlWriterWritesCorrectXml(
+            AtomXmlWriter writer,
             AtomFeed feed,
             Generator<TestEventX> eventGenerator)
         {
@@ -155,7 +156,7 @@ namespace Grean.AtomEventStore.UnitTests
                 // Verify outcome
                 w.Flush();
 
-                var expectedLinks = string.Concat(sut.Links.Select(ToXml));
+                var expectedLinks = string.Concat(sut.Links.Select(writer.ToXml));
                 var expectedEntries = string.Concat(entries.Select(ToXml));
 
                 var expected = XDocument.Parse(
@@ -174,15 +175,6 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual, new XNodeEqualityComparer());
             }
             // Teardown
-        }
-
-        private static string ToXml(AtomLink link)
-        {
-            return link
-                .ToXmlString(
-                    new ConventionBasedSerializerOfComplexImmutableClasses(),
-                    new XmlWriterSettings { OmitXmlDeclaration = true })
-                .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
 
         private static string ToXml(AtomEntry entry)
