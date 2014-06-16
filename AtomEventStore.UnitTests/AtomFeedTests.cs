@@ -157,7 +157,7 @@ namespace Grean.AtomEventStore.UnitTests
                 w.Flush();
 
                 var expectedLinks = string.Concat(sut.Links.Select(writer.ToXml));
-                var expectedEntries = string.Concat(entries.Select(ToXml));
+                var expectedEntries = string.Concat(entries.Select(writer.ToXml));
 
                 var expected = XDocument.Parse(
                     "<feed xmlns=\"http://www.w3.org/2005/Atom\">" +
@@ -175,15 +175,6 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual, new XNodeEqualityComparer());
             }
             // Teardown
-        }
-
-        private static string ToXml(AtomEntry entry)
-        {
-            return entry
-                .ToXmlString(
-                    new ConventionBasedSerializerOfComplexImmutableClasses(),
-                    new XmlWriterSettings { OmitXmlDeclaration = true })
-                .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
 
         [Theory, AutoAtomData]

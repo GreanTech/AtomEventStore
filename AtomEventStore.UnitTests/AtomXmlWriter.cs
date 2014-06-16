@@ -17,5 +17,14 @@ namespace Grean.AtomEventStore.UnitTests
                     new XmlWriterSettings { OmitXmlDeclaration = true })
                 .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
+
+        public string ToXml(AtomEntry entry)
+        {
+            return entry
+                .ToXmlString(
+                    new ConventionBasedSerializerOfComplexImmutableClasses(),
+                    new XmlWriterSettings { OmitXmlDeclaration = true })
+                .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
+        }
     }
 }
