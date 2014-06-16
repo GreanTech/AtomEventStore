@@ -115,14 +115,15 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromReturnsCorrectResult(
+            XmlContentSerializer serializer,
             XmlAtomContent seed,
-            TestEventX tex)
+            XmlAttributedTestEventX tex)
         {
             var expected = seed.WithItem(tex);
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+            using (var sr = new StringReader(expected.ToXmlString(serializer)))
             using (var r = XmlReader.Create(sr))
             {
-                XmlAtomContent actual = XmlAtomContent.ReadFrom(r, new ConventionBasedSerializerOfComplexImmutableClasses());
+                XmlAtomContent actual = XmlAtomContent.ReadFrom(r, serializer);
                 Assert.Equal(expected, actual);
             }
         }
