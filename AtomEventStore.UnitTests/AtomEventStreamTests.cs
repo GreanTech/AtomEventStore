@@ -276,9 +276,9 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsStoresOldestEventsInPreviousPage(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
-            AtomEventStream<TestEventX> sut,
-            Generator<TestEventX> eventGenerator)
+            AtomFeedParser<XmlContentSerializer> parser,
+            AtomEventStream<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var before = DateTimeOffset.Now;
             var events = eventGenerator.Take(sut.PageSize + 1).ToList();
