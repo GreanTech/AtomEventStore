@@ -308,8 +308,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncExactlyTwicePageSizeEventsStoresTwoFeedPages(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomEventStream<TestEventX> sut,
-            Generator<TestEventX> eventGenerator)
+            AtomEventStream<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var events = eventGenerator.Take(sut.PageSize * 2).ToList();
             events.ForEach(e => sut.AppendAsync(e).Wait());
