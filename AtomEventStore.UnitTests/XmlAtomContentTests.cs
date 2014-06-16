@@ -130,16 +130,14 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanRoundTripToString(
+            XmlContentSerializer serializer,
             XmlAtomContent seed,
-            TestEventX tex)
+            XmlAttributedTestEventX tex)
         {
             var expected = seed.WithItem(tex);
-            var xml = expected.ToXmlString(
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            var xml = expected.ToXmlString(serializer);
 
-            XmlAtomContent actual = XmlAtomContent.Parse(
-                xml,
-                new ConventionBasedSerializerOfComplexImmutableClasses());
+            XmlAtomContent actual = XmlAtomContent.Parse(xml, serializer);
 
             Assert.Equal(expected, actual);
         }
