@@ -401,8 +401,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutYieldsCorrectEvents(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<TestEventX> sut,
-            List<TestEventX> events)
+            AtomEventStream<XmlAttributedTestEventX> sut,
+            List<XmlAttributedTestEventX> events)
         {
             events.ForEach(e => sut.AppendAsync(e).Wait());
 
