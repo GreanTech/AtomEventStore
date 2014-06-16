@@ -14,5 +14,21 @@ namespace Grean.AtomEventStore.UnitTests
 
         [DataMember(Name = "text")]
         public string Text { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as DataContractTestEventX;
+            if (other != null)
+                return object.Equals(this.Number, other.Number)
+                    && object.Equals(this.Text, other.Text);
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                this.Number.GetHashCode() ^
+                this.Text.GetHashCode();
+        }
     }
 }
