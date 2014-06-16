@@ -75,9 +75,10 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void WriteToXmlWriterWritesCorrectXml(
+            XmlContentSerializer serializer,
             XmlAtomContent content,
             AtomEntry entry,
-            TestEventX tex)
+            XmlAttributedTestEventX tex)
         {
             // Fixture setup
             var sb = new StringBuilder();
@@ -86,16 +87,14 @@ namespace Grean.AtomEventStore.UnitTests
                 var sut = content.WithItem(tex);
 
                 // Exercise system
-                sut.WriteTo(
-                    w,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                sut.WriteTo(w, serializer);
 
                 // Verify outcome
                 w.Flush();
 
                 var expected = XDocument.Parse(
                     "<content type=\"application/xml\" xmlns=\"http://www.w3.org/2005/Atom\">" +
-                    "  <test-event-x xmlns=\"urn:grean:atom-event-store:unit-tests\">" +
+                    "  <test-event-x xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"http://grean:rocks\">" +
                     "    <number>" + tex.Number + "</number>" +
                     "    <text>" + tex.Text + "</text>" +
                     "  </test-event-x>" +
@@ -168,7 +167,7 @@ namespace Grean.AtomEventStore.UnitTests
                 endElement;
             Assert.Throws<ArgumentException>(
                 () => XmlAtomContent.Parse(
-                    xml, 
+                    xml,
                     dummySerializer));
         }
     }
