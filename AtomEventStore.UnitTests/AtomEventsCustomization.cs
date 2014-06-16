@@ -52,10 +52,26 @@ namespace Grean.AtomEventStore.UnitTests
         {
             public void Customize(IFixture fixture)
             {
+                fixture.Customizations.Add(new ContentSerializerBuilder());
                 fixture.Customizations.Add(
                     new TypeRelay(
                         typeof(IContentSerializer),
                         typeof(ConventionBasedSerializerOfComplexImmutableClasses)));
+            }
+
+            private class ContentSerializerBuilder : ISpecimenBuilder
+            {
+                public object Create(object request, ISpecimenContext context)
+                {
+                    var pi = request as ParameterInfo;
+                    if (pi == null || pi.ParameterType != typeof(IContentSerializer))
+                        return new NoSpecimen(request);
+
+                    if (pi.Member.ReflectedType == typeof(AtomEventStream<XmlAttributedTestEventX>))
+                        return context.Resolve(typeof(XmlContentSerializer));
+
+                    return new NoSpecimen(request);
+                }
             }
         }
 

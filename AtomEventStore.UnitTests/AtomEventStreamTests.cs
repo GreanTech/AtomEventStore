@@ -124,9 +124,9 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeed(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
-            AtomEventStream<TestEventX> sut,
-            TestEventX expectedEvent)
+            AtomFeedParser<XmlContentSerializer> parser,
+            AtomEventStream<XmlAttributedTestEventX> sut,
+            XmlAttributedTestEventX expectedEvent)
         {
             var before = DateTimeOffset.Now;
 
