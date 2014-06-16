@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Grean.AtomEventStore.UnitTests
 {
     [DataContract(Name = "test-event-x", Namespace = "http://grean.rocks/dc")]
-    public class DataContractTestEventX
+    public class DataContractTestEventX : IDataContractTestEvent
     {
         [DataMember(Name = "number")]
         public string Number { get; set; }
@@ -29,6 +29,12 @@ namespace Grean.AtomEventStore.UnitTests
             return
                 this.Number.GetHashCode() ^
                 this.Text.GetHashCode();
+        }
+
+        public IDataContractTestEventVisitor Accept(
+            IDataContractTestEventVisitor visitor)
+        {
+            return visitor.Visit(this);
         }
     }
 }

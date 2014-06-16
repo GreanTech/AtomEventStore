@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Grean.AtomEventStore.UnitTests
 {
     [DataContract(Name = "test-event-y", Namespace = "http://grean.rocks/dc")]
-    public class DataContractTestEventY
+    public class DataContractTestEventY : IDataContractTestEvent
     {
         [DataMember(Name = "number")]
         public long Number { get; set; }
@@ -30,6 +30,12 @@ namespace Grean.AtomEventStore.UnitTests
             return
                 this.Number.GetHashCode() ^
                 this.IsTrue.GetHashCode();
+        }
+
+        public IDataContractTestEventVisitor Accept(
+            IDataContractTestEventVisitor visitor)
+        {
+            return visitor.Visit(this);
         }
     }
 }

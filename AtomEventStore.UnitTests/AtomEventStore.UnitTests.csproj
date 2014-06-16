@@ -102,6 +102,8 @@
     <Compile Include="Disarray.cs" />
     <Compile Include="FifoEventsTests.cs" />
     <Compile Include="HashFreeEqualityComparer.cs" />
+    <Compile Include="IDataContractTestEvent.cs" />
+    <Compile Include="IDataContractTestEventVisitor.cs" />
     <Compile Include="IXmlAttributedTestEvent.cs" />
     <Compile Include="IXmlAttributedTestEventVisitor.cs" />
     <Compile Include="TestEventTypeResolver.cs" />
