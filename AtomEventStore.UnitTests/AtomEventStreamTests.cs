@@ -437,14 +437,14 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutCanAppendAndYieldPolymorphicEvents(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<ITestEvent> sut,
-            TestEventX tex,
-            TestEventY tey)
+            AtomEventStream<IXmlAttributedTestEvent> sut,
+            XmlAttributedTestEventX tex,
+            XmlAttributedTestEventY tey)
         {
             sut.AppendAsync(tex).Wait();
             sut.AppendAsync(tey).Wait();
 
-            var expected = new ITestEvent[] { tey, tex };
+            var expected = new IXmlAttributedTestEvent[] { tey, tex };
             Assert.True(expected.SequenceEqual(sut));
         }
 

@@ -69,6 +69,8 @@ namespace Grean.AtomEventStore.UnitTests
 
                     if (pi.Member.ReflectedType == typeof(AtomEventStream<XmlAttributedTestEventX>))
                         return context.Resolve(typeof(XmlContentSerializer));
+                    if (pi.Member.ReflectedType == typeof(AtomEventStream<IXmlAttributedTestEvent>))
+                        return context.Resolve(typeof(XmlContentSerializer));
 
                     return new NoSpecimen(request);
                 }
