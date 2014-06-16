@@ -432,7 +432,8 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanAppendAndYieldEnclosedPolymorphicEvents(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyStorageInjectedIntoSut,
+            [Frozen(As = typeof(IContentSerializer))]ConventionBasedSerializerOfComplexImmutableClasses dummySerializerInjectedIntoSut,
             AtomEventStream<Envelope<ITestEvent>> sut,
             Envelope<TestEventX> texEnvelope,
             Envelope<TestEventY> teyEnvelope)

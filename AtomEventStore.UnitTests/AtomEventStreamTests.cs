@@ -451,17 +451,21 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutCanAppendAndYieldEnclosedPolymorphicEvents(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<Envelope<ITestEvent>> sut,
-            Envelope<TestEventX> texEnvelope,
-            Envelope<TestEventY> teyEnvelope)
+            AtomEventStream<DataContractEnvelope<IDataContractTestEvent>> sut,
+            DataContractEnvelope<DataContractTestEventX> texEnvelope,
+            DataContractEnvelope<DataContractTestEventY> teyEnvelope)
         {
-            var texA = texEnvelope.Cast<ITestEvent>();
-            var teyA = teyEnvelope.Cast<ITestEvent>();
+            var texA = texEnvelope.Cast<IDataContractTestEvent>();
+            var teyA = teyEnvelope.Cast<IDataContractTestEvent>();
 
             sut.AppendAsync(texA).Wait();
             sut.AppendAsync(teyA).Wait();
 
-            var expected = new Envelope<ITestEvent>[] { teyA, texA };
+            var expected = new DataContractEnvelope<IDataContractTestEvent>[]
+            {
+                teyA,
+                texA 
+            };
             Assert.True(expected.SequenceEqual(sut));
         }
 

@@ -53,10 +53,6 @@ namespace Grean.AtomEventStore.UnitTests
             public void Customize(IFixture fixture)
             {
                 fixture.Customizations.Add(new ContentSerializerBuilder());
-                fixture.Customizations.Add(
-                    new TypeRelay(
-                        typeof(IContentSerializer),
-                        typeof(ConventionBasedSerializerOfComplexImmutableClasses)));
             }
 
             private class ContentSerializerBuilder : ISpecimenBuilder
@@ -71,6 +67,8 @@ namespace Grean.AtomEventStore.UnitTests
                         return context.Resolve(typeof(XmlContentSerializer));
                     if (pi.Member.ReflectedType == typeof(AtomEventStream<IXmlAttributedTestEvent>))
                         return context.Resolve(typeof(XmlContentSerializer));
+                    if (pi.Member.ReflectedType == typeof(AtomEventStream<DataContractEnvelope<IDataContractTestEvent>>))
+                        return context.Resolve(typeof(DataContractContentSerializer));
 
                     return new NoSpecimen(request);
                 }
@@ -134,6 +132,8 @@ namespace Grean.AtomEventStore.UnitTests
                             case "http://grean.rocks/dc":
                                 switch (localName)
                                 {
+                                    case "envelope":
+                                        return typeof(DataContractEnvelope<IDataContractTestEvent>);
                                     case "test-event-x":
                                         return typeof(DataContractTestEventX);
                                     default:
