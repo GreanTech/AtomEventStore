@@ -7,13 +7,20 @@ using System.Xml;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class AtomXmlWriter
+    public class AtomXmlWriter<T> where T : IContentSerializer
     {
+        private readonly T serializer;
+
+        public AtomXmlWriter(T serializer)
+        {
+            this.serializer = serializer;
+        }
+
         public string ToXml(AtomLink link)
         {
             return link
                 .ToXmlString(
-                    new ConventionBasedSerializerOfComplexImmutableClasses(),
+                    this.serializer,
                     new XmlWriterSettings { OmitXmlDeclaration = true })
                 .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }
@@ -22,7 +29,7 @@ namespace Grean.AtomEventStore.UnitTests
         {
             return entry
                 .ToXmlString(
-                    new ConventionBasedSerializerOfComplexImmutableClasses(),
+                    this.serializer,
                     new XmlWriterSettings { OmitXmlDeclaration = true })
                 .Replace("xmlns=\"http://www.w3.org/2005/Atom\"", "");
         }

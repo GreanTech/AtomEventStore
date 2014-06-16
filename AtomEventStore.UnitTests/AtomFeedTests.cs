@@ -134,7 +134,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void WriteToXmlWriterWritesCorrectXml(
-            AtomXmlWriter writer,
+            AtomXmlWriter<ConventionBasedSerializerOfComplexImmutableClasses> writer,
             AtomFeed feed,
             Generator<TestEventX> eventGenerator)
         {
