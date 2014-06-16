@@ -418,8 +418,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutYieldsPagedEvents(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<TestEventX> sut,
-            Generator<TestEventX> eventGenerator)
+            AtomEventStream<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
 
