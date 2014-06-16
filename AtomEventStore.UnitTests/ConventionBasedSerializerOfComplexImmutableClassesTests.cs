@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ploeh.AutoFixture.Xunit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -427,6 +428,23 @@ namespace Grean.AtomEventStore.UnitTests
             var actual = XmlAtomContent.Parse(xml, sut);
 
             Assert.Equal(expected, actual);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutCanAppendAndYieldEnclosedPolymorphicEvents(
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            AtomEventStream<Envelope<ITestEvent>> sut,
+            Envelope<TestEventX> texEnvelope,
+            Envelope<TestEventY> teyEnvelope)
+        {
+            var texA = texEnvelope.Cast<ITestEvent>();
+            var teyA = teyEnvelope.Cast<ITestEvent>();
+
+            sut.AppendAsync(texA).Wait();
+            sut.AppendAsync(teyA).Wait();
+
+            var expected = new Envelope<ITestEvent>[] { teyA, texA };
+            Assert.True(expected.SequenceEqual(sut));
         }
     }
 }
