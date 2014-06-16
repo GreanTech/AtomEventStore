@@ -124,7 +124,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeed(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             TestEventX expectedEvent)
         {
@@ -142,7 +142,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeeds(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             TestEventX event1,
             TestEventX event2)
@@ -163,7 +163,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncPageSizeEventsSavesAllEntriesInIndex(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
@@ -185,7 +185,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
@@ -209,7 +209,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsAddsLinkToPreviousPageToIndex(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
@@ -229,7 +229,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncLessThanPageSizeEventsDoesNotAddLinkToPreviousPageToIndex(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
@@ -249,7 +249,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsStoresPreviousPage(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
@@ -276,7 +276,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsStoresOldestEventsInPreviousPage(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
@@ -330,7 +330,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanTwicePageSizeEventAddsPreviousLinkToMiddlePage(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
@@ -358,7 +358,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void AppendAsyncTwicePageSizeEventDoesNotAddPreviousLinkToPreviousPage(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
-            AtomFeedParser parser,
+            AtomFeedParser<ConventionBasedSerializerOfComplexImmutableClasses> parser,
             AtomEventStream<TestEventX> sut,
             Generator<TestEventX> eventGenerator)
         {
