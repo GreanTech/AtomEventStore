@@ -134,9 +134,10 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void WriteToXmlWriterWritesCorrectXml(
-            AtomXmlWriter<ConventionBasedSerializerOfComplexImmutableClasses> writer,
+            XmlContentSerializer serializer,
+            AtomXmlWriter<XmlContentSerializer> writer,
             AtomFeed feed,
-            Generator<TestEventX> eventGenerator)
+            Generator<XmlAttributedTestEventX> eventGenerator)
         {
             // Fixture setup
             var sb = new StringBuilder();
@@ -149,9 +150,7 @@ namespace Grean.AtomEventStore.UnitTests
                 var sut = feed.WithEntries(entries);
 
                 // Exercise system
-                sut.WriteTo(
-                    w,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                sut.WriteTo(w, serializer);
 
                 // Verify outcome
                 w.Flush();
