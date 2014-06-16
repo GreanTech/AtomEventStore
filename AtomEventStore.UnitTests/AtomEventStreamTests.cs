@@ -474,8 +474,8 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void OnNextAppendsItem(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<TestEventX> sut,
-            TestEventX tex)
+            AtomEventStream<XmlAttributedTestEventX> sut,
+            XmlAttributedTestEventX tex)
         {
             sut.OnNext(tex);
             Assert.Equal(tex, sut.SingleOrDefault());
