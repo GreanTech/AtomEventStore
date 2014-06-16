@@ -184,8 +184,9 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ReadFromReturnsCorrectResult(
+            XmlContentSerializer serializer,
             AtomFeed feed,
-            Generator<TestEventX> eventGenerator)
+            Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var entries = feed.Entries.Zip(
                 eventGenerator,
@@ -193,12 +194,10 @@ namespace Grean.AtomEventStore.UnitTests
                     entry.Content.WithItem(@event))).ToList();
             var expected = feed.WithEntries(entries);
 
-            using (var sr = new StringReader(expected.ToXmlString(new ConventionBasedSerializerOfComplexImmutableClasses())))
+            using (var sr = new StringReader(expected.ToXmlString(serializer)))
             using (var r = XmlReader.Create(sr))
             {
-                AtomFeed actual = AtomFeed.ReadFrom(
-                    r,
-                    new ConventionBasedSerializerOfComplexImmutableClasses());
+                AtomFeed actual = AtomFeed.ReadFrom(r, serializer);
                 Assert.Equal(expected, actual, new AtomFeedComparer());
             }
         }
