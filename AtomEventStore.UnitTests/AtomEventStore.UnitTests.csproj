@@ -111,8 +111,6 @@
     <Compile Include="Conventions.cs" />
     <Compile Include="InlineAutoAtomDataAttribute.cs" />
     <Compile Include="TestEventSealed.cs" />
-    <Compile Include="Envelope.cs" />
-    <Compile Include="EnvelopeTypeConverter.cs" />
     <Compile Include="ITestEvent.cs" />
     <Compile Include="ITestEventVisitor.cs" />
     <Compile Include="SpyAtomEventStore.cs" />
