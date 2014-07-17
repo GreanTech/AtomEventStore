@@ -14,18 +14,8 @@ namespace Grean.AtomEventStore.LegacySerializer.UnitTests
     {
         public AtomEventsCustomization()
             : base(
-                new StreamCustomization(),
                 new AutoMoqCustomization())
         {
-        }
-
-        private class StreamCustomization : ICustomization
-        {
-            public void Customize(IFixture fixture)
-            {
-                fixture.Register<Stream>(
-                    () => new MemoryStream());
-            }
         }
     }
 }
