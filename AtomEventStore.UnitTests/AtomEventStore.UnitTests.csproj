@@ -108,7 +108,6 @@
     <Compile Include="IXmlAttributedTestEventVisitor.cs" />
     <Compile Include="TestEventTypeResolver.cs" />
     <Compile Include="XmlAttributedChangeset.cs" />
-    <Compile Include="Changeset.cs" />
     <Compile Include="Conventions.cs" />
     <Compile Include="InlineAutoAtomDataAttribute.cs" />
     <Compile Include="TestEventSealed.cs" />
