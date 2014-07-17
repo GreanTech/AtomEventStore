@@ -14,19 +14,9 @@ namespace Grean.AtomEventStore.LegacySerializer.UnitTests
     {
         public AtomEventsCustomization()
             : base(
-                new DirectoryCustomization(),
                 new StreamCustomization(),
                 new AutoMoqCustomization())
         {
-        }
-
-        private class DirectoryCustomization : ICustomization
-        {
-            public void Customize(IFixture fixture)
-            {
-                fixture.Inject(
-                    new DirectoryInfo(Environment.CurrentDirectory));
-            }
         }
 
         private class StreamCustomization : ICustomization
