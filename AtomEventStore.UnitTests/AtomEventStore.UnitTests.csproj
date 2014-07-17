@@ -95,7 +95,6 @@
     <Compile Include="AtomXmlWriter.cs" />
     <Compile Include="AutoAtomDataAttribute.cs" />
     <Compile Include="AtomEventStreamTests.cs" />
-    <Compile Include="ConventionBasedSerializerOfComplexImmutableClassesTests.cs" />
     <Compile Include="DataContractContentSerializerTests.cs" />
     <Compile Include="DataContractEnvelope.cs" />
     <Compile Include="DataContractTestEventX.cs" />
