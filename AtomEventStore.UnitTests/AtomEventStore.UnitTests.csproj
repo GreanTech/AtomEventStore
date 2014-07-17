@@ -117,7 +117,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestEventX.cs" />
     <Compile Include="UuidIriTests.cs" />
-    <Compile Include="Wrapper.cs" />
     <Compile Include="XmlAtomContentTests.cs" />
     <Compile Include="XmlAttributedTestEventY.cs" />
     <Compile Include="XmlAttributedTestEventX.cs" />
