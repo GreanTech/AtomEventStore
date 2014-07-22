@@ -29,7 +29,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void IdIsCorrect(
             [Frozen]UuidIri expected,
-            AtomEventStream<TestEventX> sut)
+            AtomEventStream<DataContractTestEventX> sut)
         {
             UuidIri actual = sut.Id;
             Assert.Equal(expected, actual);
