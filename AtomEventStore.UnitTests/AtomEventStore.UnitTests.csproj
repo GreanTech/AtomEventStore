@@ -111,7 +111,6 @@
     <Compile Include="Conventions.cs" />
     <Compile Include="InlineAutoAtomDataAttribute.cs" />
     <Compile Include="SpyAtomEventStore.cs" />
-    <Compile Include="TestEventY.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestEventX.cs" />
     <Compile Include="UuidIriTests.cs" />
