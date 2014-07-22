@@ -384,9 +384,9 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutIsEnumerable(AtomEventStream<TestEventY> sut)
+        public void SutIsEnumerable(AtomEventStream<DataContractTestEventY> sut)
         {
-            Assert.IsAssignableFrom<IEnumerable<TestEventY>>(sut);
+            Assert.IsAssignableFrom<IEnumerable<DataContractTestEventY>>(sut);
         }
 
         [Theory, AutoAtomData]
