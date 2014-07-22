@@ -22,8 +22,8 @@ namespace Grean.AtomEventStore.UnitTests
         public void VerifyGuardClauses(GuardClauseAssertion assertion)
         {
             assertion.Verify(
-                typeof(AtomEventStream<TestEventX>).GetMembers()
-                    .Where(m => new Methods<AtomEventStream<TestEventX>>().Select(x => x.OnError(null)) != m));
+                typeof(AtomEventStream<DataContractTestEventX>).GetMembers()
+                    .Where(m => new Methods<AtomEventStream<DataContractTestEventX>>().Select(x => x.OnError(null)) != m));
         }
 
         [Theory, AutoAtomData]
