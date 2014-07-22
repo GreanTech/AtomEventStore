@@ -18,7 +18,7 @@ namespace Grean.AtomEventStore.UnitTests
         public void PropertiesAreCorrectlyInitialized(
             ConstructorInitializedMemberAssertion assertion)
         {
-            assertion.Verify(typeof(AtomEventObserver<TestEventX>));
+            assertion.Verify(typeof(AtomEventObserver<DataContractTestEventX>));
         }
 
         [Theory, AutoAtomData]
