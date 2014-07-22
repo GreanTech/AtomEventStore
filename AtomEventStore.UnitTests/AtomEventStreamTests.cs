@@ -487,7 +487,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void OnErrorDoesNotThrow(
-            AtomEventStream<TestEventY> sut,
+            AtomEventStream<DataContractTestEventY> sut,
             Exception e)
         {
             Assert.DoesNotThrow(() => sut.OnError(e));
