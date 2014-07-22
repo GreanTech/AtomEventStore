@@ -47,7 +47,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void ContentSerializerIsCorrect(
             [Frozen]IContentSerializer expected,
-            AtomEventStream<TestEventX> sut)
+            AtomEventStream<DataContractTestEventX> sut)
         {
             IContentSerializer actual = sut.ContentSerializer;
             Assert.Equal(expected, actual);
