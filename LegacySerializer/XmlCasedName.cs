@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Grean.AtomEventStore
+namespace Grean.AtomEventStore.LegacySerializer
 {
     internal class XmlCasedName
     {

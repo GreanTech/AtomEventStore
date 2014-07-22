@@ -61,7 +61,6 @@
     <Compile Include="AtomFeed.cs" />
     <Compile Include="AtomEventsInMemory.cs" />
     <Compile Include="AtomLink.cs" />
-    <Compile Include="ConventionBasedSerializerOfComplexImmutableClasses.cs" />
     <Compile Include="DataContractContentSerializer.cs" />
     <Compile Include="FifoEvents.cs" />
     <Compile Include="IAtomEventStorage.cs" />
@@ -72,7 +71,6 @@
     <Compile Include="AtomEventStream.cs" />
     <Compile Include="UuidIri.cs" />
     <Compile Include="XmlAtomContent.cs" />
-    <Compile Include="XmlCasedName.cs" />
     <Compile Include="XmlContentSerializer.cs" />
     <Compile Include="XmlWritable.cs" />
   </ItemGroup>

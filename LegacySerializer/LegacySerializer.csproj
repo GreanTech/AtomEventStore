@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConventionBasedSerializerOfComplexImmutableClasses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XmlCasedName.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AtomEventStore\AtomEventStore.csproj">

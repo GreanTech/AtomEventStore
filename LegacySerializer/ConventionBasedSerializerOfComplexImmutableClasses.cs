@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Grean.AtomEventStore
+namespace Grean.AtomEventStore.LegacySerializer
 {
     public class ConventionBasedSerializerOfComplexImmutableClasses : IContentSerializer
     {

@@ -90,6 +90,10 @@
       <Project>{a9d6cb62-1949-402a-95eb-007710e98735}</Project>
       <Name>AtomEventStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LegacySerializer\LegacySerializer.csproj">
+      <Project>{3521ad1a-a47e-4bf4-bd15-69b3cda1e83a}</Project>
+      <Name>LegacySerializer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
