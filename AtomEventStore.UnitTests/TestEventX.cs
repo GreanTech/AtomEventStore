@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class TestEventX : ITestEvent
+    public class TestEventX
     {
         private readonly int number;
         private readonly string text;

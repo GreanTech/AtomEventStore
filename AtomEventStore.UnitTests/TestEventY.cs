@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Grean.AtomEventStore.UnitTests
 {
-    public class TestEventY : ITestEvent
+    public class TestEventY
     {
         private readonly long number;
         private readonly bool isTrue;
