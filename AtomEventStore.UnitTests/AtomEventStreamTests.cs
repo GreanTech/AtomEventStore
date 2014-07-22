@@ -470,9 +470,9 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void SutIsObserver(AtomEventStream<TestEventX> sut)
+        public void SutIsObserver(AtomEventStream<DataContractTestEventX> sut)
         {
-            Assert.IsAssignableFrom<IObserver<TestEventX>>(sut);
+            Assert.IsAssignableFrom<IObserver<DataContractTestEventX>>(sut);
         }
 
         [Theory, AutoAtomData]
