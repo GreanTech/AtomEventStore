@@ -13,6 +13,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AtomEventStore.UnitTests.FS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacySerializer.UnitTests", "LegacySerializer.UnitTests\LegacySerializer.UnitTests.csproj", "{CF3E7649-43FB-4C0D-B452-709E909F7CA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacySerializer", "LegacySerializer\LegacySerializer.csproj", "{3521AD1A-A47E-4BF4-BD15-69B3CDA1E83A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,12 @@ Global
 		{CF3E7649-43FB-4C0D-B452-709E909F7CA4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CF3E7649-43FB-4C0D-B452-709E909F7CA4}.Verify|Any CPU.ActiveCfg = Release|Any CPU
 		{CF3E7649-43FB-4C0D-B452-709E909F7CA4}.Verify|Any CPU.Build.0 = Release|Any CPU
+		{3521AD1A-A47E-4BF4-BD15-69B3CDA1E83A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3521AD1A-A47E-4BF4-BD15-69B3CDA1E83A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3521AD1A-A47E-4BF4-BD15-69B3CDA1E83A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3521AD1A-A47E-4BF4-BD15-69B3CDA1E83A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3521AD1A-A47E-4BF4-BD15-69B3CDA1E83A}.Verify|Any CPU.ActiveCfg = Release|Any CPU
+		{3521AD1A-A47E-4BF4-BD15-69B3CDA1E83A}.Verify|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
