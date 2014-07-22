@@ -494,7 +494,8 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory, AutoAtomData]
-        public void OnCompletedDoesNotThrow(AtomEventStream<TestEventY> sut)
+        public void OnCompletedDoesNotThrow(
+            AtomEventStream<DataContractTestEventY> sut)
         {
             Assert.DoesNotThrow(() => sut.OnCompleted());
         }
