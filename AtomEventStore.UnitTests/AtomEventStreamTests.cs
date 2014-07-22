@@ -392,7 +392,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void SutIsInitiallyEmpty(
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
-            AtomEventStream<TestEventX> sut)
+            AtomEventStream<DataContractTestEventX> sut)
         {
             Assert.False(sut.Any(), "Intial event stream should be empty.");
             Assert.Empty(sut);
