@@ -110,7 +110,6 @@
     <Compile Include="XmlAttributedChangeset.cs" />
     <Compile Include="Conventions.cs" />
     <Compile Include="InlineAutoAtomDataAttribute.cs" />
-    <Compile Include="ITestEventVisitor.cs" />
     <Compile Include="SpyAtomEventStore.cs" />
     <Compile Include="TestEventY.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

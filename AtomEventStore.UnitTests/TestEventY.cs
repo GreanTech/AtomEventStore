@@ -41,10 +41,5 @@ namespace Grean.AtomEventStore.UnitTests
                 this.number.GetHashCode() ^
                 this.isTrue.GetHashCode();
         }
-
-        public ITestEventVisitor Accept(ITestEventVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
     }
 }
