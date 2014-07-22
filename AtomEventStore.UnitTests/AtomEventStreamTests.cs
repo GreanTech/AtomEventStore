@@ -38,7 +38,7 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void StorageIsCorrect(
             [Frozen]IAtomEventStorage expected,
-            AtomEventStream<TestEventX> sut)
+            AtomEventStream<DataContractTestEventX> sut)
         {
             IAtomEventStorage actual = sut.Storage;
             Assert.Equal(expected, actual);
