@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Grean.AtomEventStore, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\AtomEventStore.0.10.0\lib\net45\Grean.AtomEventStore.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,10 +49,7 @@
     <Compile Include="XmlCasedName.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AtomEventStore\AtomEventStore.csproj">
-      <Project>{a9d6cb62-1949-402a-95eb-007710e98735}</Project>
-      <Name>AtomEventStore</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,453 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Grean.AtomEventStore</name>
+    </assembly>
+    <members>
+        <member name="T:Grean.AtomEventStore.IAtomEventStorage">
+            <summary>
+            Implements a storage mechanism for use with
+            <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>.
+            </summary>
+            <remarks>
+            <para>
+            <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/> implements an event stream using the
+            Atom syndication standard as a storage format. The responsibility of
+            AtomEventStream&lt;T&gt; is to format and interpret Atom feeds and
+            entries so that they can be used as an event stream. However, the
+            responsibility of actually writing and reading the Atom data falls to
+            implementations of IAtomEventStorage.
+            </para>
+            <para>
+            Implementations could, for example, persist Atom data on files, in rows
+            in a relational database, in a cloud storage service, in a document
+            database, or many other options. To keep the interface as flexible as
+            possible, the API is mainly expressed in terms of
+            <see cref="T:System.Xml.XmlReader"/> and <see cref="T:System.Xml.XmlWriter"/>.
+            </para>
+            </remarks>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventsInFiles"/>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventsInMemory"/>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventStream`1"/>
+        </member>
+        <member name="M:Grean.AtomEventStore.IAtomEventStorage.CreateFeedReaderFor(System.Uri)">
+            <summary>
+            Creates an <see cref="T:System.Xml.XmlReader"/> for reading an Atom feed from
+            the provided <see cref="T:System.Uri"/>.
+            </summary>
+            <param name="href">
+            The relative <see cref="T:System.Uri"/> of the Atom feed to read.
+            </param>
+            <returns>
+            An <see cref="T:System.Xml.XmlReader"/> over the Atom feed identified by
+            <paramref name="href"/>.
+            </returns>
+            <remarks>
+            <para>
+            <strong>Note to implementers:</strong>
+            </para>
+            <para>
+            If no entry can be found for <paramref name="href"/>, the method
+            must return an <see cref="T:System.Xml.XmlReader"/> over an empty Atom feed.
+            Returning <see langword="null"/> is considered an incorrect
+            implementation.
+            </para>
+            <para>
+            One, relatively easy way to create an XmlReader over an empty Atom
+            feed is to create a new <see cref="T:Grean.AtomEventStore.AtomFeed"/> instance with no
+            entries, serialize it to XML and return a reader over the XML.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Grean.AtomEventStore.IAtomEventStorage.CreateFeedWriterFor(Grean.AtomEventStore.AtomFeed)">
+            <summary>
+            Creates an <see cref="T:System.Xml.XmlWriter"/> for writing the provided
+            <see cref="T:Grean.AtomEventStore.AtomFeed"/>.
+            </summary>
+            <param name="atomFeed">The Atom feed to write.</param>
+            <returns>
+            An <see cref="T:System.Xml.XmlWriter"/> over the Atom feed provided by
+            <paramref name="atomFeed"/>.
+            </returns>
+            <remarks>
+            <para>
+            <strong>Note to implementers:</strong>
+            </para>
+            <para>
+            The implementation is free to choose an appropriate naming or
+            identification scheme that fits the underlying persistence
+            technology. However, it must be able to find the written Atom feed
+            when a client subsequently invokes
+            <see cref="M:Grean.AtomEventStore.IAtomEventStorage.CreateFeedReaderFor(System.Uri)"/>.
+            </para>
+            <para>
+            When the CreateFeedWriterFor method is invoked,
+            <paramref name="atomFeed"/> contains at least a 'self' link
+            (identified by <see cref="P:Grean.AtomEventStore.AtomLink.IsSelfLink"/>) identifying the
+            Atom entry. The <see cref="P:Grean.AtomEventStore.AtomLink.Href"/> value of this link is
+            the value used when CreateFeedReaderFor is subsequently invoked to
+            read the Atom feed. In other words, this is the corrolation ID,
+            so a naming or identification scheme must take this into account.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:Grean.AtomEventStore.AtomEventStream`1">
+            <summary>
+            Represents a stream of events. Events can be of (potentially) any type,
+            as long as there's a storage mechanism that can persist and read back
+            instances of that type.
+            </summary>
+            <typeparam name="T">
+            The type of event represented by the stream.
+            </typeparam>
+            <remarks>
+            <para>
+            The AtomEventStream class stores and reads events using a Linked List
+            storage approach. For its particulars, it uses Atom for persistence and
+            linking.
+            </para>
+            <para>
+            The concepts of storing events as a linked list was inspired by an
+            article by Yves Reynhout called "Your EventStream is a linked list" at
+            http://bit.ly/AqearV.
+            </para>
+            <para>
+            When you store an event with <see cref="M:Grean.AtomEventStore.AtomEventStream`1.AppendAsync(`0)"/> or
+            <see cref="M:Grean.AtomEventStore.AtomEventStream`1.OnNext(`0)"/>, AtomEventStream creates a new Atom entry with
+            that event, and adds it to an Atom feed, which contains the index of
+            the event stream. When the number of entries in the index exceeds the
+            configured <see cref="P:Grean.AtomEventStore.AtomEventStream`1.PageSize"/>, the oldest entries are moved to a
+            new Atom feed page, and a "previous" link is added to the index page.
+            If a previous page was already present, the new 'previous' page itself
+            gets a link to its previous page, thus establishing a Linked List of
+            Atom feed pages.
+            </para>
+            <para>
+            When you read the event stream, the AtomEventStream starts at the index
+            and works its way back, yielding events as it goes along. Thus, newest
+            events are served first, until you stop enumerating, or until you reach
+            the first event.
+            </para>
+            <para>
+            Various storage mechanisms can be plugged into AtomEventStream, such as
+            a file-based storage mechanism, or in-memory storage. Third-party
+            storage add-ins for e.g. cloud-based storage is also an option. A
+            custom storage mechanism must implement the
+            <see cref="T:Grean.AtomEventStore.IAtomEventStorage"/> interface.
+            </para>
+            </remarks>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventsInMemory"/>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventsInFiles"/>
+            <seealso cref="T:Grean.AtomEventStore.IAtomEventStorage"/>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream`1.#ctor(Grean.AtomEventStore.UuidIri,Grean.AtomEventStore.IAtomEventStorage,System.Int32,Grean.AtomEventStore.IContentSerializer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>
+            class.
+            </summary>
+            <param name="id">The ID of the event stream.</param>
+            <param name="storage">
+            The underlying storage mechanism to use.
+            </param>
+            <param name="pageSize">
+            The maxkum page size; that is: the maximum number of instances of
+            T stored in a single Atom feed page.
+            </param>
+            <param name="contentSerializer">
+            The serializer used to serialize and deserialize items to a format
+            compatible with Atom. The object supplied via this constructor
+            parameter is subsequently available via the
+            <see cref="P:Grean.AtomEventStore.AtomEventStream`1.ContentSerializer"/> property.
+            </param>
+            <remarks>
+            <para>
+            The <paramref name="id"/> is the ID of a single event stream. Each
+            event stream has its own ID. If you need more than a single event
+            stream (e.g. if you are implementing the Aggregate Root pattern),
+            each event stream should have a separate ID.
+            </para>
+            <para>
+            The <paramref name="storage"/> value can be any implementation of
+            <see cref="T:Grean.AtomEventStore.IAtomEventStorage"/>. Built-in implementatoins include
+            <see cref="T:Grean.AtomEventStore.AtomEventsInMemory"/> and
+            <see cref="T:Grean.AtomEventStore.AtomEventsInFiles"/>.
+            </para>
+            </remarks>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventStream`1"/>
+            <seealso cref="P:Grean.AtomEventStore.AtomEventStream`1.ContentSerializer"/>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventsInMemory"/>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventsInFiles"/>
+            <seealso cref="T:Grean.AtomEventStore.IAtomEventStorage"/>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream`1.AppendAsync(`0)">
+            <summary>
+            Appends an event to the event stream.
+            </summary>
+            <param name="event">
+            The event to append to the event stream.
+            </param>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation of
+            appending the event to the event stream.
+            </returns>
+            <remarks>
+            <para>
+            This method appends <paramref name="event"/> to the current event
+            stream. Appending an event indicates that it happened
+            <em>after</em> all previous events. However, keep in mind that
+            since <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/> iterates over the event
+            stream from newest to oldest event, the newly appended event will
+            also be the first item to be enumerated, because it's the most
+            recent event.
+            </para>
+            <para>
+            Since this method conceptually involves writing the event to the
+            underlying <see cref="P:Grean.AtomEventStore.AtomEventStream`1.Storage"/>, it may take significant time to
+            complete; for that reason, it's an asynchronous method, returning a
+            <see cref="T:System.Threading.Tasks.Task"/>. The operation is not guaranteed to be complete
+            before the Task completes successfully.
+            </para>
+            <para>
+            When updating the underlying Storage, the method typically only
+            updates the index feed, using
+            <see cref="M:Grean.AtomEventStore.IAtomEventStorage.CreateFeedWriterFor(Grean.AtomEventStore.AtomFeed)"/>.
+            However, when the number of entries in the index surpasses
+            <see cref="P:Grean.AtomEventStore.AtomEventStream`1.PageSize"/>, the oldest entries are moved to a new,
+            "previous" feed page. This page is also written using the
+            CreateFeedWriterFor method, and only after this succeeds is the
+            index updated. Since these two operations are not guaranteed to
+            happen within an ACID transaction, it's possible that the
+            "previous" page is saved, but that the update of the index fails.
+            If the underlying storage throws an exception at that point, that
+            exception will bubble up to the caller of the AppendAsync method.
+            It's up to the caller to retry the operation.
+            </para>
+            <para>
+            However, in that situation, an orphaned Atom feed page is likely to
+            have been left in the underlying storage. This doesn't affect
+            consistency of the system, but may take up unnecessary disk space.
+            If this is the case, a separate clean-up task should find and
+            delete orphaned pages.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream`1.GetEnumerator">
+            <summary>
+            Gets the enumerator for the event stream.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.Generic.IEnumerator`1"/> instance that can be used to
+            iterate through the event stream, from most newest to oldest event.
+            </returns>
+            <remarks>
+            <para>
+            When you enumerate the event stream, the
+            <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/> starts at the most recent event
+            and works its way back, yielding events as it goes along. Thus,
+            newest events are served first, until you stop enumerating, or
+            until you reach the oldest event, which is the first event that was
+            written.
+            </para>
+            <para>
+            When you move to the next entry, the underlying
+            <see cref="P:Grean.AtomEventStore.AtomEventStream`1.Storage"/> mechanism may be invoked in order to read
+            the previous page of events. If the storage mechanism involves I/O
+            latency, enumeration may be a slow operation when there are many
+            events. However, since events are immutable, they can be cached.
+            Additional optimizations, such as snapshots, are also an option. 
+            Such optimizations can be implemented as Decorators of
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator"/> object that can
+            be used to iterate through the collection.
+            </returns>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.GetEnumerator"/>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream`1.OnCompleted">
+            <summary>
+            Notifies the <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/> that the provider
+            has finished sending push-based notifications.
+            </summary>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream`1.OnError(System.Exception)">
+            <summary>
+            Notifies the <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/> that the provider
+            has experienced an error condition.
+            </summary>
+            <param name="error">
+            An object that provides additional information about the error.
+            </param>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream`1.OnNext(`0)">
+            <summary>
+            Provides the <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/> with a new event,
+            appending it to the event stream.
+            </summary>
+            <param name="value">The event appended to the event stream.</param>
+            <remarks>
+            <para>
+            Invoking this method appends <paramref name="value"/> to the event
+            stream and blocks until the write and update operations are
+            completed. Since it uses the underlying <see cref="P:Grean.AtomEventStore.AtomEventStream`1.Storage"/>
+            mechanism to write the event to persistent storage, and since this
+            may involve I/O, the execution time of this method can be
+            significant.
+            </para>
+            <para>
+            For an asynchronous alternative, use <see cref="M:Grean.AtomEventStore.AtomEventStream`1.AppendAsync(`0)"/>.
+            </para>
+            </remarks>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.AppendAsync(`0)"/>
+        </member>
+        <member name="P:Grean.AtomEventStore.AtomEventStream`1.Id">
+            <summary>
+            Gets the id of the event stream.
+            </summary>
+            <value>
+            The id of the event stream, as originally supplied via the
+            constructor.
+            </value>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.#ctor(Grean.AtomEventStore.UuidIri,Grean.AtomEventStore.IAtomEventStorage,System.Int32,Grean.AtomEventStore.IContentSerializer)"/>
+        </member>
+        <member name="P:Grean.AtomEventStore.AtomEventStream`1.Storage">
+            <summary>
+            Gets the underlying storage mechanism.
+            </summary>
+            <value>
+            The underlying storage mechanism, as originally supplied via the
+            constructor.
+            </value>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.#ctor(Grean.AtomEventStore.UuidIri,Grean.AtomEventStore.IAtomEventStorage,System.Int32,Grean.AtomEventStore.IContentSerializer)"/>
+        </member>
+        <member name="P:Grean.AtomEventStore.AtomEventStream`1.PageSize">
+            <summary>
+            Gets the maximum page size.
+            </summary>
+            <value>
+            The maximum page size, measured in numbers of entries per Atom feed
+            page. This value is supplied via the constructor.
+            </value>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.#ctor(Grean.AtomEventStore.UuidIri,Grean.AtomEventStore.IAtomEventStorage,System.Int32,Grean.AtomEventStore.IContentSerializer)"/>
+            <seealso cref="T:Grean.AtomEventStore.AtomEventStream`1"/>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.AppendAsync(`0)"/>
+        </member>
+        <member name="P:Grean.AtomEventStore.AtomEventStream`1.ContentSerializer">
+            <summary>
+            Gets the content serializer.
+            </summary>
+            <value>
+            The content serializer, which is used to serialize and deserialize
+            the elements of the stream to and from the Atom 'content' element
+            within an Atom entry. This object is supplied via the constructor.
+            </value>
+            <remarks>
+            <para>
+            The serializer is used to serialize elements in order to persist 
+            them. This happens when you append items to the stream. Likewise,
+            when you read items from the stream, <see cref="P:Grean.AtomEventStore.AtomEventStream`1.Storage"/> is used
+            to read the contents, and the serializer is subsequently used to
+            deserialize the previously serialized content.
+            </para>
+            </remarks>
+            <seealso cref="P:Grean.AtomEventStore.AtomEventStream`1.Storage"/>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.AppendAsync(`0)"/>
+            <seealso cref="M:Grean.AtomEventStore.AtomEventStream`1.#ctor(Grean.AtomEventStore.UuidIri,Grean.AtomEventStore.IAtomEventStorage,System.Int32,Grean.AtomEventStore.IContentSerializer)"/>
+        </member>
+        <member name="T:Grean.AtomEventStore.AtomEventStream">
+            <summary>
+            Contains helper methods related to <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>.
+            </summary>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream.CreateSelfLinkFrom(System.Guid)">
+            <summary>
+            Creates a 'self' link from a <see cref="T:System.Guid"/>, for explicit use
+            with <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>.
+            </summary>
+            <param name="id">
+            The id from which the 'self' link should be generated.
+            </param>
+            <returns>
+            A new <see cref="T:Grean.AtomEventStore.AtomLink"/> instance with the appropriate
+            <see cref="P:Grean.AtomEventStore.AtomLink.Href"/> value based on <paramref name="id"/>,
+            and a <see cref="P:Grean.AtomEventStore.AtomLink.Rel"/> value of "self".
+            </returns>
+            <remarks>
+            <para>
+            While the CreateSelfLinkFrom method smells of Feature Envy, the
+            reason this isn't a method on <see cref="T:Grean.AtomEventStore.AtomLink"/> is that this
+            particular definition of how to create a 'self' link from a
+            <see cref="T:System.Guid"/> is particular to how it's being used by
+            <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>, and not general in all contexts.
+            </para>
+            <para>
+            This is also the reason that this method isn't an extension method
+            on Guid. It's not the only way to create a 'self' link from a Guid,
+            but it's the appropriate way to do it in the context of an
+            AtomEventStream&lt;T&gt;.
+            </para>
+            <para>
+            The reason that this isn't a static helper method on 
+            AtomEventStream&lt;T&gt; is that the generic type argument isn't
+            used.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream.CreatePreviousLinkFrom(System.Guid)">
+            <summary>
+            Creates a 'previous' link from a <see cref="T:System.Guid"/>, for explicit 
+            use with <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>.
+            </summary>
+            <param name="id">
+            The id from which the 'previous' link should be generated.
+            </param>
+            <returns>
+            A new <see cref="T:Grean.AtomEventStore.AtomLink"/> instance with the appropriate
+            <see cref="P:Grean.AtomEventStore.AtomLink.Href"/> value based on <paramref name="id"/>,
+            and a <see cref="P:Grean.AtomEventStore.AtomLink.Rel"/> value of "previous".
+            </returns>
+            <remarks>
+            <para>
+            While the CreatePreviousLinkFrom method smells of Feature Envy, the
+            reason this isn't a method on <see cref="T:Grean.AtomEventStore.AtomLink"/> is that this
+            particular definition of how to create a 'previous' link from a
+            <see cref="T:System.Guid"/> is particular to how it's being used by
+            <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>, and not general in all contexts.
+            </para>
+            <para>
+            This is also the reason that this method isn't an extension method
+            on Guid. It's not the only way to create a 'previous' link from a
+            Guid, but it's the appropriate way to do it in the context of an
+            AtomEventStream&lt;T&gt;.
+            </para>
+            <para>
+            The reason that this isn't a static helper method on 
+            AtomEventStream&lt;T&gt; is that the generic type argument isn't
+            used.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Grean.AtomEventStore.AtomEventStream.IsPreviousFeedLink(Grean.AtomEventStore.AtomLink)">
+            <summary>
+            Determines whether a link is a 'previous' link, as used by
+            AtomEventStream&lt;T&gt;.
+            </summary>
+            <param name="link">The link to examine.</param>
+            <returns>
+            <see langword="true"/> if <paramref name="link"/> is a 'previous'
+            link with a proper value for use by
+            <see cref="T:Grean.AtomEventStore.AtomEventStream`1"/>; otherwise,
+            <see langword="false"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            link is null
+            </exception>
+        </member>
+    </members>
+</doc>

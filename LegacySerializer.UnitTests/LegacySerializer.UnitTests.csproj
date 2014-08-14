@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Grean.AtomEventStore, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\AtomEventStore.0.10.0\lib\net45\Grean.AtomEventStore.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1312.1622\lib\net40\Moq.dll</HintPath>
     </Reference>
@@ -86,10 +90,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AtomEventStore\AtomEventStore.csproj">
-      <Project>{a9d6cb62-1949-402a-95eb-007710e98735}</Project>
-      <Name>AtomEventStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LegacySerializer\LegacySerializer.csproj">
       <Project>{3521ad1a-a47e-4bf4-bd15-69b3cda1e83a}</Project>
       <Name>LegacySerializer</Name>
