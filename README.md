@@ -13,4 +13,4 @@ A server-less Event Store based on the Atom syndication format.
 
 ## Credits
 
-The idea that an Event Stora can be modelled as a Linked List was originally put to my attention by [Yves Reynhout](http://seabites.wordpress.com) in his article [Your EventStream is a linked list](http://seabites.wordpress.com/2011/12/07/your-eventstream-is-a-linked-list).
+The idea that an Event Store can be modelled as a Linked List was originally put to my attention by [Yves Reynhout](http://seabites.wordpress.com) in his article [Your EventStream is a linked list](http://seabites.wordpress.com/2011/12/07/your-eventstream-is-a-linked-list).
