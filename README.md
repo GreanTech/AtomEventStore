@@ -1,6 +1,6 @@
 # AtomEventStore
 
-A server-less Event Store based on the Atom syndication format.
+A server-less .NET Event Store based on the Atom syndication format.
 
 ## Highlights:
 
