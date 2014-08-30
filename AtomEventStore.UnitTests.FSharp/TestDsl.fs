@@ -7,10 +7,12 @@ open Ploeh.AutoFixture.Kernel
 open Ploeh.AutoFixture.Xunit
 
 type AtomStorageInMemoryCustomization() =
+    let id = UuidIri.NewId()
     let storage = new AtomEventsInMemory()
     interface ICustomization with
         member this.Customize fixture =
             fixture.Inject<IAtomEventStorage> storage
+            fixture.Inject id
 
 type XmlContentSerializerCustomization() =
     interface ICustomization with

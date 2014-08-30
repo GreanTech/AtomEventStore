@@ -13,11 +13,12 @@ module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsASingleElement
-        (sut : AtomEventStream<TestEventF>)
+        (writer : AtomEventStream<TestEventF>)
+        (reader : AtomEventStream<TestEventF>)
         (tef : TestEventF) =
         
-        sut.AppendAsync(tef).Wait()
-        let actual = sut |> Seq.toList
+        writer.AppendAsync(tef).Wait()
+        let actual = reader |> Seq.toList
 
         Verify <@ actual.Length = 1 @>
 
