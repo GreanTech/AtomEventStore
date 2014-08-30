@@ -24,13 +24,14 @@ module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsMultipleElements
-        (sut : AtomEventStream<TestEventF>)
+        (writer : AtomEventStream<TestEventF>)
+        (reader : AtomEventStream<TestEventF>)
         (g : Generator<TestEventF>) =
 
         let tefs = g |> Seq.take 3 |> Seq.toList
 
-        tefs |> List.iter(fun tef -> sut.AppendAsync(tef).Wait())
-        let actual = sut |> Seq.toList
+        tefs |> List.iter(fun tef -> writer.AppendAsync(tef).Wait())
+        let actual = reader |> Seq.toList
 
         let expected = tefs |> List.rev
         Verify <@ expected = actual @>
