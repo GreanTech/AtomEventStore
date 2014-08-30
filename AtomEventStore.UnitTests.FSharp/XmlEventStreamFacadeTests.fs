@@ -13,8 +13,8 @@ module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsASingleElement
-        (writer : AtomEventStream<TestEventF>)
-        (reader : AtomEventStream<TestEventF>)
+        (writer : AtomEventObserver<TestEventF>)
+        (reader : FifoEvents<TestEventF>)
         (tef : TestEventF) =
         
         writer.AppendAsync(tef).Wait()
