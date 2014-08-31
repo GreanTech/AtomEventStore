@@ -386,5 +386,13 @@ namespace Grean.AtomEventStore.UnitTests
                     .GetMembers()
                     .Where(m => m.Name != "OnError"));
         }
+
+        [Theory, AutoAtomData]
+        public void OnErrorDoesNotThrow(
+            AtomEventObserver<DataContractTestEventX> sut,
+            Exception error)
+        {
+            Assert.DoesNotThrow(() => sut.OnError(error));
+        }
     }
 }

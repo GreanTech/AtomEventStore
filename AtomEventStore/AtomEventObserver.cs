@@ -203,7 +203,6 @@ namespace Grean.AtomEventStore
 
         public void OnError(Exception error)
         {
-            throw new NotImplementedException();
         }
 
         public void OnNext(T value)
