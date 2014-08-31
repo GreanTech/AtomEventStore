@@ -370,5 +370,21 @@ namespace Grean.AtomEventStore.UnitTests
                 xml,
                 new XmlContentSerializer(new TestEventTypeResolver()));
         }
+
+        [Theory, AutoAtomData]
+        public void SutIsObserver(AtomEventObserver<DataContractTestEventX> sut)
+        {
+            Assert.IsAssignableFrom<IObserver<DataContractTestEventX>>(sut);
+        }
+
+        [Theory, AutoAtomData]
+        public void SutHasAppropriateGuardClauses(
+            GuardClauseAssertion assertion)
+        {
+            assertion.Verify(
+                typeof(AtomEventObserver<>)
+                    .GetMembers()
+                    .Where(m => m.Name != "OnError"));
+        }
     }
 }

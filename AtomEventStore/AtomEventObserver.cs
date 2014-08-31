@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class AtomEventObserver<T>
+    public class AtomEventObserver<T> : IObserver<T>
     {
         private readonly UuidIri id;
         private readonly int pageSize;
@@ -194,6 +194,21 @@ namespace Grean.AtomEventStore
         public IContentSerializer Serializer
         {
             get { return this.serializer; }
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnNext(T value)
+        {
+            throw new NotImplementedException();
         }
     }
 }
