@@ -21,17 +21,20 @@ namespace Grean.AtomEventStore.UnitTests
             assertion.Verify(typeof(AtomEventObserver<DataContractTestEventX>));
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyStoresFeed(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteCorrectlyStoresFeed(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             XmlAttributedTestEventX expectedEvent)
         {
             var before = DateTimeOffset.Now;
 
-            sut.AppendAsync(expectedEvent).Wait();
+            writerFactory.Create(usage).WriteTo(sut, expectedEvent);
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var actual = FindFirstPage(writtenFeeds, sut.Id);
@@ -42,32 +45,39 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncFirstEventWritesPageBeforeIndex(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteFirstEventWritesPageBeforeIndex(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             XmlAttributedTestEventX @event)
         {
-            sut.AppendAsync(@event).Wait();
+            writerFactory.Create(usage).WriteTo(sut, @event);
 
             var feed = Assert.IsAssignableFrom<AtomFeed>(
                 spyStore.ObservedArguments.Last());
             Assert.Equal(sut.Id, feed.Id);
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncTwoEventsOnlyWritesIndexOnce(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteTwoEventsOnlyWritesIndexOnce(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var events = eventGenerator.Take(2).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenIds = spyStore.ObservedArguments
                 .OfType<AtomFeed>()
@@ -75,18 +85,22 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(1, writtenIds.Count(id => sut.Id == id));
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncPageSizeEventsStoresAllEntriesInFirstPage(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WritePageSizeEventsStoresAllEntriesInFirstPage(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var before = DateTimeOffset.Now;
             var events = eventGenerator.Take(sut.PageSize).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var actual = FindFirstPage(writtenFeeds, sut.Id);
@@ -99,18 +113,22 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var before = DateTimeOffset.Now;
             var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
@@ -124,17 +142,21 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncMoreThanPageSizeEventsWritesInCorrectOrder(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteMoreThanPageSizeEventsWritesInCorrectOrder(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenFeeds = spyStore.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
@@ -150,17 +172,21 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncMoreThanPageSizeEventsOnlyWritesIndexTwice(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteMoreThanPageSizeEventsOnlyWritesIndexTwice(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenIds = spyStore.ObservedArguments
                 .OfType<AtomFeed>()
@@ -168,17 +194,20 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(2, writtenIds.Count(id => sut.Id == id));
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncCorrectlyStoresLastLinkOnIndex(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteCorrectlyStoresLastLinkOnIndex(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             XmlAttributedTestEventX expectedEvent)
         {
             var before = DateTimeOffset.Now;
 
-            sut.AppendAsync(expectedEvent).Wait();
+            writerFactory.Create(usage).WriteTo(sut, expectedEvent);
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var index = FindIndex(writtenFeeds, sut.Id);
@@ -189,18 +218,22 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(firstLink.Href, lastLink.Href);
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncMoreThanPageSizeEventsCorrectlyUpdatesLastLink(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteMoreThanPageSizeEventsCorrectlyUpdatesLastLink(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var before = DateTimeOffset.Now;
             var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var index = FindIndex(writtenFeeds, sut.Id);
@@ -213,18 +246,22 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Equal(expected.Href, lastLink.Href);
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncMultipeTimesMoreThanPageSizeCorrectlyStoresOverflowingEvents(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteMultipeTimesMoreThanPageSizeCorrectlyStoresOverflowingEvents(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var before = DateTimeOffset.Now;
             var events = eventGenerator.Take(sut.PageSize * 2).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
@@ -238,18 +275,22 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncMoreThanTwicePageSizeCorrectlyStoresOverflowingEvent(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteMoreThanTwicePageSizeCorrectlyStoresOverflowingEvent(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var before = DateTimeOffset.Now;
             var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
@@ -264,17 +305,21 @@ namespace Grean.AtomEventStore.UnitTests
                 "Expected feed must match actual feed.");
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncWritesEventToCorrectPageEvenIfLastLinkIsNotUpToDate(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteWritesEventToCorrectPageEvenIfLastLinkIsNotUpToDate(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             // Fixture setup
+            var writer = writerFactory.Create(usage);
             var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             /* Point the 'last' link to the second page, instead of to the last
              * page. This simulates that when the true last page was created,
@@ -295,7 +340,7 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = eventGenerator.First();
 
             // Exercise system
-            sut.AppendAsync(expected).Wait();
+            writer.WriteTo(sut, expected);
 
             // Verify outcome
             writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
@@ -311,17 +356,21 @@ namespace Grean.AtomEventStore.UnitTests
             // Teardown
         }
 
-        [Theory, AutoAtomData]
-        public void AppendAsyncMoreThanPageSizeEventsAddsNextPageWithPreviousLink(
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        public void WriteMoreThanPageSizeEventsAddsNextPageWithPreviousLink(
+            AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
             [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
             AtomEventObserver<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
             var events = eventGenerator.Take(sut.PageSize + 1).ToList();
+            var writer = writerFactory.Create(usage);
 
-            events.ForEach(e => sut.AppendAsync(e).Wait());
+            events.ForEach(e => writer.WriteTo(sut, e));
 
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
@@ -400,6 +449,49 @@ namespace Grean.AtomEventStore.UnitTests
             AtomEventObserver<DataContractTestEventX> sut)
         {
             Assert.DoesNotThrow(sut.OnCompleted);
+        }
+    }
+
+    public interface IAtomEventWriter<T>
+    {
+        void WriteTo(AtomEventObserver<T> observer, T @event);
+    }
+
+    public enum AtomEventWriteUsage
+    {
+        AppendAsync = 0,
+        OnNext
+    }
+
+    public class AppendAsyncAtomEventWriter<T> : IAtomEventWriter<T>
+    {
+        public void WriteTo(AtomEventObserver<T> observer, T @event)
+        {
+            observer.AppendAsync(@event).Wait();
+        }
+    }
+
+    public class OnNextAtomEventWriter<T> : IAtomEventWriter<T>
+    {
+        public void WriteTo(AtomEventObserver<T> observer, T @event)
+        {
+            observer.OnNext(@event);
+        }
+    }
+
+    public class AtomEventWriterFactory<T>
+    {
+        public IAtomEventWriter<T> Create(AtomEventWriteUsage use)
+        {
+            switch (use)
+            {
+                case AtomEventWriteUsage.AppendAsync:
+                    return new AppendAsyncAtomEventWriter<T>();
+                case AtomEventWriteUsage.OnNext:
+                    return new OnNextAtomEventWriter<T>();
+                default:
+                    throw new ArgumentOutOfRangeException("Unexpected value.");
+            }
         }
     }
 }
