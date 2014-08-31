@@ -206,7 +206,7 @@ namespace Grean.AtomEventStore
 
         public void OnNext(T value)
         {
-            throw new NotImplementedException();
+            this.AppendAsync(value).Wait();
         }
     }
 }

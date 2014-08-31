@@ -23,6 +23,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteCorrectlyStoresFeed(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -47,6 +48,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteFirstEventWritesPageBeforeIndex(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -65,6 +67,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteTwoEventsOnlyWritesIndexOnce(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -87,6 +90,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WritePageSizeEventsStoresAllEntriesInFirstPage(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -115,6 +119,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -144,6 +149,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanPageSizeEventsWritesInCorrectOrder(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -174,6 +180,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanPageSizeEventsOnlyWritesIndexTwice(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -196,6 +203,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteCorrectlyStoresLastLinkOnIndex(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -220,6 +228,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanPageSizeEventsCorrectlyUpdatesLastLink(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -248,6 +257,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMultipeTimesMoreThanPageSizeCorrectlyStoresOverflowingEvents(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -277,6 +287,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanTwicePageSizeCorrectlyStoresOverflowingEvent(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -307,6 +318,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteWritesEventToCorrectPageEvenIfLastLinkIsNotUpToDate(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
@@ -358,6 +370,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanPageSizeEventsAddsNextPageWithPreviousLink(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
