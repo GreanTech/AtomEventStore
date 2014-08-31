@@ -198,7 +198,6 @@ namespace Grean.AtomEventStore
 
         public void OnCompleted()
         {
-            throw new NotImplementedException();
         }
 
         public void OnError(Exception error)
