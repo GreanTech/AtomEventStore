@@ -63,8 +63,8 @@ module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnions
-        (writer : AtomEventStream<SerializableChangeset>)
-        (reader : AtomEventStream<SerializableChangeset>)
+        (writer : AtomEventObserver<SerializableChangeset>)
+        (reader : FifoEvents<SerializableChangeset>)
         (tef : TestEventF)
         (teg : TestEventG)
         (id : Guid) =
