@@ -56,6 +56,7 @@ namespace Grean.AtomEventStore
     /// <seealso cref="IAtomEventStorage" />
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = "Suppressed on common vote by Mark Seemann and Mikkel Christensen, 2013-05-09. See also http://bit.ly/13ioVAG")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
+    [Obsolete("If you need Last-In, First-Out enumeration of events, please submit a pull request for issue #83 (https://github.com/GreanTech/AtomEventStore/issues/83). If you need First-In, First-Out enumeration of events, please use FifoEvents<T>.")]
     public class AtomEventStream<T> : IEnumerable<T>, IObserver<T>
     {
         private readonly UuidIri id;

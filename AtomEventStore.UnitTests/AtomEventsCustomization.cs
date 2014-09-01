@@ -63,12 +63,14 @@ namespace Grean.AtomEventStore.UnitTests
                     if (pi == null || pi.ParameterType != typeof(IContentSerializer))
                         return new NoSpecimen(request);
 
+#pragma warning disable 618
                     if (pi.Member.ReflectedType == typeof(AtomEventStream<XmlAttributedTestEventX>))
                         return context.Resolve(typeof(XmlContentSerializer));
                     if (pi.Member.ReflectedType == typeof(AtomEventStream<IXmlAttributedTestEvent>))
                         return context.Resolve(typeof(XmlContentSerializer));
                     if (pi.Member.ReflectedType == typeof(AtomEventStream<DataContractEnvelope<IDataContractTestEvent>>))
                         return context.Resolve(typeof(DataContractContentSerializer));
+#pragma warning restore 618
 
                     return new NoSpecimen(request);
                 }

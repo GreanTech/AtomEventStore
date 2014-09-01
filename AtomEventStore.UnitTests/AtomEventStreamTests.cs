@@ -18,6 +18,7 @@ namespace Grean.AtomEventStore.UnitTests
 {
     public class AtomEventStreamTests
     {
+#pragma warning disable 618
         [Theory, AutoAtomData]
         public void VerifyGuardClauses(GuardClauseAssertion assertion)
         {
@@ -514,5 +515,6 @@ namespace Grean.AtomEventStore.UnitTests
                 spyStore.ObservedArguments.Last());
             Assert.Equal(sut.Id, feed.Id);
         }
+#pragma warning restore 618
     }
 }
