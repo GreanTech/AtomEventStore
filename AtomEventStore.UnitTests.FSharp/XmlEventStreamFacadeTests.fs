@@ -38,8 +38,8 @@ module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsDiscriminatedUnions
-        (writer : AtomEventStream<obj>)
-        (reader : AtomEventStream<obj>)
+        (writer : AtomEventObserver<obj>)
+        (reader : FifoEvents<obj>)
         (tef : TestEventF)
         (teg : TestEventG) =
 
@@ -58,7 +58,7 @@ module XmlEventStreamFacadeTests =
         let duSeq = reader |> Seq.map infuse
         let actual = duSeq |> Seq.toList
 
-        let expected = [teg |> G; tef |> F]
+        let expected = [tef |> F; teg |> G]
         Verify <@ expected = actual @>
 
     [<Theory; InMemoryXmlConventions>]
