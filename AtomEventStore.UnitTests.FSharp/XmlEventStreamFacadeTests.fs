@@ -38,14 +38,15 @@ module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsDiscriminatedUnions
-        (sut : AtomEventStream<obj>)
+        (writer : AtomEventStream<obj>)
+        (reader : AtomEventStream<obj>)
         (tef : TestEventF)
         (teg : TestEventG) =
 
         let extract = function
             | F(x) -> x :> obj
             | G(x) -> x :> obj
-        let duObs = Observer.Create(extract >> sut.OnNext)
+        let duObs = Observer.Create(extract >> writer.OnNext)
         duObs.OnNext(tef |> F)
         duObs.OnNext(teg |> G)
         
@@ -54,7 +55,7 @@ module XmlEventStreamFacadeTests =
             | :? TestEventF as f -> f |> F
             | :? TestEventG as g -> g |> G
             | _ -> raise(System.ArgumentException("Unknown event type."))
-        let duSeq = sut |> Seq.map infuse
+        let duSeq = reader |> Seq.map infuse
         let actual = duSeq |> Seq.toList
 
         let expected = [teg |> G; tef |> F]
