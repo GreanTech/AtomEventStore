@@ -63,7 +63,8 @@ module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
     let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnions
-        (sut : AtomEventStream<SerializableChangeset>)
+        (writer : AtomEventStream<SerializableChangeset>)
+        (reader : AtomEventStream<SerializableChangeset>)
         (tef : TestEventF)
         (teg : TestEventG)
         (id : Guid) =
@@ -74,7 +75,7 @@ module XmlEventStreamFacadeTests =
                 | G(x) -> x :> obj
             let events = changeset.Items |> Seq.map extract |> Seq.toArray
             { SerializableChangeset.Id = changeset.Id; Items = events }
-        let duObs = Observer.Create(toObj >> sut.OnNext)
+        let duObs = Observer.Create(toObj >> writer.OnNext)
         duObs.OnNext({ Id = id; Items = [| tef |> F; teg |> G |]})
 
         let ofObj (changeset : SerializableChangeset) =
@@ -85,7 +86,7 @@ module XmlEventStreamFacadeTests =
                 | _ -> raise(System.ArgumentException("Unknown event type."))
             let events = changeset.Items |> Array.map infuse
             { Id = changeset.Id; Items = events }
-        let duSeq = sut |> Seq.map ofObj
+        let duSeq = reader |> Seq.map ofObj
         let actual = duSeq |> Seq.toList
 
         let expected = [ { Id = id; Items = [| tef |> F; teg |> G |] } ]
