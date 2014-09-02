@@ -8,6 +8,8 @@
     <owners>Grean</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Event store implementation based on the Atom syndication format.</description>
+    <projectUrl>https://github.com/GreanTech/AtomEventStore</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/GreanTech/AtomEventStore/master/LICENSE</licenseUrl>
     <copyright>Copyright Grean ApS 2013, 2014</copyright>
     <tags>EventSourcing Atom</tags>
   </metadata>
