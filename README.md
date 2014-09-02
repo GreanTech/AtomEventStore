@@ -11,6 +11,10 @@ A server-less .NET Event Store based on the Atom syndication format.
 - Designed to be scalable
 - Extensible
 
+## Versioning
+
+AtomEventStore follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html).
+
 ## Credits
 
 The idea that an Event Store can be modelled as a Linked List was originally put to my attention by [Yves Reynhout](http://seabites.wordpress.com) in his article [Your EventStream is a linked list](http://bit.ly/AqearV).
