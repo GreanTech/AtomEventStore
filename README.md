@@ -11,6 +11,13 @@ A server-less .NET Event Store based on the Atom syndication format.
 - Designed to be scalable
 - Extensible
 
+## NuGet
+
+AtomEventStore is available via NuGet:
+
+- [AtomEventStore](http://www.nuget.org/packages/AtomEventStore/)
+- [AtomEventStore.AzureBlob](http://www.nuget.org/packages/AtomEventStore.AzureBlob/)
+
 ## Versioning
 
 AtomEventStore follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html).
