@@ -6,6 +6,57 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Writes events to a specific event stream.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the events.
+    /// </typeparam>
+    /// <remarks>
+    /// <para>
+    /// <typeparamref name="T"/> can be a polymorphic type such as an interface
+    /// or an F# Discriminated Union, as long as the supplied
+    /// <see cref="Serializer" /> can round-trip the type (that is: write all
+    /// subtypes to XML, and correctly read them from XML and dehydrate them to
+    /// their original subtype). Sometimes, an <see cref="ITypeResolver" /> can
+    /// be helpful when deserializing.
+    /// </para>
+    /// <para>
+    /// In order to read the event stream, you can use
+    /// <see cref="FifoEvents{T}" />.
+    /// </para>
+    /// <para>
+    /// The AtomEventObserver class stores events using a Linked List storage
+    /// approach. For its particulars, it uses Atom for persistence and
+    /// linking.
+    /// </para>
+    /// <para>
+    /// The concepts of storing events as a linked list was inspired by an
+    /// article by Yves Reynhout called "Your EventStream is a linked list" at
+    /// http://bit.ly/AqearV.
+    /// </para>
+    /// <para>
+    /// When you store an event with <see cref="AppendAsync" /> or
+    /// <see cref="OnNext" />, AtomEventObserver creates a new Atom entry with
+    /// that event, and adds it to an Atom feed page. When the number of
+    /// entries exceeds the configured <see cref="PageSize" />, a new feed page
+    /// is created for the surplus entry, and a "previous" link is added to the
+    /// new page, pointing to the previous page, thus establishing a Linked
+    /// List of Atom feed pages.
+    /// </para>
+    /// <para>
+    /// Various storage mechanisms can be plugged into AtomEventObserver, such
+    /// as a file-based storage mechanism, or in-memory storage. Third-party
+    /// storage add-ins for e.g. cloud-based storage is also an option. A
+    /// custom storage mechanism must implement the
+    /// <see cref="IAtomEventStorage" /> interface, and can optionally benefit
+    /// from also implementing <see cref="IEnumerable{UuidIri}" />.
+    /// </para>
+    /// </remarks>
+    /// <seealso cref="AtomEventsInMemory" />
+    /// <seealso cref="AtomEventsInFiles" />
+    /// <seealso cref="IAtomEventStorage" />
+    /// <seealso cref="FifoEvents{T}" />
     public class AtomEventObserver<T> : IObserver<T>
     {
         private readonly UuidIri id;
