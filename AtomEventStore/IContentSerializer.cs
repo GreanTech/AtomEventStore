@@ -41,8 +41,36 @@ namespace Grean.AtomEventStore
         /// XML.
         /// </para>
         /// </remarks>
+        /// <seealso cref="Deserialize(XmlReader)" />
         void Serialize(XmlWriter xmlWriter, object value);
 
+        /// <summary>
+        /// Deserializes XML to an object.
+        /// </summary>
+        /// <param name="xmlReader">
+        /// The <see cref="XlmReader" /> from which to read the XML.
+        /// </param>
+        /// <returns>
+        /// An <see cref="XmlAtomContent" /> object containing the object read
+        /// from <paramref name="xmlReader" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// <strong>Note to implementers:</strong>
+        /// </para>
+        /// <para>
+        /// The implementation should be able to correctly deserialize XML
+        /// produced by the <see cref="Serialize(XmlWriter, object)" /> method.
+        /// In other words, the implementation must be able to round-trip an
+        /// object to and from XML.
+        /// </para>
+        /// <para>
+        /// If <paramref name="xmlReader" /> contains invalid data, the
+        /// implementation must throw an appropriate exception. It's considered
+        /// an error to return <see langword="null" />.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="Serialize(XmlWriter, object)" />
         XmlAtomContent Deserialize(XmlReader xmlReader);
     }
 }
