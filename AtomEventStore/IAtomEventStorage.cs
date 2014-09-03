@@ -24,6 +24,16 @@ namespace Grean.AtomEventStore
     /// possible, the API is mainly expressed in terms of
     /// <see cref="XmlReader" /> and <see cref="XmlWriter" />.
     /// </para>
+    /// <para>
+    /// <strong>Note to implementers:</strong>
+    /// </para>
+    /// <para>
+    /// While not necessary for AtomEventStore to work, implementations should
+    /// also implement <see cref="IEnumerable{UuidIri}" /> if at all possible.
+    /// This will enable clients to enumerate all the event streams in a given
+    /// storage implementation, which can sometimes be handy. For examples, see
+    /// <see cref="AtomEventsInFiles" /> and <see cref="AtomEventsInMemory" />.
+    /// </para>
     /// </remarks>
     /// <seealso cref="AtomEventsInFiles" />
     /// <seealso cref="AtomEventsInMemory" />
