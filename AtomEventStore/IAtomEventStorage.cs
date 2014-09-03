@@ -5,14 +5,15 @@ namespace Grean.AtomEventStore
 {
     /// <summary>
     /// Implements a storage mechanism for use with
-    /// <see cref="AtomEventStream{T}" />.
+    /// <see cref="AtomEventObserver{T}" /> and <see cref="FifoEvents{T}" />.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <see cref="AtomEventStream{T}" /> implements an event stream using the
-    /// Atom syndication standard as a storage format. The responsibility of
-    /// AtomEventStream&lt;T&gt; is to format and interpret Atom feeds and
-    /// entries so that they can be used as an event stream. However, the
+    /// <see cref="AtomEventObserver{T}" /> and <see cref="FifoEvents{T}" />
+    /// implement event streams using the Atom syndication standard as a
+    /// storage format. The responsibility of AtomEventObserver&lt;T&gt; and
+    /// FifoEvents&lt;T&gt; is to format and interpret Atom feeds and entries
+    /// so that they can be used as an event stream. However, the
     /// responsibility of actually writing and reading the Atom data falls to
     /// implementations of IAtomEventStorage.
     /// </para>
@@ -26,7 +27,8 @@ namespace Grean.AtomEventStore
     /// </remarks>
     /// <seealso cref="AtomEventsInFiles" />
     /// <seealso cref="AtomEventsInMemory" />
-    /// <seealso cref="AtomEventStream{T}" />
+    /// <seealso cref="AtomEventObserver{T}" />
+    /// <seealso cref="FifoEvents{T} "/>
     public interface IAtomEventStorage
     {
         /// <summary>
@@ -51,9 +53,9 @@ namespace Grean.AtomEventStore
         /// implementation.
         /// </para>
         /// <para>
-        /// One, relatively easy way to create an XmlReader over an empty Atom
-        /// feed is to create a new <see cref="AtomFeed" /> instance with no
-        /// entries, serialize it to XML and return a reader over the XML.
+        /// One, relatively easy, way to create an XmlReader over an empty Atom
+        /// feed is to invoke
+        /// <see cref="AtomEventStorage.CreateNewFeed(Uri)" />.
         /// </para>
         /// </remarks>
         XmlReader CreateFeedReaderFor(Uri href);
