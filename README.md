@@ -11,6 +11,8 @@ A server-less .NET Event Store based on the Atom syndication format.
 - Designed to be scalable
 - Extensible
 
+Due to its flexible design and simple storage requirements, you can easily implement a storage implementation on top of your favourite storage mechanism: document databases, relational database, and so on. All you have to do is to implement a *single interface with two methods!* If you are interested in contributing a storage implementation, please first [submit an issue](https://github.com/GreanTech/AtomEventStore/issues) to start the discussion. 
+
 ## NuGet
 
 AtomEventStore is available via NuGet:
