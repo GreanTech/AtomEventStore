@@ -39,6 +39,18 @@ namespace Grean.AtomEventStore
             this.indexes = new List<UuidIri>();
         }
 
+        /// <summary>
+        /// Creates an <see cref="XmlWriter" /> for writing the provided
+        /// <see cref="AtomFeed" />.
+        /// </summary>
+        /// <param name="atomFeed">The Atom feed to write.</param>
+        /// <returns>
+        /// An <see cref="XmlWriter" /> over the Atom feed provided by
+        /// <paramref name="atomFeed" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="atomFeed" /> is <see langword="null" />.
+        /// </exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "According to the documentation of this code analysis rule, it's OK to suppress a warning if 'the method that raised the warning returns an IDisposable object wraps your object', which is exactly the case here.")]
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
