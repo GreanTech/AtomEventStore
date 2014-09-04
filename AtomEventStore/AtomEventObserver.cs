@@ -314,6 +314,14 @@ namespace Grean.AtomEventStore
                 feed.WriteTo(w, this.serializer);
         }
 
+        /// <summary>
+        /// Gets the ID of the event stream.
+        /// </summary>
+        /// <value>
+        /// The ID of the event stream, as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEventObserver{T}(UuidIri, int, IAtomEventStorage, IContentSerializer)" />
         public UuidIri Id
         {
             get { return this.id; }
