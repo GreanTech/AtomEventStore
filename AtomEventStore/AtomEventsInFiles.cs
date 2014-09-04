@@ -7,11 +7,24 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Stores events in Atom Feeds as files on disk.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class AtomEventsInFiles : IAtomEventStorage, IEnumerable<UuidIri>
     {
         private readonly DirectoryInfo directory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomEventsInFiles"/>
+        /// class.
+        /// </summary>
+        /// <param name="directory">
+        /// The base directory that will be used to store the Atom files.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="directory" /> is <see langword="null" />.
+        /// </exception>
         public AtomEventsInFiles(DirectoryInfo directory)
         {
             if (directory == null)
