@@ -118,6 +118,18 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Creates an <see cref="XmlReader" /> for reading an Atom feed from
+        /// the provided <see cref="Uri" />.
+        /// </summary>
+        /// <param name="href">The relative <see cref="Uri" /> of the Atom feed to read.</param>
+        /// <returns>
+        /// An <see cref="XmlReader" /> over the Atom feed identified by
+        /// <paramref name="href" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="href" /> is <see langword="null" />.
+        /// </exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "According to the documentation of this code analysis rule, it's OK to suppress a warning if 'the method that raised the warning returns an IDisposable object wraps your object', which is exactly the case here.")]
         public XmlReader CreateFeedReaderFor(Uri href)
         {
