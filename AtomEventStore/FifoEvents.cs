@@ -230,6 +230,25 @@ namespace Grean.AtomEventStore
             get { return this.storage; }
         }
 
+        /// <summary>
+        /// Gets the content serializer.
+        /// </summary>
+        /// <value>
+        /// The content serializer, which is used to deserialize the elements
+        /// of the stream from the Atom 'content' element within an Atom entry.
+        /// This object is supplied via the constructor.
+        /// </value>
+        /// <remarks>
+        /// <para>
+        /// The serializer is used to read items from the stream, using
+        /// <see cref="Storage" /> to read the contents, after which the
+        /// serializer is used to deserialize the previously serialized
+        /// content.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="Storage" />
+        /// <seealso cref="AppendAsync(T)" />
+        /// <seealso cref="FifoEvents{T}(UuidIri, IAtomEventStorage, IContentSerializer)" />
         public IContentSerializer Serializer
         {
             get { return this.serializer; }
