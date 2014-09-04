@@ -70,6 +70,25 @@ namespace Grean.AtomEventStore
             return AtomEventStorage.CreateNewFeed(href);
         }
 
+        /// <summary>
+        /// Creates an <see cref="XmlWriter" /> for writing the provided
+        /// <see cref="AtomFeed" />.
+        /// </summary>
+        /// <param name="atomFeed">The Atom feed to write.</param>
+        /// <returns>
+        /// An <see cref="XmlWriter" /> over the Atom feed provided by
+        /// <paramref name="atomFeed" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="atomFeed" /> is <see langword="null" />.
+        /// </exception>
+        /// <remarks>
+        /// <para>
+        /// This method returns an <see cref="XmlWriter" /> for a particular
+        /// Atom Feed. The file name and location is based on the Atom Feed's
+        /// "self" link.
+        /// </para>
+        /// </remarks>
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
             if (atomFeed == null)
