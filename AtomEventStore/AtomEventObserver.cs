@@ -327,6 +327,17 @@ namespace Grean.AtomEventStore
             get { return this.id; }
         }
 
+        /// <summary>
+        /// Gets the maximum page size.
+        /// </summary>
+        /// <value>
+        /// The maximum page size, measured in numbers of entries per Atom feed
+        /// page. This value is supplied via the constructor.
+        /// </value>
+        /// <seealso cref="AtomEventObserver{T}(UuidIri, int, IAtomEventStorage, IContentSerializer)" />
+        /// <seealso cref="AtomEventObserver{T}" />
+        /// <seealso cref="AppendAsync(T)" />
+        /// <seealso cref="OnNext" />
         public int PageSize
         {
             get { return this.pageSize; }
