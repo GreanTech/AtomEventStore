@@ -189,6 +189,24 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through all the event stream
+        /// IDs in the internal collection.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that
+        /// can be used to iterate through the IDs.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The in-memory collection can contain multiple event streams, each
+        /// identified by an event stream ID. This Iterator enumerates all the
+        /// event stream IDs. A client can use this to find all the IDs in the
+        /// collection represented by this AtomEventsInMemory instance.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="AtomEventObserver{T}" />
+        /// <seealso cref="FifoEvents{T}" />
         public IEnumerator<UuidIri> GetEnumerator()
         {
             this.rwLock.EnterReadLock();
@@ -202,6 +220,14 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can
+        /// be used to iterate through the collection.
+        /// </returns>
+        /// <see cref="GetEnumerator()" />
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
