@@ -166,6 +166,13 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Gets the Atom Feed pages as strings.
+        /// </summary>
+        /// <value>
+        /// The Atom Feed pages. Each page is returned as a separate string,
+        /// which contains XML according to the Atom format.
+        /// </value>
         public IEnumerable<string> Feeds
         {
             get
