@@ -204,6 +204,14 @@ namespace Grean.AtomEventStore
                 return AtomFeed.ReadFrom(r, this.serializer);
         }
 
+        /// <summary>
+        /// Gets the ID of the event stream.
+        /// </summary>
+        /// <value>
+        /// The ID of the event stream, as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="FifoEvents{T}(UuidIri, IAtomEventStorage, IContentSerializer)" />
         public UuidIri Id
         {
             get { return this.id; }
