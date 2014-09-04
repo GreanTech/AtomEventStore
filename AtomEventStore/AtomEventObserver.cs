@@ -378,10 +378,32 @@ namespace Grean.AtomEventStore
             get { return this.serializer; }
         }
 
+        /// <summary>
+        /// Does nothing.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method only exists because it's part of the
+        /// <see cref="IObserver{T}" /> interface.
+        /// </para>
+        /// </remarks>
         public void OnCompleted()
         {
         }
 
+        /// <summary>
+        /// Does nothing.
+        /// </summary>
+        /// <param name="error">
+        /// An object that provides additional information about the error.
+        /// Ignored by this particular implementation.
+        /// </param>
+        /// <remarks>
+        /// <para>
+        /// This method only exists because it's part of the
+        /// <see cref="IObserver{T}" /> interface.
+        /// </para>
+        /// </remarks>
         public void OnError(Exception error)
         {
         }
