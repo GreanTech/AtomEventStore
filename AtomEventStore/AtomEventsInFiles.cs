@@ -22,6 +22,12 @@ namespace Grean.AtomEventStore
         /// <param name="directory">
         /// The base directory that will be used to store the Atom files.
         /// </param>
+        /// <remarks>
+        /// <para>
+        /// The <paramref name="directory" /> argument is subsequently
+        /// available via the <see cref="Directory" /> property.
+        /// </para>
+        /// </remarks>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="directory" /> is <see langword="null" />.
         /// </exception>
@@ -100,6 +106,13 @@ namespace Grean.AtomEventStore
             return XmlWriter.Create(fileName);
         }
 
+        /// <summary>
+        /// Gets the based directory.
+        /// </summary>
+        /// <value>
+        /// The base directory supplied via the constructor.
+        /// </value>
+        /// <seealso cref="AtomEventsInFiles" />
         public DirectoryInfo Directory
         {
             get { return this.directory; }
