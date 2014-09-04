@@ -6,6 +6,46 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// A forward-moving sequence of events, read from an underlying storage
+    /// mechansism. Events can be of (potentially) any type, as long as there's
+    /// a storage mechanism that can persist and read back instances of that
+    /// type.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of event represented by the stream.
+    /// </typeparam>
+    /// <remarks>
+    /// <para>
+    /// The FifoEvents class reads events using a Linked List storage approach.
+    /// For its particulars, it uses Atom for persistence and linking.
+    /// </para>
+    /// <para>
+    /// The concepts of storing events as a linked list was inspired by an
+    /// article by Yves Reynhout called "Your EventStream is a linked list" at
+    /// http://bit.ly/AqearV.
+    /// </para>
+    /// <para>
+    /// When you read the event stream, FifoEvents starts at the beginning and
+    /// works its way forward, yielding events as it goes along. Thus, oldest
+    /// events are served first, until you stop enumerating, or until you reach
+    /// the most recent event.
+    /// </para>
+    /// <para>
+    /// Various storage mechanisms can be plugged into FifoEvents, such as a
+    /// file-based storage mechanism, or in-memory storage. Third-party storage
+    /// add-ins for e.g. cloud-based storage is also an option. A custom
+    /// storage mechanism must implement the <see cref="IAtomEventStorage" />
+    /// interface.
+    /// </para>
+    /// <para>
+    /// Use <see cref="AtomEventObserver{T}" /> to write the events.
+    /// </para>
+    /// </remarks>
+    /// <seealso cref="AtomEventsInMemory" />
+    /// <seealso cref="AtomEventsInFiles" />
+    /// <seealso cref="IAtomEventStorage" />
+    /// <seealso cref="AtomEventObserver{T}" />
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class FifoEvents<T> : IEnumerable<T>
     {
