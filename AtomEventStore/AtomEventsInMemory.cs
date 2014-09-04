@@ -9,6 +9,18 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Keeps events in Atom Feeds as strings in memory.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Obviously, this implementation isn't persistent, so when disposed of,
+    /// all Atom Feeds are lost.
+    /// </para>
+    /// <para>
+    /// This class is thread-safe.
+    /// </para>
+    /// </remarks>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class AtomEventsInMemory : IAtomEventStorage, IEnumerable<UuidIri>, IDisposable
     {
@@ -16,6 +28,10 @@ namespace Grean.AtomEventStore
         private readonly Dictionary<Uri, StringBuilder> feeds;
         private readonly List<UuidIri> indexes;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomEventsInMemory"/>
+        /// class.
+        /// </summary>
         public AtomEventsInMemory()
         {
             this.rwLock = new ReaderWriterLockSlim();
