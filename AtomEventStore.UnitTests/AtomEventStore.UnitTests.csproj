@@ -106,6 +106,7 @@
     <Compile Include="IDataContractTestEventVisitor.cs" />
     <Compile Include="IXmlAttributedTestEvent.cs" />
     <Compile Include="IXmlAttributedTestEventVisitor.cs" />
+    <Compile Include="LifoEventsTests.cs" />
     <Compile Include="TestEventTypeResolver.cs" />
     <Compile Include="XmlAttributedChangeset.cs" />
     <Compile Include="Conventions.cs" />
