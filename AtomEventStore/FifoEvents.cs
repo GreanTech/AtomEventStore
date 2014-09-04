@@ -105,6 +105,38 @@ namespace Grean.AtomEventStore
             this.serializer = serializer;
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through the events, from
+        /// earliest to the most recent.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator{T}" /> that
+        /// can be used to iterate through the collection.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// This Iterator reads events from the instance's underlying
+        /// <see cref="Storage" />, which may involve I/O operations. Since
+        /// AtomEventStore stores events in Atom Feed pages, unless the page
+        /// size used is 1, events will tend to be enumerated in bursts
+        /// corresponding to the page size.
+        /// </para>
+        /// <para>
+        /// In order to minimize the potential delay caused by I/O operations,
+        /// this Iterator employs a read-ahead algorithm. When enumerating
+        /// events, it begins to download the next Atom feed page on a
+        /// background thread, while still yielding entries from the current
+        /// page. This means that the Iterator may occasionally download a page
+        /// that the client doesn't need, because the client breaks out of the
+        /// enumeration before reaching the page in question.
+        /// </para>
+        /// <para>
+        /// In order to prevent unnecessary page downloads, the algorithm only
+        /// starts reading ahead after enumerating the first item in the
+        /// sequence. This enables clients to peek at the first item without
+        /// triggering a background download.
+        /// </para>
+        /// </remarks>
         public IEnumerator<T> GetEnumerator()
         {
             var page = this.ReadFirst();
@@ -125,6 +157,14 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can
+        /// be used to iterate through the collection.
+        /// </returns>
+        /// <seealso cref="GetEnumerator()" />
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
