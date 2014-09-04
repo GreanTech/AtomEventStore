@@ -33,6 +33,30 @@ namespace Grean.AtomEventStore
             this.directory = directory;
         }
 
+        /// <summary>
+        /// Creates an <see cref="XmlReader" /> for reading an Atom feed from
+        /// the provided <see cref="Uri" />.
+        /// </summary>
+        /// <param name="href">
+        /// The relative <see cref="Uri" /> of the Atom feed to read.
+        /// </param>
+        /// <returns>
+        /// An <see cref="XmlReader" /> over the Atom feed identified by
+        /// <paramref name="href" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="href" /> is <see langword="null" />.
+        /// </exception>
+        /// <remarks>
+        /// <para>
+        /// This method attempts to find a file corresponding to
+        /// <paramref name="href" />. If the file is found, an
+        /// <see cref="XmlReader" /> over that file is created and returned. If
+        /// the file isn't found, an XmlReader over an empty Atom Feed is
+        /// returned. In this case, no file is created fo rthe empty Atom Feed.
+        /// In other words: this method has no observable side-effects.
+        /// </para>
+        /// </remarks>
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             if (href == null)
