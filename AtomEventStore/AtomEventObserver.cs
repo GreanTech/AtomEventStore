@@ -121,6 +121,53 @@ namespace Grean.AtomEventStore
             this.serializer = serializer;
         }
 
+        /// <summary>
+        /// Appends an event to the event stream.
+        /// </summary>
+        /// <param name="event">
+        /// The event to append to the event stream.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task" /> representing the asynchronous operation of
+        /// appending the event to the event stream.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// This method appends <paramref name="event" /> to the current event
+        /// stream. Appending an event indicates that it happened
+        /// <em>after</em> all previous events.
+        /// </para>
+        /// <para>
+        /// Since this method conceptually involves writing the event to the
+        /// underlying <see cref="Storage" />, it may take significant time to
+        /// complete; for that reason, it's an asynchronous method, returning a
+        /// <see cref="Task" />. The operation is not guaranteed to be complete
+        /// before the Task completes successfully.
+        /// </para>
+        /// <para>
+        /// When updating the underlying Storage, the method typically only
+        /// updates the index feed, using
+        /// <see cref="IAtomEventStorage.CreateFeedWriterFor(AtomFeed)" />.
+        /// However, when the number of entries in the index surpasses
+        /// <see cref="PageSize" />, a new feed page is created for the new
+        /// entry. This page is also written using the CreateFeedWriterFor
+        /// method, and only after this succeeds is the old feed page updated
+        /// with a link to the new page. Since these two operations are not
+        /// guaranteed to happen within an ACID transaction, it's possible that
+        /// the new page is saved, but that the update of the old page fails.
+        /// If the underlying storage throws an exception at that point, that
+        /// exception will bubble up to the caller of the AppendAsync method.
+        /// It's up to the caller to retry the operation.
+        /// </para>
+        /// <para>
+        /// However, in that situation, an orphaned Atom feed page is likely to
+        /// have been left in the underlying storage. This doesn't affect
+        /// consistency of the system, but may take up unnecessary disk space.
+        /// If this is the case, a separate clean-up task should find and
+        /// delete orphaned pages.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="OnNext" />
         public Task AppendAsync(T @event)
         {
             return Task.Factory.StartNew(() =>
