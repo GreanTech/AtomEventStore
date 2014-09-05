@@ -148,7 +148,7 @@ namespace Grean.AtomEventStore
 
                 yield return (T)entries.First().Content.Item;
 
-                var t = Task.Factory.StartNew(() => this.ReadNext(page));
+                var t = Task.Factory.StartNew(() => this.ReadPrevious(page));
 
                 foreach (var entry in entries.Skip(1))
                     yield return (T)entry.Content.Item;
@@ -180,7 +180,7 @@ namespace Grean.AtomEventStore
             return this.ReadPage(lastLink.Href);
         }
 
-        private AtomFeed ReadNext(AtomFeed page)
+        private AtomFeed ReadPrevious(AtomFeed page)
         {
             var nextLink = page.Links.SingleOrDefault(l => l.IsPreviousLink);
             if (nextLink == null)
