@@ -233,6 +233,13 @@ namespace Grean.AtomEventStore
             return !value1.Equals(value2);
         }
 
+        /// <summary>
+        /// Returns a hash code for this value.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this value, suitable for use in hashing algorithms
+        /// and data structures like a hash table.
+        /// </returns>
         public override int GetHashCode()
         {
             return this.id.GetHashCode();
