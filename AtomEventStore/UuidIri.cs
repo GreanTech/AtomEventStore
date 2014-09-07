@@ -172,6 +172,16 @@ namespace Grean.AtomEventStore
             return new UuidIri(Guid.NewGuid());
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="Object" />, is equal to
+        /// this value.
+        /// </summary>
+        /// <param name="obj">The <see cref="Object" /> to compare with this
+        /// value.</param>
+        /// <returns>
+        /// <see langword="true" /> if the specified <see cref="Object" /> is
+        /// equal to this value; otherwise, <see langword="false" />.
+        /// </returns>
         public override bool Equals(object obj)
         {
             if (obj is UuidIri)
@@ -180,6 +190,16 @@ namespace Grean.AtomEventStore
             return base.Equals(obj);
         }
 
+        /// <summary>
+        /// Indicates whether the current value is equal to another
+        /// <see cref="UuidIri" /> value.
+        /// </summary>
+        /// <param name="other">A value to compare with this value.</param>
+        /// <returns>
+        /// <see langword="true" /> if the current value is equal to the
+        /// <paramref name="other" /> parameter; otherwise,
+        /// <see langword="false" />.
+        /// </returns>
         public bool Equals(UuidIri other)
         {
             return object.Equals(this.id, other.id);
