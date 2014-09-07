@@ -8,10 +8,26 @@ using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Represents an Author of an Atom document.
+    /// </summary>
     public class AtomAuthor : IXmlWritable
     {
         private readonly string name;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomAuthor"/> class.
+        /// </summary>
+        /// <param name="name">The name of the Author.</param>
+        /// <remarks>
+        /// <para>
+        /// The <paramref name="name" /> argument is subsequently available via
+        /// the <see cref="Name" /> property.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="name" /> is <see langword="null" />.
+        /// </exception>
         public AtomAuthor(string name)
         {
             if (name == null)
