@@ -49,6 +49,14 @@ namespace Grean.AtomEventStore
             this.id = id;
         }
 
+        /// <summary>
+        /// Returns a <see cref="String" /> that representing this instance,
+        /// correctly formatted as a UUID IRI.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="String" /> representing this instance, correctly
+        /// formatted as a UUID IRI.
+        /// </returns>
         public override string ToString()
         {
             return prefix + this.id;
