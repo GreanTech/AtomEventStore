@@ -48,6 +48,27 @@ namespace Grean.AtomEventStore
             get { return this.name; }
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomAuthor" /> with the
+        /// supplied name, but all other properties held constant.
+        /// </summary>
+        /// <param name="newName">The new name.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomAuthor" /> with the supplied name,
+        /// but all other properties held constant.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// This method mostly exists to make <see cref="AtomAuthor" />
+        /// consistent with the other Atom classes with similar methods. The
+        /// method also exists for future compatibility reasons. However,
+        /// currently, since AtomAuthor only contains the saingle
+        /// <see cref="Name" /> property, there are no other properties to hold
+        /// constant. However, clients can use this method as a more robust,
+        /// forward-compatible way of copying an AtomAuthor instance with a new
+        /// name.
+        /// </para>
+        /// </remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "While the documentation of this CA warning mostly states that you can suppress this warning for already shipped code, as it would be a breaking change to address it, I'm taking the reverse position: making it static now would mean that it'd be a breaking change to make it an instance method later. All these 'With' methods are, in their nature, instance methods. The only reason the 'this' keyword isn't used here is because there's only a single field on the class, but this may change in the future.")]
         public AtomAuthor WithName(string newName)
         {
