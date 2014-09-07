@@ -25,6 +25,10 @@ namespace Grean.AtomEventStore
     /// Guid values.
     /// </para>
     /// <para>
+    /// When converted to a <see cref="String" />, a typical UuidIri looks like
+    /// this: "urn:uuid:ce11a36a-61af-4f66-8def-09e32bcce824".
+    /// </para>
+    /// <para>
     /// UuidIri defines implicit conversions to and from Guid, because
     /// conversions are lossless both ways.
     /// </para>
@@ -57,6 +61,15 @@ namespace Grean.AtomEventStore
         /// A <see cref="String" /> representing this instance, correctly
         /// formatted as a UUID IRI.
         /// </returns>
+        /// <example>
+        /// This example demonstrates how to format a UuidIri value as a
+        /// string:
+        /// <code>
+        /// var actual = sut.ToString();
+        /// </code>
+        /// The output is a <see cref="String" /> equivalent to
+        /// "urn:uuid:ce11a36a-61af-4f66-8def-09e32bcce824".
+        /// </example>
         public override string ToString()
         {
             return prefix + this.id;
