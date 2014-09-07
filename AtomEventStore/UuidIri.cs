@@ -6,6 +6,29 @@ using System.Text;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// A UUID IRI (Universally Unique IDentifier Internationalized Resource
+    /// Identifier)
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A UUID is a Universally Unique IDentifier; on Windows implemented as
+    /// GUIDs, and surfaced in .NET as <see cref="Guid" /> values.
+    /// </para>
+    /// <para>
+    /// An IRI is an Internationalized Resource Identifier, which is a
+    /// generalization of an URI - a Uniform Resource Identifier.
+    /// </para>
+    /// <para>
+    /// The UuidIri value type encapsulates a <see cref="Guid" /> and provides
+    /// varous formatting and parsing methods to convert UUID IRIs to and from
+    /// Guid values.
+    /// </para>
+    /// <para>
+    /// UuidIri defines implicit conversions to and from Guid, because
+    /// conversions are lossless both ways.
+    /// </para>
+    /// </remarks>
     public struct UuidIri : IEquatable<UuidIri>
     {
         private const string prefix = "urn:uuid:";
