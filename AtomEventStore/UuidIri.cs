@@ -205,11 +205,29 @@ namespace Grean.AtomEventStore
             return object.Equals(this.id, other.id);
         }
 
+        /// <summary>
+        /// Implements the equality operator.
+        /// </summary>
+        /// <param name="value1">A <see cref="UuidIri"/> value.</param>
+        /// <param name="value2">A <see cref="UuidIri"/> value.</param>
+        /// <returns>
+        /// <see langword="true" /> if the values are equal; otherwise,
+        /// <see langword="false" />.
+        /// </returns>
         public static bool operator ==(UuidIri value1, UuidIri value2)
         {
             return value1.Equals(value2);
         }
 
+        /// <summary>
+        /// Implements the inequality operator.
+        /// </summary>
+        /// <param name="value1">A <see cref="UuidIri"/> value.</param>
+        /// <param name="value2">A <see cref="UuidIri"/> value.</param>
+        /// <returns>
+        /// <see langword="true" /> if the values are different; otherwise,
+        /// <see langword="false" />.
+        /// </returns>
         public static bool operator !=(UuidIri value1, UuidIri value2)
         {
             return !value1.Equals(value2);
