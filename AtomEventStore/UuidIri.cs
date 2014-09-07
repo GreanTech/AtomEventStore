@@ -75,11 +75,28 @@ namespace Grean.AtomEventStore
             return prefix + this.id;
         }
 
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="UuidIri" /> to
+        /// <see cref="Guid" />.
+        /// </summary>
+        /// <param name="uuidIri">The UUID IRI.</param>
+        /// <returns>
+        /// <paramref name="uuidIri" /> converted to a <see cref="Guid" />.
+        /// </returns>
         public static implicit operator Guid(UuidIri uuidIri)
         {
             return uuidIri.id;
         }
 
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="Guid" /> to
+        /// <see cref="UuidIri" />.
+        /// </summary>
+        /// <param name="value">a <see cref="Guid" /> value.</param>
+        /// <returns>
+        /// <paramref name="value" /> converted to a <seealso cref="UuidIri" />
+        /// value.
+        /// </returns>
         public static implicit operator UuidIri(Guid value)
         {
             return new UuidIri(value);
