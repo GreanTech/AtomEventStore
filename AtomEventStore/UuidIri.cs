@@ -102,6 +102,19 @@ namespace Grean.AtomEventStore
             return new UuidIri(value);
         }
 
+        /// <summary>
+        /// Tries to parse a string into a <see cref="UuidIri" /> value.
+        /// </summary>
+        /// <param name="candidate">The candidate to parse.</param>
+        /// <param name="uuidIri">
+        /// The UUID IRI instance that will hold the parse value if the parse
+        /// operation succeeds.
+        /// </param>
+        /// <returns>
+        /// <see langword="true" /> if <paramref name="candidate" /> could be
+        /// parsed to a valid <see cref="UuidIri" /> value; otherwise,
+        /// <see langword="false" />.
+        /// </returns>
         public static bool TryParse(string candidate, out UuidIri uuidIri)
         {
             Guid parsedId;
@@ -117,6 +130,17 @@ namespace Grean.AtomEventStore
             return false;
         }
 
+        /// <summary>
+        /// Parses a string as a <see cref="UuidIri" />.
+        /// </summary>
+        /// <param name="candidate">The candidate to parse.</param>
+        /// <returns>The parsed <see cref="UuidIri" /> value.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="candidate" /> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// <paramref name="candidate" /> is an invalid UUID IRI string.
+        /// </exception>
         public static UuidIri Parse(string candidate)
         {
             if (candidate == null)
