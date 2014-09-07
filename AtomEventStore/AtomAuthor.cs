@@ -107,6 +107,16 @@ namespace Grean.AtomEventStore
             return this.name.GetHashCode();
         }
 
+        /// <summary>
+        /// Writes the data contained in this instance to XML, according to the
+        /// Atom Syndication format.
+        /// </summary>
+        /// <param name="xmlWriter">
+        /// The <see cref="XmlWriter" /> to write to.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="xmlWriter" /> is <see langword="null" />.
+        /// </exception>
         public void WriteTo(XmlWriter xmlWriter)
         {
             if (xmlWriter == null)
