@@ -31,6 +31,33 @@ namespace Grean.AtomEventStore
         private readonly IEnumerable<AtomEntry> entries;
         private readonly IEnumerable<AtomLink> links;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomFeed"/> class.
+        /// </summary>
+        /// <param name="id">The ID of the Atom Feed.</param>
+        /// <param name="title">The title of the Atom Feed.</param>
+        /// <param name="updated">
+        /// The date and time the Atom Feed was last updated.
+        /// </param>
+        /// <param name="author">The author of the Atom Feed.</param>
+        /// <param name="entries">The entries of the Atom Feed.</param>
+        /// <param name="links">The links of the Atom Feed itself.</param>
+        /// <remarks>
+        /// <para>
+        /// All values passed into this constructor are subsequently available
+        /// as properties on the instance.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="title" />
+        /// or
+        /// <paramref name="author" />
+        /// or
+        /// <paramref name="entries" />
+        /// or
+        /// <paramref name="links" />
+        /// is <see langword="null" />.
+        /// </exception>
         public AtomFeed(
             UuidIri id,
             string title, 
