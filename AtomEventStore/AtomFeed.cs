@@ -83,11 +83,26 @@ namespace Grean.AtomEventStore
             this.links = links;
         }
 
+        /// <summary>
+        /// Gets the ID of the Atom Feed.
+        /// </summary>
+        /// <value>
+        /// The ID of the Atom Feed as originally supplied via the constructor.
+        /// </value>
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
         public UuidIri Id
         {
             get { return this.id; }
         }
 
+        /// <summary>
+        /// Gets the title of the Atom Feed.
+        /// </summary>
+        /// <value>
+        /// The title of the Atom Feed as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
         public string Title
         {
             get { return this.title; }
@@ -98,16 +113,40 @@ namespace Grean.AtomEventStore
             get { return this.updated; }
         }
 
+        /// <summary>
+        /// Gets the author of the Atom Feed.
+        /// </summary>
+        /// <value>
+        /// The author of the Atom Feed as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
         public AtomAuthor Author
         {
             get { return this.author; }
         }
 
+        /// <summary>
+        /// Gets the entries of the Atom Feed.
+        /// </summary>
+        /// <value>
+        /// The entries of the Atom Feed as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
         public IEnumerable<AtomEntry> Entries
         {
             get { return this.entries; }
         }
 
+        /// <summary>
+        /// Gets the links of the Atom Feed.
+        /// </summary>
+        /// <value>
+        /// The links of the Atom Feed as originally supplied via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
         public IEnumerable<AtomLink> Links
         {
             get { return this.links; }
