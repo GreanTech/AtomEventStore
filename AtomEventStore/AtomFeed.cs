@@ -9,6 +9,19 @@ using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Represents an Atom Feed.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The AtomFeed class represents a minimal set of required data in order
+    /// to construct a valid Atom Feed according to the Atom Syndication Format
+    /// specification at http://tools.ietf.org/html/rfc4287. Not all data
+    /// elements or options defined by the specification are modelled by the
+    /// AtomFeed class. Instead, only those features and options required to
+    /// implement AtomEventStore are included.
+    /// </para>
+    /// </remarks>
     public class AtomFeed : IXmlWritable
     {
         private readonly UuidIri id;
