@@ -44,6 +44,20 @@ namespace Grean.AtomEventStore
             this.resolver = resolver;
         }
 
+        /// <summary>
+        /// Serializes an object to XML and writes it to an
+        /// <see cref="XmlWriter" />.
+        /// </summary>
+        /// <param name="xmlWriter">
+        /// The <see cref="XmlWriter" /> to which the serialized object should
+        /// be written.
+        /// </param>
+        /// <param name="value">The object to serialize to XML.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="xmlWriter" /> or <paramref name="value" /> is
+        /// <see langword="null" />.
+        /// </exception>
+        /// <seealso cref="Deserialize(XmlReader)" />
         public void Serialize(XmlWriter xmlWriter, object value)
         {
             if (xmlWriter == null)
