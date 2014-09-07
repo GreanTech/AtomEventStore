@@ -69,6 +69,28 @@ namespace Grean.AtomEventStore
             serializer.Serialize(xmlWriter, value);
         }
 
+        /// <summary>
+        /// Deserializes XML to an object.
+        /// </summary>
+        /// <param name="xmlReader">
+        /// The <see cref="XlmReader" /> from which to read the XML.
+        /// </param>
+        /// <returns>
+        /// An <see cref="XmlAtomContent" /> object containing the object read
+        /// from <paramref name="xmlReader" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The Deserialize method uses the contained
+        /// <see cref="ITypeResolver" /> to identify the type of object being
+        /// deserialized, based on the local name and XML namespace in the XML
+        /// read from <paramref name="xmlReader" />.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="xmlReader" /> is <see langword="null" />.
+        /// </exception>
+        /// <seealso cref="Serialize(XmlWriter, object)" />
         public XmlAtomContent Deserialize(XmlReader xmlReader)
         {
             if (xmlReader == null)
