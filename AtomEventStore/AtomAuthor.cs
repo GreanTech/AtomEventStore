@@ -150,6 +150,18 @@ namespace Grean.AtomEventStore
             this.WriteTo(xmlWriter);
         }
 
+        /// <summary>
+        /// Creates an <see cref="AtomAuthor" /> instance from XML.
+        /// </summary>
+        /// <param name="xmlReader">
+        /// The <see cref="XmlReader" /> containing the XML representation of
+        /// the Atom Author.
+        /// </param>
+        /// <returns>
+        /// A new instance of <see cref="AtomAuthor" /> containing the data
+        /// from the XML representation of the Atom Author contained in
+        /// <paramref name="xmlReader" />.
+        /// </returns>
         public static AtomAuthor ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
