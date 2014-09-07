@@ -1,10 +1,10 @@
 # How to contribute to AtomEventStore
 
-AtomEventStore is currently being developed in C# on .NET 3.5 (in order to ensure as broad reach as possible) using Visual Studio 2012 with xUnit.net as the unit testing framework. So far, all development has been done with TDD, so there's a high degree of code coverage, and it would be preferable to keep it that way.
+AtomEventStore is currently being developed in C# on .NET 4.5 (in order to ensure as broad reach as possible) using Visual Studio 2012 with xUnit.net as the unit testing framework. So far, all development has been done with TDD, so there's a high degree of code coverage, and it would be preferable to keep it that way.
 
 ## Dependencies
 
-All binaries (such as xUnit.net) are included as NuGet packages in the source control repository under the \Packages folder. All additional binaries not part of .NET 3.5 must also be added to the repository, so that it would be possible to pull down the repository and immediately be able to compile and run all tests.
+All binaries (such as xUnit.net) are included as NuGet packages in the source control repository under the \Packages folder. All additional binaries not part of .NET 4.5 must also be added to the repository, so that it would be possible to pull down the repository and immediately be able to compile and run all tests.
 
 ## Verification
 
