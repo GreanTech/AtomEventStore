@@ -176,6 +176,18 @@ namespace Grean.AtomEventStore
             return new AtomAuthor(name);
         }
 
+        /// <summary>
+        /// Parses the supplied XML into an instance of
+        /// <see cref="AtomAuthor" />.
+        /// </summary>
+        /// <param name="xml">
+        /// A string of characters containing the XML representation of an Atom 
+        /// Author.
+        /// </param>
+        /// <returns>
+        /// A new instance of <see cref="AtomAuthor" /> containing the data
+        /// from the supplied <paramref name="xml" />.
+        /// </returns>
         public static AtomAuthor Parse(string xml)
         {
             var sr = new StringReader(xml);
