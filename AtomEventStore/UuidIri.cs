@@ -158,6 +158,15 @@ namespace Grean.AtomEventStore
             return parsedUuid;
         }
 
+        /// <summary>
+        /// Creates a new value of <see cref="UuidIri" />.
+        /// </summary>
+        /// <returns>A new value of <see cref="UuidIri" />.</returns>
+        /// <remarks>
+        /// <para>
+        /// The created value is a universally unique value.
+        /// </para>
+        /// </remarks>
         public static UuidIri NewId()
         {
             return new UuidIri(Guid.NewGuid());
