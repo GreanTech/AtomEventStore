@@ -34,6 +34,13 @@ namespace Grean.AtomEventStore
         private const string prefix = "urn:uuid:";
         private readonly Guid id;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UuidIri"/> struct.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <exception cref="System.ArgumentException">
+        /// <paramref name="id" /> is <see cref="Guid.Empty" />.
+        /// </exception>
         public UuidIri(Guid id)
         {
             if (id == Guid.Empty)
