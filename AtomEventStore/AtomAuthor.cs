@@ -36,6 +36,13 @@ namespace Grean.AtomEventStore
             this.name = name;
         }
 
+        /// <summary>
+        /// Gets the name of the author.
+        /// </summary>
+        /// <value>
+        /// The name of the author, as provided via the constructor.
+        /// </value>
+        /// <seealso cref="AtomAuthor(string)" />
         public string Name
         {
             get { return this.name; }
