@@ -7,10 +7,35 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// An Adapter that uses <see cref="DataContractSerializer" /> to implement
+    /// <see cref="IContentSerializer" />.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A DataContractContentSerializer serializes and deserializes the
+    /// contents of <see cref="XmlAtomContent" /> instances to and from XML
+    /// using <see cref="DataContractSerializer" />.
+    /// </para>
+    /// </remarks>
+    /// <seealso cref="XmlContentSerializer" />
+    /// <seealso cref="IContentSerializer" />
     public class DataContractContentSerializer : IContentSerializer
     {
         private readonly ITypeResolver resolver;
 
+        /// <summary>
+        /// Initializes a new instance of the
+        /// <see cref="DataContractContentSerializer"/> class.
+        /// </summary>
+        /// <param name="resolver">
+        /// An <see cref="ITypeResolver" /> used to resolve XML names to
+        /// <see cref="Type" /> instances, used when deserializing XML to
+        /// objects.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="resolver" /> is <see langword="null" />.
+        /// </exception>
         public DataContractContentSerializer(ITypeResolver resolver)
         {
             if (resolver == null)
