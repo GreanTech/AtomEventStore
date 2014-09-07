@@ -313,6 +313,25 @@ namespace Grean.AtomEventStore
                 e.WriteTo(xmlWriter, serializer);
         }
 
+        /// <summary>
+        /// Creates an <see cref="AtomFeed" /> instance from XML.
+        /// </summary>
+        /// <param name="xmlReader">
+        /// The <see cref="XmlReader" /> containing the XML representation of
+        /// the Atom Feed.
+        /// </param>
+        /// <param name="serializer">
+        /// The <see cref="IContentSerializer" /> used to serialize custom XML
+        /// content.
+        /// </param>
+        /// <returns>
+        /// A new instance of <see cref="AtomFeed" /> containing the data from
+        /// the XML representation of the Atom Feed contained in
+        /// <paramref name="xmlReader" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="serializer" /> is <see langword="null" />.
+        /// </exception>
         public static AtomFeed ReadFrom(
             XmlReader xmlReader,
             IContentSerializer serializer)
