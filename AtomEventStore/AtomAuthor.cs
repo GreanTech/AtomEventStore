@@ -75,6 +75,17 @@ namespace Grean.AtomEventStore
             return new AtomAuthor(newName);
         }
 
+        /// <summary>
+        /// Determines whether the supplied <see cref="Object" /> is equal to
+        /// this instance.
+        /// </summary>
+        /// <param name="obj">
+        /// The <see cref="Object" /> to compare with this instance.
+        /// </param>
+        /// <returns>
+        /// <see langword="true" /> if the supplied <see cref="Object" /> is
+        /// equal to this instance; otherwise, <see langword="false" />.
+        /// </returns>
         public override bool Equals(object obj)
         {
             var other = obj as AtomAuthor;
@@ -84,6 +95,13 @@ namespace Grean.AtomEventStore
             return base.Equals(obj);
         }
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing
+        /// algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode()
         {
             return this.name.GetHashCode();
