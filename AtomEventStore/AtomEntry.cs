@@ -9,6 +9,19 @@ using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Represents an Entry in an Atom Feed.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The AtomEntry class represents a minimal set of required data in order
+    /// to construct a valid Atom Entry according to the Atom Syndication
+    /// Format specification at http://tools.ietf.org/html/rfc4287. Not all
+    /// data elements or options defined by the specification are modelled by
+    /// the AtomEntry class. Instead, only those features and options required
+    /// to implement AtomEventStore are included.
+    /// </para>
+    /// </remarks>
     public class AtomEntry : IXmlWritable
     {
         private readonly UuidIri id;
@@ -19,6 +32,33 @@ namespace Grean.AtomEventStore
         private readonly XmlAtomContent content;
         private readonly IEnumerable<AtomLink> links;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomEntry"/> class.
+        /// </summary>
+        /// <param name="id">The ID of the entry.</param>
+        /// <param name="title">The title of the entry.</param>
+        /// <param name="published">The date and time of publication.</param>
+        /// <param name="updated">
+        /// The date and time the entry was last updated.
+        /// </param>
+        /// <param name="author">The author of the entry.</param>
+        /// <param name="content">The content of the entry.</param>
+        /// <param name="links">The links of the entry.</param>
+        /// <remarks>
+        /// <para>
+        /// The constructor arguments are subsequently available on the object
+        /// as properties.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="title" />
+        /// or
+        /// <paramref name="author" />
+        /// or
+        /// <paramref name="content" />
+        /// or
+        /// <paramref name="content" /> is <see langword="null" />.
+        /// </exception>
         public AtomEntry(
             UuidIri id,
             string title,
