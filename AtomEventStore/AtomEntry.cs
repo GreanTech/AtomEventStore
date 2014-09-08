@@ -177,6 +177,16 @@ namespace Grean.AtomEventStore
             get { return this.links; }
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomEntry" /> with the
+        /// supplied title, but all other values held constant.
+        /// </summary>
+        /// <param name="newTitle">The new title.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomEntry" /> with the supplied title,
+        /// but all other values held constant.
+        /// </returns>
+        /// <seealso cref="Title" />
         public AtomEntry WithTitle(string newTitle)
         {
             return new AtomEntry(
@@ -189,6 +199,16 @@ namespace Grean.AtomEventStore
                 this.links);
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomEntry" /> with the
+        /// supplied update date and time, but all other values held constant.
+        /// </summary>
+        /// <param name="newUpdated">The new update date and time.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomEntry" /> with the supplied update
+        /// date and time, but all other values held constant.
+        /// </returns>
+        /// <seealso cref="Updated" />
         public AtomEntry WithUpdated(DateTimeOffset newUpdated)
         {
             return new AtomEntry(
@@ -201,6 +221,16 @@ namespace Grean.AtomEventStore
                 this.links);
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomEntry" /> with the
+        /// supplied author, but all other values held constant.
+        /// </summary>
+        /// <param name="newAuthor">The new author.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomEntry" /> with the supplied
+        /// author, but all other values held constant.
+        /// </returns>
+        /// <seealso cref="Author" />
         public AtomEntry WithAuthor(AtomAuthor newAuthor)
         {
             return new AtomEntry(
@@ -213,6 +243,16 @@ namespace Grean.AtomEventStore
                 this.links);
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomEntry" /> with the
+        /// supplied content, but all other values held constant.
+        /// </summary>
+        /// <param name="newContent">The new content.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomEntry" /> with the supplied
+        /// content, but all other values held constant.
+        /// </returns>
+        /// <seealso cref="Content" />
         public AtomEntry WithContent(XmlAtomContent newContent)
         {
             return new AtomEntry(
@@ -225,6 +265,16 @@ namespace Grean.AtomEventStore
                 this.links);
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomEntry" /> with the
+        /// supplied links, but all other values held constant.
+        /// </summary>
+        /// <param name="newLinks">The new links.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomEntry" /> with the supplied links,
+        /// but all other values held constant.
+        /// </returns>
+        /// <seealso cref="Links" />
         public AtomEntry WithLinks(IEnumerable<AtomLink> newLinks)
         {
             return new AtomEntry(
