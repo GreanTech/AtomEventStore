@@ -86,36 +86,92 @@ namespace Grean.AtomEventStore
             this.links = links;
         }
 
+        /// <summary>
+        /// Gets the ID of the Atom Entry.
+        /// </summary>
+        /// <value>
+        /// The ID of the Atom Entry, as originally provided via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEnty(UuidIri, string, DateTimeOffset, DateTimeOffset, AtomAuthor, XmlAtomContent, IEnumerable{AtomLink})" />
         public UuidIri Id
         {
             get { return this.id; }
         }
 
+        /// <summary>
+        /// Gets the title of the Atom Entry.
+        /// </summary>
+        /// <value>
+        /// The title of the Atom Entry, as originally provided via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEnty(UuidIri, string, DateTimeOffset, DateTimeOffset, AtomAuthor, XmlAtomContent, IEnumerable{AtomLink})" />
         public string Title
         {
             get { return this.title; }
         }
 
+        /// <summary>
+        /// Gets the publication date and time of the Atom Entry.
+        /// </summary>
+        /// <value>
+        /// The publication date and time of the Atom Entry, as originally
+        /// provided via the constructor.
+        /// </value>
+        /// <seealso cref="AtomEnty(UuidIri, string, DateTimeOffset, DateTimeOffset, AtomAuthor, XmlAtomContent, IEnumerable{AtomLink})" />
         public DateTimeOffset Published
         {
             get { return this.published; }
         }
 
+        /// <summary>
+        /// Gets the update date and time of the Atom Entry.
+        /// </summary>
+        /// <value>
+        /// The update date and time of the Atom Entry, as originally provided
+        /// via the constructor.
+        /// </value>
+        /// <seealso cref="AtomEnty(UuidIri, string, DateTimeOffset, DateTimeOffset, AtomAuthor, XmlAtomContent, IEnumerable{AtomLink})" />
         public DateTimeOffset Updated
         {
             get { return this.updated; }
         }
 
+        /// <summary>
+        /// Gets the author of the Atom Entry.
+        /// </summary>
+        /// <value>
+        /// The author of the Atom Entry, as originally provided via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEnty(UuidIri, string, DateTimeOffset, DateTimeOffset, AtomAuthor, XmlAtomContent, IEnumerable{AtomLink})" />
         public AtomAuthor Author
         {
             get { return this.author; }
         }
 
+        /// <summary>
+        /// Gets the content of the Atom Entry.
+        /// </summary>
+        /// <value>
+        /// The content of the Atom Entry, as originally provided via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEnty(UuidIri, string, DateTimeOffset, DateTimeOffset, AtomAuthor, XmlAtomContent, IEnumerable{AtomLink})" />
         public XmlAtomContent Content
         {
             get { return this.content; }
         }
 
+        /// <summary>
+        /// Gets the links of the Atom Entry.
+        /// </summary>
+        /// <value>
+        /// The links of the Atom Entry, as originally provided via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="AtomEnty(UuidIri, string, DateTimeOffset, DateTimeOffset, AtomAuthor, XmlAtomContent, IEnumerable{AtomLink})" />
         public IEnumerable<AtomLink> Links
         {
             get { return this.links; }
