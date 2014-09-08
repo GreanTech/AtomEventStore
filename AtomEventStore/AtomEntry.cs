@@ -441,6 +441,25 @@ namespace Grean.AtomEventStore
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
 
+        /// <summary>
+        /// Parses the supplied XML into an instance of
+        /// <see cref="AtomEntry" />.
+        /// </summary>
+        /// <param name="xml">
+        /// A string of characters containing the XML representation of an Atom
+        /// Entry.
+        /// </param>
+        /// <param name="serializer">
+        /// An <see cref="IContentSerializer" /> used to deserialize custom
+        /// content to objects.
+        /// </param>
+        /// <returns>
+        /// A new instance of <see cref="AtomEntry" /> containing the data from
+        /// the supplied <paramref name="xml" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="serializer" /> is <see langword="null" />.
+        /// </exception>
         public static AtomEntry Parse(string xml, IContentSerializer serializer)
         {
             if (serializer == null)
