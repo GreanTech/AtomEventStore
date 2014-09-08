@@ -409,6 +409,30 @@ namespace Grean.AtomEventStore
                 links.Select(x => AtomLink.ReadFrom(x.ReadSubtree())));
         }
 
+        /// <summary>
+        /// Adds an <see cref="AtomLink" /> to the Atom Entry's collection of
+        /// <see cref="Links" />.
+        /// </summary>
+        /// <param name="newLink">The link to be added.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomEntry" /> with the new link added.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// This method doesn't mutate the instance upon which it is invoked,
+        /// but return a new instance with all other properties held constant,
+        /// but <paramref name="newLink" /> added to the new instance's
+        /// collection of <see cref="Links" />. The new copy also contains all
+        /// the links from the original instance.
+        /// </para>
+        /// <para>
+        /// The exact position of the new link relative to the original links
+        /// is not guaranteed to be deterministic.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="newLink" /> is <see langword="null" />.
+        /// </exception>
         public AtomEntry AddLink(AtomLink newLink)
         {
             if (newLink == null)
