@@ -93,6 +93,24 @@ namespace Grean.AtomEventStore
             return new XmlAtomContent(newItem);
         }
 
+        /// <summary>
+        /// Determines whether the supplied <see cref="object" />, is equal to
+        /// this instance.
+        /// </summary>
+        /// <param name="obj">
+        /// The <see cref="object" /> to compare with this instance.
+        /// </param>
+        /// <returns>
+        /// <see langword="true" /> if the specified <see cref="object" /> is
+        /// equal to this instance; otherwise, <see langword="false" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// If <paramref name="obj" /> is another <see cref="XmlAtomContent" />
+        /// instance, this implementation uses the <see cref="Item" />
+        /// properties' own implementation of Equals to compare the items.
+        /// </para>
+        /// </remarks>
         public override bool Equals(object obj)
         {
             var other = obj as XmlAtomContent;
@@ -102,6 +120,13 @@ namespace Grean.AtomEventStore
             return base.Equals(obj);
         }
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing
+        /// algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode()
         {
             return this.item.GetHashCode();
