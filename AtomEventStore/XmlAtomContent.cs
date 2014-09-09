@@ -206,6 +206,27 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Creates an <see cref="XmlAtomContent" /> instance from XML.
+        /// </summary>
+        /// <param name="xmlReader">
+        /// The <see cref="XmlReader" /> containing the XML representation of
+        /// the Atom Content element.
+        /// </param>
+        /// <param name="serializer">
+        /// The <see cref="IContentSerializer" /> used to deserialize the XML
+        /// into an instance of the correct object type.
+        /// </param>
+        /// <returns>
+        /// A new instance <see cref="XmlAtomContent" /> containing the data
+        /// from the XML representation of the Atom Content element contained
+        /// in <paramref name="xmlReader" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="xmlReader" />
+        /// or
+        /// <paramref name="serializer" /> is <see langword="null" />.
+        /// </exception>
         public static XmlAtomContent ReadFrom(
             XmlReader xmlReader,
             IContentSerializer serializer)
