@@ -164,6 +164,25 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteEndElement();
         }
 
+        /// <summary>
+        /// Parses the supplied XML into an instance of
+        /// <see cref="XmlAtomContent" />.
+        /// </summary>
+        /// <param name="xml">
+        /// A string of characters containing the XML representation of an Atom 
+        /// Content element.
+        /// </param>
+        /// <param name="serializer">
+        /// The <see cref="IContentSerializer" /> used to deserialize the XML
+        /// into an instance of the correct object type.
+        /// </param>
+        /// <returns>
+        /// A new instance of <see cref="XmlAtomContent" /> containing the data
+        /// from the supplied <paramref name="xml" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="serializer" /> is <see langword="null" />.
+        /// </exception>
         public static XmlAtomContent Parse(
             string xml,
             IContentSerializer serializer)
