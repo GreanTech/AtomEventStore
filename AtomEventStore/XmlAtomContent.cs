@@ -34,6 +34,12 @@ namespace Grean.AtomEventStore
         /// class.
         /// </summary>
         /// <param name="item">The actual content of the element.</param>
+        /// <remarks>
+        /// <para>
+        /// <paramref name="item" /> is subsequently available to clients via
+        /// the <see cref="Item" /> property.
+        /// </para>
+        /// </remarks>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="item" /> is <see langword="null" />.
         /// </exception>
@@ -45,6 +51,13 @@ namespace Grean.AtomEventStore
             this.item = item;
         }
 
+        /// <summary>
+        /// Gets the content item.
+        /// </summary>
+        /// <value>
+        /// The content item, as originally supplied via the constructor.
+        /// </value>
+        /// <seealso cref="XmlAtomContent(object)" />
         public object Item
         {
             get { return this.item; }
