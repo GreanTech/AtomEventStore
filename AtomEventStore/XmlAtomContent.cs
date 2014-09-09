@@ -12,10 +12,31 @@ using System.Xml.XPath;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Represents the content element in an Atom Entry.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The XmlAtomContent class represents a minimal set of required data in
+    /// order to construct a valid Atom content element according to the Atom
+    /// Syndication Format specification at http://tools.ietf.org/html/rfc4287.
+    /// Not all data elements or options defined by the specification are
+    /// modelled by the XmlAtomContent class. Instead, only those features and
+    /// options required to implement AtomEventStore are included.
+    /// </para>
+    /// </remarks>
     public class XmlAtomContent : IXmlWritable
     {
         private readonly object item;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XmlAtomContent"/>
+        /// class.
+        /// </summary>
+        /// <param name="item">The actual content of the element.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="item" /> is <see langword="null" />.
+        /// </exception>
         public XmlAtomContent(object item)
         {
             if (item == null)
