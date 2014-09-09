@@ -132,6 +132,23 @@ namespace Grean.AtomEventStore
             return this.item.GetHashCode();
         }
 
+        /// <summary>
+        /// Writes the object to XML using the supplied
+        /// <see cref="XmlWriter" /> and <see cref="IContentSerializer" />.
+        /// </summary>
+        /// <param name="xmlWriter">
+        /// The <see cref="XmlWriter" /> with which the object should be
+        /// written.
+        /// </param>
+        /// <param name="serializer">
+        /// The <see cref="IContentSerializer" /> to use to serialize any
+        /// custom content.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="xmlWriter" />
+        /// or
+        /// <paramref name="serializer" /> is <see langword="null" />.
+        /// </exception>
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
