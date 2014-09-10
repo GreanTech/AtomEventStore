@@ -8,9 +8,24 @@ using System.Xml;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Contains helper methods for Atom event storage.
+    /// </summary>
     public static class AtomEventStorage
     {
 
+        /// <summary>
+        /// Creates a new, empty feed.
+        /// </summary>
+        /// <param name="href">The address of the feed.</param>
+        /// <returns>A new, empty Atom Feed.</returns>
+        /// <remarks>
+        /// <para>
+        /// <paramref name="href" /> is expected to contain an
+        /// <see cref="Uri" /> in the last segment. This Uri is used as the ID
+        /// for the new Atom Feed.
+        /// </para>
+        /// </remarks>
         public static XmlReader CreateNewFeed(Uri href)
         {
             var id = GetIdFromHref(href);
