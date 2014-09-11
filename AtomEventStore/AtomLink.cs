@@ -55,11 +55,25 @@ namespace Grean.AtomEventStore
             this.href = href;
         }
 
+        /// <summary>
+        /// Gets the relationship type.
+        /// </summary>
+        /// <value>
+        /// The relationship type, as originally supplied via the constructor.
+        /// </value>
+        /// <seealso cref="AtomLink(string, Uri)" />
         public string Rel
         {
             get { return this.rel; }
         }
 
+        /// <summary>
+        /// Gets the link address.
+        /// </summary>
+        /// <value>
+        /// The link address, as originally supplied via the constructor.
+        /// </value>
+        /// <seealso cref="AtomLink(string, Uri)" />
         public Uri Href
         {
             get { return this.href; }
