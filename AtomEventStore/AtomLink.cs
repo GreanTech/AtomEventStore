@@ -344,6 +344,13 @@ namespace Grean.AtomEventStore
             get { return this.rel == "via"; }
         }
 
+        /// <summary>
+        /// Turns an <see cref="AtomLink" /> into a via link.
+        /// </summary>
+        /// <returns>
+        /// A new instance af <see cref="AtomLink" /> with a <see cref="Rel" />
+        /// value of "via", but all other properties held constant.
+        /// </returns>
         public AtomLink ToViaLink()
         {
             return this.WithRel("via");
