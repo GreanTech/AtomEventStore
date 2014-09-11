@@ -488,6 +488,15 @@ namespace Grean.AtomEventStore
             return this.WithRel("first");
         }
 
+        /// <summary>
+        /// Creates a last link.
+        /// </summary>
+        /// <param name="href">The address of the last link.</param>
+        /// <returns>
+        /// A new <see cref="AtomLink" /> instance with the <see cref="Rel" />
+        /// value "last", and the <see cref="Href" /> value equal to
+        /// <paramref name="href" />.
+        /// </returns>
         public static AtomLink CreateLastLink(Uri uri)
         {
             return new AtomLink("last", uri);
