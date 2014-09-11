@@ -225,6 +225,23 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Creates an <see cref="AtomLink" /> instance from XML.
+        /// </summary>
+        /// <param name="xmlReader">
+        /// The <see cref="XmlReader" /> containing the XML representation of
+        /// the Atom Link.
+        /// </param>
+        /// <returns>
+        /// A new instance of <see cref="AtomLink" /> containing the data from
+        /// the XML representation of the Atom link contained in
+        /// <paramref name="xmlReader" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// The supplied XML reader contains an atom:link element without an href attribute.
+        /// or
+        /// The supplied XML reader contains an atom:link element without a rel attribute.
+        /// </exception>
         public static AtomLink ReadFrom(XmlReader xmlReader)
         {
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
