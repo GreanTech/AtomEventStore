@@ -282,6 +282,19 @@ namespace Grean.AtomEventStore
             return new AtomLink("self", href);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is a self link.
+        /// </summary>
+        /// <value>
+        /// <see langword="true" /> if this instance is a self link; otherwise,
+        /// <see langword="false" />.
+        /// </value>
+        /// <remarks>
+        /// <para>
+        /// An <see cref="AtomLink" /> is considered a self link if its
+        /// <see cref="Rel" /> value is "self".
+        /// </para>
+        /// </remarks>
         public bool IsSelfLink
         {
             get { return this.rel == "self"; }
