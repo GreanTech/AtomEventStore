@@ -432,6 +432,13 @@ namespace Grean.AtomEventStore
             get { return this.rel == "next"; }
         }
 
+        /// <summary>
+        /// Turns an <see cref="AtomLink" /> into a next link.
+        /// </summary>
+        /// <returns>
+        /// A new instance af <see cref="AtomLink" /> with a <see cref="Rel" />
+        /// value of "next", but all other properties held constant.
+        /// </returns>
         public AtomLink ToNextLink()
         {
             return this.WithRel("next");
