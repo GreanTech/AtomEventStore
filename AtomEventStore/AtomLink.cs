@@ -388,6 +388,13 @@ namespace Grean.AtomEventStore
             get { return this.rel == "previous"; }
         }
 
+        /// <summary>
+        /// Turns an <see cref="AtomLink" /> into a previous link.
+        /// </summary>
+        /// <returns>
+        /// A new instance af <see cref="AtomLink" /> with a <see cref="Rel" />
+        /// value of "previous", but all other properties held constant.
+        /// </returns>
         public AtomLink ToPreviousLink()
         {
             return this.WithRel("previous");
