@@ -370,6 +370,19 @@ namespace Grean.AtomEventStore
             return new AtomLink("previous", uri);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is a previous link.
+        /// </summary>
+        /// <value>
+        /// <see langword="true" /> if this instance is a previous link;
+        /// otherwise, <see langword="false" />.
+        /// </value>
+        /// <remarks>
+        /// <para>
+        /// An <see cref="AtomLink" /> is considered a previous link if its
+        /// <see cref="Rel" /> value is "previous".
+        /// </para>
+        /// </remarks>
         public bool IsPreviousLink
         {
             get { return this.rel == "previous"; }
