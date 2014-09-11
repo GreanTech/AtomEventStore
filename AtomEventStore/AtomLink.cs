@@ -520,6 +520,13 @@ namespace Grean.AtomEventStore
             get { return this.rel == "last"; }
         }
 
+        /// <summary>
+        /// Turns an <see cref="AtomLink" /> into a last link.
+        /// </summary>
+        /// <returns>
+        /// A new instance af <see cref="AtomLink" /> with a <see cref="Rel" />
+        /// value of "last", but all other properties held constant.
+        /// </returns>
         public AtomLink ToLastLink()
         {
             return this.WithRel("last");
