@@ -300,6 +300,13 @@ namespace Grean.AtomEventStore
             get { return this.rel == "self"; }
         }
 
+        /// <summary>
+        /// Turns an <see cref="AtomLink" /> into a self link.
+        /// </summary>
+        /// <returns>
+        /// A new instance af <see cref="AtomLink" /> with a <see cref="Rel" />
+        /// value of "self", but all other properties held constant.
+        /// </returns>
         public AtomLink ToSelfLink()
         {
             return this.WithRel("self");
