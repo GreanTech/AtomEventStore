@@ -444,6 +444,15 @@ namespace Grean.AtomEventStore
             return this.WithRel("next");
         }
 
+        /// <summary>
+        /// Creates a first link.
+        /// </summary>
+        /// <param name="href">The address of the first link.</param>
+        /// <returns>
+        /// A new <see cref="AtomLink" /> instance with the <see cref="Rel" />
+        /// value "first", and the <see cref="Href" /> value equal to
+        /// <paramref name="href" />.
+        /// </returns>
         public static AtomLink CreateFirstLink(Uri uri)
         {
             return new AtomLink("first", uri);
