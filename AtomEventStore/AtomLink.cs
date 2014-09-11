@@ -356,6 +356,15 @@ namespace Grean.AtomEventStore
             return this.WithRel("via");
         }
 
+        /// <summary>
+        /// Creates a previous link.
+        /// </summary>
+        /// <param name="href">The address of the previous link.</param>
+        /// <returns>
+        /// A new <see cref="AtomLink" /> instance with the <see cref="Rel" />
+        /// value "previous", and the <see cref="Href" /> value equal to
+        /// <paramref name="href" />.
+        /// </returns>
         public static AtomLink CreatePreviousLink(Uri uri)
         {
             return new AtomLink("previous", uri);
