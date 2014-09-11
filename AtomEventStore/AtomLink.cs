@@ -152,6 +152,14 @@ namespace Grean.AtomEventStore
                 this.Href.GetHashCode();
         }
 
+        /// <summary>
+        /// Writes an <see cref="AtomLink"/> to XML using the supplied
+        /// <see cref="XmlWriter" />.
+        /// </summary>
+        /// <param name="xmlWriter">
+        /// The <see cref="XmlWriter" /> with which the object should be
+        /// written.
+        /// </param>
         public void WriteTo(XmlWriter xmlWriter)
         {
             if (xmlWriter == null)
@@ -163,6 +171,25 @@ namespace Grean.AtomEventStore
             xmlWriter.WriteEndElement();
         }
 
+        /// <summary>
+        /// Writes an <see cref="AtomLink"/>the object to XML using the
+        /// supplied <see cref="XmlWriter" /> and
+        /// <see cref="IContentSerializer" />.
+        /// </summary>
+        /// <param name="xmlWriter">
+        /// The <see cref="XmlWriter" /> with which the object should be
+        /// written.
+        /// </param>
+        /// <param name="serializer">
+        /// The <see cref="IContentSerializer" /> to use to serialize any
+        /// custom content. Ignore in this implementation.
+        /// </param>
+        /// <remarks>
+        /// <para>
+        /// <paramref name="serializer" /> is ignore in this implementation,
+        /// because <see cref="AtomLink" /> has no custom content.
+        /// </para>
+        /// </remarks>
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             this.WriteTo(xmlWriter);
