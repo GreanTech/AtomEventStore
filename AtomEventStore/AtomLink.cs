@@ -109,6 +109,25 @@ namespace Grean.AtomEventStore
             return new AtomLink(this.rel, newHref);
         }
 
+        /// <summary>
+        /// Determines whether the specified <see cref="object" /> is equal to
+        /// this instance.
+        /// </summary>
+        /// <param name="obj">
+        /// The <see cref="object" /> to compare with this instance.
+        /// </param>
+        /// <returns>
+        /// <see langword="true" /> if the specified <see cref="object" /> is
+        /// another <see cref="AtomLink" /> instance with identical properties;
+        /// otherwise, <see langword="false" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// Two <see cref="AtomLink" /> instances are considered to be equal if
+        /// the have the same property values; that is, if they are
+        /// structurally equal.
+        /// </para>
+        /// </remarks>
         public override bool Equals(object obj)
         {
             var other = obj as AtomLink;
@@ -119,6 +138,13 @@ namespace Grean.AtomEventStore
             return base.Equals(obj);
         }
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing
+        /// algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode()
         {
             return
