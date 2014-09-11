@@ -195,6 +195,18 @@ namespace Grean.AtomEventStore
             this.WriteTo(xmlWriter);
         }
 
+        /// <summary>
+        /// Parses the specified XML into an instance of
+        /// <see cref="AtomLink" />.
+        /// </summary>
+        /// <param name="xml">
+        /// A string of characters containing the XML representation of an Atom
+        /// link.
+        /// </param>
+        /// <returns>
+        /// A new instance of <see cref="AtomLink" /> containing the data from
+        /// the supplied <paramref name="xml" />.
+        /// </returns>
         public static AtomLink Parse(string xml)
         {
             var sr = new StringReader(xml);
