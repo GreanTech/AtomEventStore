@@ -79,11 +79,31 @@ namespace Grean.AtomEventStore
             get { return this.href; }
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomLink" /> with thie
+        /// supplied relationship type, but all other values held constant.
+        /// </summary>
+        /// <param name="newRel">The new relationship type.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomLink" /> with thie supplied
+        /// relationship type, but all other values held constant.
+        /// </returns>
+        /// <seealso cref="Rel" />
         public AtomLink WithRel(string newRel)
         {
             return new AtomLink(newRel, this.href);
         }
 
+        /// <summary>
+        /// Returns a new instance of <see cref="AtomLink" /> with the supplied
+        /// link address, but all other values held constant.
+        /// </summary>
+        /// <param name="newHref">The new link address.</param>
+        /// <returns>
+        /// A new instance of <see cref="AtomLink" /> with the supplied link
+        /// address, but all other values held constant.
+        /// </returns>
+        /// <seealso cref="Href" />
         public AtomLink WithHref(Uri newHref)
         {
             return new AtomLink(this.rel, newHref);
