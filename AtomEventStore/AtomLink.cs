@@ -476,6 +476,13 @@ namespace Grean.AtomEventStore
             get { return this.rel == "first"; }
         }
 
+        /// <summary>
+        /// Turns an <see cref="AtomLink" /> into a first link.
+        /// </summary>
+        /// <returns>
+        /// A new instance af <see cref="AtomLink" /> with a <see cref="Rel" />
+        /// value of "first", but all other properties held constant.
+        /// </returns>
         public AtomLink ToFirstLink()
         {
             return this.WithRel("first");
