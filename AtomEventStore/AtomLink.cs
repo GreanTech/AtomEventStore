@@ -312,6 +312,15 @@ namespace Grean.AtomEventStore
             return this.WithRel("self");
         }
 
+        /// <summary>
+        /// Creates a via link.
+        /// </summary>
+        /// <param name="href">The address of the via link.</param>
+        /// <returns>
+        /// A new <see cref="AtomLink" /> instance with the <see cref="Rel" />
+        /// value "via", and the <see cref="Href" /> value equal to
+        /// <paramref name="href" />.
+        /// </returns>
         public static AtomLink CreateViaLink(Uri href)
         {
             return new AtomLink("via", href);
