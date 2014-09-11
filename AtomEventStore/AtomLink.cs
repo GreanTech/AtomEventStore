@@ -26,6 +26,24 @@ namespace Grean.AtomEventStore
         private readonly string rel;
         private readonly Uri href;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomLink"/> class.
+        /// </summary>
+        /// <param name="rel">The relationship type.</param>
+        /// <param name="href">The link address.</param>
+        /// <remarks>
+        /// <para>
+        /// The value of <paramref name="rel" /> is subsequently available via
+        /// the <see cref="Rel" /> property. The value of
+        /// <paramref name="href" /> is subsequently available via the
+        /// <see cref="Href" /> property.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="rel" />
+        /// or
+        /// <paramref name="href" /> is <see langword="null" />.
+        /// </exception>
         public AtomLink(string rel, Uri href)
         {
             if (rel == null)
