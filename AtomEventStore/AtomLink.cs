@@ -268,6 +268,15 @@ namespace Grean.AtomEventStore
             return new AtomLink(rel, new Uri(href, UriKind.RelativeOrAbsolute));
         }
 
+        /// <summary>
+        /// Creates a self link.
+        /// </summary>
+        /// <param name="href">The address of the self link.</param>
+        /// <returns>
+        /// A new <see cref="AtomLink" /> instance with the <see cref="Rel" />
+        /// value "self", and the <see cref="Href" /> value equal to
+        /// <paramref name="href" />.
+        /// </returns>
         public static AtomLink CreateSelfLink(Uri href)
         {
             return new AtomLink("self", href);
