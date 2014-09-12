@@ -9,11 +9,35 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Grean.AtomEventStore.AzureBlob
 {
+    /// <summary>
+    /// Stores events in Atom Feeds as BLOBs in Microsoft Azure.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
     public class AtomEventsOnAzure : IAtomEventStorage, IEnumerable<UuidIri>
     {
         private readonly CloudBlobContainer container;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AtomEventsOnAzure" />
+        /// class.
+        /// </summary>
+        /// <param name="container">
+        /// The BLOB container where all BLOBs written by this instance will
+        /// reside.
+        /// </param>
+        /// <remarks>
+        /// <para>
+        /// A single instance of <see cref="AtomEventsOnAzure" /> can manage
+        /// several event streams in a single CloudBlobContainer. Several
+        /// instances of AtomEventsOnAzure can also read from, and write to,
+        /// the same BLOB container.
+        /// </para>
+        /// <para>
+        /// If you need to distribute event streams across different BLOB
+        /// container, you can create an AtomEventsOnAzure instance per
+        /// container.
+        /// </para>
+        /// </remarks>
         [CLSCompliant(false)]
         public AtomEventsOnAzure(CloudBlobContainer container)
         {
