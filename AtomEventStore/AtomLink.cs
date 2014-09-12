@@ -365,9 +365,9 @@ namespace Grean.AtomEventStore
         /// value "previous", and the <see cref="Href" /> value equal to
         /// <paramref name="href" />.
         /// </returns>
-        public static AtomLink CreatePreviousLink(Uri uri)
+        public static AtomLink CreatePreviousLink(Uri href)
         {
-            return new AtomLink("previous", uri);
+            return new AtomLink("previous", href);
         }
 
         /// <summary>
@@ -409,9 +409,9 @@ namespace Grean.AtomEventStore
         /// value "next", and the <see cref="Href" /> value equal to
         /// <paramref name="href" />.
         /// </returns>
-        public static AtomLink CreateNextLink(Uri uri)
+        public static AtomLink CreateNextLink(Uri href)
         {
-            return new AtomLink("next", uri);
+            return new AtomLink("next", href);
         }
 
         /// <summary>
@@ -453,9 +453,9 @@ namespace Grean.AtomEventStore
         /// value "first", and the <see cref="Href" /> value equal to
         /// <paramref name="href" />.
         /// </returns>
-        public static AtomLink CreateFirstLink(Uri uri)
+        public static AtomLink CreateFirstLink(Uri href)
         {
-            return new AtomLink("first", uri);
+            return new AtomLink("first", href);
         }
 
         /// <summary>
@@ -497,9 +497,9 @@ namespace Grean.AtomEventStore
         /// value "last", and the <see cref="Href" /> value equal to
         /// <paramref name="href" />.
         /// </returns>
-        public static AtomLink CreateLastLink(Uri uri)
+        public static AtomLink CreateLastLink(Uri href)
         {
-            return new AtomLink("last", uri);
+            return new AtomLink("last", href);
         }
 
         /// <summary>
