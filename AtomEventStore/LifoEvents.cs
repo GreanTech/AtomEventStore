@@ -247,7 +247,7 @@ namespace Grean.AtomEventStore
         /// </para>
         /// </remarks>
         /// <seealso cref="Storage" />
-        /// <seealso cref="AppendAsync(T)" />
+        /// <seealso cref="AtomEventObserver{T}.AppendAsync(T)" />
         /// <seealso cref="LifoEvents{T}(UuidIri, IAtomEventStorage, IContentSerializer)" />
         public IContentSerializer Serializer
         {
