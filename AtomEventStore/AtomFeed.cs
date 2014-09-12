@@ -108,6 +108,14 @@ namespace Grean.AtomEventStore
             get { return this.title; }
         }
 
+        /// <summary>
+        /// Gets the date and time the Atom Feed was last updated.
+        /// </summary>
+        /// <value>
+        /// The date and time the Atom Feed was last updated, as originally
+        /// supplied via the constructor.
+        /// </value>
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEntry}, IEnumerable{AtomLink})" />
         public DateTimeOffset Updated
         {
             get { return this.updated; }
