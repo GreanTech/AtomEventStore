@@ -67,7 +67,7 @@ namespace Grean.AtomEventStore
         /// Returns a new instance of <see cref="XmlAtomContent" /> with the
         /// supplied content item, but all other properties held constant.
         /// </summary>
-        /// <param name="newName">The new content item.</param>
+        /// <param name="newItem">The new content item.</param>
         /// <returns>
         /// A new instance of <see cref="XmlAtomContent" /> with the supplied
         /// name, but all other properties held constant.
