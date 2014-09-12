@@ -44,6 +44,27 @@ namespace Grean.AtomEventStore.AzureBlob
             this.container = container;
         }
 
+        /// <summary>
+        /// Creates an <see cref="XmlReader" /> for reading an Atom feed from
+        /// the provided <see cref="Uri" />.
+        /// </summary>
+        /// <param name="href">
+        /// The relative <see cref="Uri" /> of the Atom feed to read.
+        /// </param>
+        /// <returns>
+        /// An <see cref="XmlReader" /> over the Atom feed identified by
+        /// <paramref name="href" />.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// This method attempts to find a BLOB corresponding to
+        /// <paramref name="href" />. If the BLOB is found, an
+        /// <see cref="XmlReader" /> over that BLOB is created and returned. If
+        /// the BLOB isn't found, an XmlReader over an empty Atom Feed is
+        /// returned. In this case, no BLOB is created for the empty Atom Feed.
+        /// In other words: this method has no observable side-effects.
+        /// </para>
+        /// </remarks>
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             var blobRef = this.CreateBlobReference(href);

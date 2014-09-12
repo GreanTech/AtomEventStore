@@ -59,7 +59,7 @@ namespace Grean.AtomEventStore
         /// <paramref name="href" />. If the file is found, an
         /// <see cref="XmlReader" /> over that file is created and returned. If
         /// the file isn't found, an XmlReader over an empty Atom Feed is
-        /// returned. In this case, no file is created fo rthe empty Atom Feed.
+        /// returned. In this case, no file is created for the empty Atom Feed.
         /// In other words: this method has no observable side-effects.
         /// </para>
         /// </remarks>
