@@ -89,7 +89,7 @@ namespace Grean.AtomEventStore
         /// <value>
         /// The ID of the Atom Feed as originally supplied via the constructor.
         /// </value>
-        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEntry}, IEnumerable{AtomLink})" />
         public UuidIri Id
         {
             get { return this.id; }
@@ -102,7 +102,7 @@ namespace Grean.AtomEventStore
         /// The title of the Atom Feed as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEntry}, IEnumerable{AtomLink})" />
         public string Title
         {
             get { return this.title; }
@@ -120,7 +120,7 @@ namespace Grean.AtomEventStore
         /// The author of the Atom Feed as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEntry}, IEnumerable{AtomLink})" />
         public AtomAuthor Author
         {
             get { return this.author; }
@@ -133,7 +133,7 @@ namespace Grean.AtomEventStore
         /// The entries of the Atom Feed as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEntry}, IEnumerable{AtomLink})" />
         public IEnumerable<AtomEntry> Entries
         {
             get { return this.entries; }
@@ -146,7 +146,7 @@ namespace Grean.AtomEventStore
         /// The links of the Atom Feed as originally supplied via the
         /// constructor.
         /// </value>
-        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEnty}, IEnumerable{AtomLink})" />
+        /// <seealso cref="AtomFeed(UuidIri, string, DateTimeOffset, AtomAuthor, IEnumerable{AtomEntry}, IEnumerable{AtomLink})" />
         public IEnumerable<AtomLink> Links
         {
             get { return this.links; }
