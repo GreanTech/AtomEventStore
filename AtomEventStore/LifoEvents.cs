@@ -86,7 +86,7 @@ namespace Grean.AtomEventStore
         /// <see langword="null" />
         /// </exception>
         /// <seealso cref="LifoEvents{T}" />
-        /// <seealso cref="ContentSerializer" />
+        /// <seealso cref="IContentSerializer" />
         /// <seealso cref="AtomEventsInMemory" />
         /// <seealso cref="AtomEventsInFiles" />
         /// <seealso cref="IAtomEventStorage" />
