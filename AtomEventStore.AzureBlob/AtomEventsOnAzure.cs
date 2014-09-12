@@ -118,6 +118,25 @@ namespace Grean.AtomEventStore.AzureBlob
             return this.container.GetBlockBlobReference(href.ToString() + ".xml");
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through all the event stream
+        /// IDs in the BLOB container.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that
+        /// can be used to iterate through the IDs.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// The BLOB container can contain multiple event streams, each
+        /// identified by an event stream ID. This Iterator enumerates all the
+        /// event stream IDs. A client can use this to find all the IDs in the
+        /// collection represented by this AtomEventsOnAzure instance.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="AtomEventObserver{T}" />
+        /// <seealso cref="FifoEvents{T}" />
+        /// <seealso cref="LifoEvents{T}" />
         public IEnumerator<UuidIri> GetEnumerator()
         {
             return this.container
@@ -138,6 +157,14 @@ namespace Grean.AtomEventStore.AzureBlob
             return new Tuple<bool, Guid>(success, id);
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can
+        /// be used to iterate through the collection.
+        /// </returns>
+        /// <seealso cref="GetEnumerator()" />
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
