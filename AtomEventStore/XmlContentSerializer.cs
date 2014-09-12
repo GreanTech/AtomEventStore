@@ -73,7 +73,7 @@ namespace Grean.AtomEventStore
         /// Deserializes XML to an object.
         /// </summary>
         /// <param name="xmlReader">
-        /// The <see cref="XlmReader" /> from which to read the XML.
+        /// The <see cref="XmlReader" /> from which to read the XML.
         /// </param>
         /// <returns>
         /// An <see cref="XmlAtomContent" /> object containing the object read
