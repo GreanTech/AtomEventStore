@@ -99,6 +99,11 @@
     <Compile Include="DataContractEnvelope.cs" />
     <Compile Include="DataContractTestEventX.cs" />
     <Compile Include="DataContractTestEventY.cs" />
+    <Compile Include="Demo\UserOnBoarding\EmailChanged.cs" />
+    <Compile Include="Demo\UserOnBoarding\EmailVerified.cs" />
+    <Compile Include="Demo\UserOnBoarding\Stories.cs" />
+    <Compile Include="Demo\UserOnBoarding\UserCreated.cs" />
+    <Compile Include="Demo\UserOnBoarding\UserTypeResolver.cs" />
     <Compile Include="Disarray.cs" />
     <Compile Include="FifoEventsTests.cs" />
     <Compile Include="HashFreeEqualityComparer.cs" />
