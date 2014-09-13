@@ -70,6 +70,34 @@ Notice that since `AtomEventObserver<T>` uses the standard TPL model, you can us
 
 When the task returned by `obs.AppendAsync` completes, the `userCreated` event has been written to `storage`.
 
+### Reading events
+
+You can read events either forwards or backwards. In both cases, reading events is based on the standard `IEnumerable<T>` interface.
+
+#### Reading in original order
+
+If you want to read the events in the order they were written, with the oldest event first, you should use the *First-In, First-Out* reader:
+
+```C#
+IEnumerable<object> events = new FifoEvents<object>(
+    eventStreamId, // a Guid
+    storage,       // an IAtomEventStorage object
+    serializer);   // an IContentSerializer object
+var firstEvent = events.First();
+```
+
+It's not necessary to explicitly declare `events` as `IEnumerable<object>`: you can use the `var` keyword as well; this example just uses explicit variable declaration in order to make it clearer what's going on.
+
+#### Reading in reverse order
+
+If you want to read the most recent events first, you can use the `LifoEvents<T>` class instead of `FifoEvents<T>`: it provides a *Last-In, First-Out* Iterator over the event stream.
+
+#### Filtering, aggregation, and projections
+
+Since both `FifoEvents<T>` and `LifoEvents<T>` implement `IEnumerable<T>`, you can perform *any* filtering, aggregation, and projection operation you're used to be able to do with LINQ. However, be aware that there's no protocol translation going on (`IQueryable<T>` is not in use). All operations on the event stream happen on the Iterator in memory, so if you're not careful, you may inadvertently read the entire event stream into memory from storage.
+
+However, with a bit of care, and judicious selection of `FifoEvents<T>` or `LifoEvents<T>` you can still make your system efficient.  
+
 ## NuGet
 
 AtomEventStore is available via NuGet:
