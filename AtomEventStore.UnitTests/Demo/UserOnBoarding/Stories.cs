@@ -35,5 +35,32 @@ namespace Grean.AtomEventStore.UnitTests.Demo.UserOnBoarding
 
             Assert.NotEmpty(storage);
         }
+
+        [Fact]
+        public async Task WriteASingleEventAsynchronously()
+        {
+            var eventStreamId =
+                new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
+            var storage = new AtomEventsInMemory();
+            var pageSize = 25;
+            var serializer =
+                new DataContractContentSerializer(new UserTypeResolver());
+            var obs = new AtomEventObserver<object>(
+                eventStreamId, // a Guid
+                pageSize,      // an Int32
+                storage,       // an IAtomEventStorage object
+                serializer);   // an IContentSerializer object
+
+            var userCreated = new UserCreated
+            {
+                UserId = eventStreamId,
+                UserName = "ploeh",
+                Password = "12345",
+                Email = "ploeh@fnaah.com"
+            };
+            await obs.AppendAsync(userCreated);
+
+            Assert.NotEmpty(storage);
+        }
     }
 }
