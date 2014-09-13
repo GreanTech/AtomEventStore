@@ -5,6 +5,7 @@ A server-less .NET Event Store based on the Atom syndication format.
 ## Highlights:
 
 - No server required; only storage
+- Human-readable storage format
 - Supports file storage
 - Supports in-memory storage
 - Supports Azure Blob storage
