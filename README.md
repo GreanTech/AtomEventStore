@@ -68,7 +68,7 @@ await obs.AppendAsync(userCreated);
 
 Notice that since `AtomEventObserver<T>` uses the standard TPL model, you can use it with `async` and `await`.
 
-when the task returned by `obs.AppendAsync` completes, the `userCreated` event has been written to `storage`.
+When the task returned by `obs.AppendAsync` completes, the `userCreated` event has been written to `storage`.
 
 ## NuGet
 
