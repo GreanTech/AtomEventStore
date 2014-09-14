@@ -167,6 +167,28 @@ namespace Grean.AtomEventStore
         /// delete orphaned pages.
         /// </para>
         /// </remarks>
+        /// <example>
+        /// This example shows how to create a UserCreated event and write it
+        /// using the AppendAsync method. Notice that since
+        /// AtomEventObserver&lt;T&gt; uses the standard Task Parallel Library
+        /// (TPL) model, you can use it with 'async' and 'await'.
+        /// <code>
+        /// var obs = new AtomEventObserver&lt;object&gt;(
+        ///     eventStreamId, // a Guid
+        ///     pageSize,      // an Int32
+        ///     storage,       // an IAtomEventStorage object
+        ///     serializer);   // an IContentSerializer object
+        /// 
+        /// var userCreated = new UserCreated
+        /// {
+        ///     UserId = eventStreamId,
+        ///     UserName = "ploeh",
+        ///     Password = "12345",
+        ///     Email = "ploeh@fnaah.com"
+        /// };
+        /// await obs.AppendAsync(userCreated);
+        /// </code>
+        /// </example>
         /// <seealso cref="OnNext" />
         public Task AppendAsync(T @event)
         {
