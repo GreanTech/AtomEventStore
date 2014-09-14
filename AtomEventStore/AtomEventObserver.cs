@@ -426,6 +426,30 @@ namespace Grean.AtomEventStore
         /// For an asynchronous alternative, use <see cref="AppendAsync(T)" />.
         /// </para>
         /// </remarks>
+        /// <example>
+        /// This example shows how to create a UserCreated event and write it
+        /// using the OnNext method. It's not necessary to declare the 'obs'
+        /// variable using explicit type declation; the 'var' keyword can be
+        /// used as well. This example only uses the explicit type declaration
+        /// to make it clearer that 'obs' can be treated as an
+        /// <see cref="IEnumerable{T}" />.
+        /// <code>
+        /// IObserver&lt;object&gt; obs = new AtomEventObserver&lt;object&gt;(
+        ///     eventStreamId, // a Guid
+        ///     pageSize,      // an Int32
+        ///     storage,       // an IAtomEventStorage object
+        ///     serializer);   // an IContentSerializer object
+        /// 
+        /// var userCreated = new UserCreated
+        /// {
+        ///     UserId = eventStreamId,
+        ///     UserName = "ploeh",
+        ///     Password = "12345",
+        ///     Email = "ploeh@fnaah.com"
+        /// };
+        /// obs.OnNext(userCreated);
+        /// </code>
+        /// </example>
         /// <seealso cref="AppendAsync(T)" />
         public void OnNext(T value)
         {
