@@ -178,7 +178,7 @@ namespace Grean.AtomEventStore
         /// </returns>
         public FifoEvents<T> Reverse()
         {
-            return new FifoEvents<T>(id, storage, serializer);
+            return new FifoEvents<T>(this.id, this.storage, this.serializer);
         }
 
         private AtomFeed ReadLast()
