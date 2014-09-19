@@ -170,6 +170,12 @@ namespace Grean.AtomEventStore
             return this.GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns the equivalent <see cref="FifoEvents&lt;T&gt;" /> instance.
+        /// </summary>
+        /// <returns>
+        /// The equivalent <see cref="FifoEvents&lt;T&gt;" /> instance.
+        /// </returns>
         public FifoEvents<T> Reverse()
         {
             return new FifoEvents<T>(id, storage, serializer);
