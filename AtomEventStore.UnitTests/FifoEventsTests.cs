@@ -95,5 +95,30 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = new IXmlAttributedTestEvent[] { tex, tey };
             Assert.True(expected.SequenceEqual(sut));
         }
+
+        [Theory, AutoAtomData]
+        public void ReverseYieldsCorrectEvents(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen]UuidIri dummyId,
+            AtomEventObserver<XmlAttributedTestEventX> writer,
+            FifoEvents<XmlAttributedTestEventX> sut,
+            List<XmlAttributedTestEventX> expected)
+        {
+            Enumerable
+                .Reverse(expected)
+                .ToList()
+                .ForEach(e => writer.AppendAsync(e).Wait());
+
+            LifoEvents<XmlAttributedTestEventX> actual = sut.Reverse();
+
+            Assert.True(
+                expected.SequenceEqual(actual),
+                "Events should be yielded in a LIFO order");
+            Assert.True(
+                expected.Cast<object>().SequenceEqual(actual.OfType<object>()),
+                "Events should be yielded in a LIFO order");
+        }
     }
 }
