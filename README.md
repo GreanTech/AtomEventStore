@@ -18,30 +18,15 @@ Due to its flexible design and simple storage requirements, you can easily imple
 AtomEventStore is easy to use, and is built on well-known abstractions already present in .NET.
 
 ### Writing events
-You write events one at a time using the `AtomEventObserver<T>` class.
+You [write events](https://github.com/GreanTech/AtomEventStore/wiki/Writing-events) one at a time using the `AtomEventObserver<T>` class.
 
 #### Synchronous writes
 
-`AtomEventObserver<T>` supports both synchronous and asynchronous writes. Synchronous writes offer the advantage that you can treat `AtomEventObserver<T>` as an `IObserver<T>`: 
+In this example, `obs` is an instance of `AtomEventObserver<object>`, and `userCreated` is represent an event: 
 
 ```C#
-IObserver<object> obs = new AtomEventObserver<object>(
-    eventStreamId, // a Guid
-    pageSize,      // an Int32
-    storage,       // an IAtomEventStorage object
-    serializer);   // an IContentSerializer object
-
-var userCreated = new UserCreated
-{
-    UserId = eventStreamId,
-    UserName = "ploeh",
-    Password = "12345",
-    Email = "ploeh@fnaah.com"
-};
 obs.OnNext(userCreated);
 ```
-
-It's not necessary to explicitly declare `obs` as `IObserver<object>`: you can use the `var` keyword as well; this example just uses explicit variable declaration in order to make it clearer what's going on.
 
 When the call to `obs.OnNext` returns, the `userCreated` event has been written to `storage`.
 
@@ -50,19 +35,6 @@ When the call to `obs.OnNext` returns, the `userCreated` event has been written 
 Asynchronous writes can be done using the standard Task Parallel Library (TPL) model for asynchrony:
 
 ```C#
-var obs = new AtomEventObserver<object>(
-    eventStreamId, // a Guid
-    pageSize,      // an Int32
-    storage,       // an IAtomEventStorage object
-    serializer);   // an IContentSerializer object
-
-var userCreated = new UserCreated
-{
-    UserId = eventStreamId,
-    UserName = "ploeh",
-    Password = "12345",
-    Email = "ploeh@fnaah.com"
-};
 await obs.AppendAsync(userCreated);
 ```
 
