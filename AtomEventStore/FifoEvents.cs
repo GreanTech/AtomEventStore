@@ -170,6 +170,17 @@ namespace Grean.AtomEventStore
             return this.GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns the equivalent <see cref="LifoEvents&lt;T&gt;" /> instance.
+        /// </summary>
+        /// <returns>
+        /// The equivalent <see cref="LifoEvents&lt;T&gt;" /> instance.
+        /// </returns>
+        public IEnumerable<T> Reverse()
+        {
+            return new LifoEvents<T>(this.id, this.storage, this.serializer);
+        }
+
         private AtomFeed ReadFirst()
         {
             var index = this.ReadIndex();

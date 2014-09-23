@@ -95,5 +95,49 @@ namespace Grean.AtomEventStore.UnitTests
             var expected = new IXmlAttributedTestEvent[] { tex, tey };
             Assert.True(expected.SequenceEqual(sut));
         }
+
+        [Theory, AutoAtomData]
+        public void ReverseYieldsCorrectEvents(
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen]UuidIri dummyId,
+            AtomEventObserver<XmlAttributedTestEventX> writer,
+            FifoEvents<XmlAttributedTestEventX> sut,
+            List<XmlAttributedTestEventX> expected)
+        {
+            Enumerable
+                .Reverse(expected)
+                .ToList()
+                .ForEach(e => writer.AppendAsync(e).Wait());
+
+            var actual = sut.Reverse();
+
+            Assert.True(
+                expected.SequenceEqual(actual),
+                "Events should be yielded in a LIFO order");
+            Assert.True(
+                expected.Cast<object>().SequenceEqual(actual.OfType<object>()),
+                "Events should be yielded in a LIFO order");
+        }
+
+        [Theory, AutoAtomData]
+        public void ReverseReturnsCorrectResult(
+            UuidIri id,
+            AtomEventsInMemory storage,
+            XmlContentSerializer serializer)
+        {
+            var sut =
+                new FifoEvents<XmlAttributedTestEventX>(id, storage, serializer);
+            var expected =
+                new LifoEvents<XmlAttributedTestEventX>(id, storage, serializer);
+
+            var actual = sut.Reverse();
+
+            var lifo = Assert.IsType<LifoEvents<XmlAttributedTestEventX>>(actual);
+            Assert.Equal(expected.Id, lifo.Id);
+            Assert.Equal(expected.Storage, lifo.Storage);
+            Assert.Equal(expected.Serializer, lifo.Serializer);
+        }
     }
 }
