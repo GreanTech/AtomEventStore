@@ -111,7 +111,7 @@ namespace Grean.AtomEventStore.UnitTests
                 .ToList()
                 .ForEach(e => writer.AppendAsync(e).Wait());
 
-            LifoEvents<XmlAttributedTestEventX> actual = sut.Reverse();
+            var actual = sut.Reverse();
 
             Assert.True(
                 expected.SequenceEqual(actual),
