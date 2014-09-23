@@ -176,7 +176,7 @@ namespace Grean.AtomEventStore
         /// <returns>
         /// The equivalent <see cref="FifoEvents&lt;T&gt;" /> instance.
         /// </returns>
-        public FifoEvents<T> Reverse()
+        public IEnumerable<T> Reverse()
         {
             return new FifoEvents<T>(this.id, this.storage, this.serializer);
         }

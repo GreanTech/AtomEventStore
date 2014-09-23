@@ -112,7 +112,7 @@ namespace Grean.AtomEventStore.UnitTests
         {
             expected.ForEach(e => writer.AppendAsync(e).Wait());
 
-            FifoEvents<XmlAttributedTestEventX> actual = sut.Reverse();
+            var actual = sut.Reverse();
 
             Assert.True(
                 expected.SequenceEqual(actual),
