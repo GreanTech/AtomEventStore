@@ -121,5 +121,24 @@ namespace Grean.AtomEventStore.UnitTests
                 expected.Cast<object>().SequenceEqual(actual.OfType<object>()),
                 "Events should be yielded in a FIFO order");
         }
+
+        [Theory, AutoAtomData]
+        public void ReverseReturnsCorrectResult(
+            UuidIri id,
+            AtomEventsInMemory storage,
+            XmlContentSerializer serializer)
+        {
+            var sut =
+                new LifoEvents<XmlAttributedTestEventX>(id, storage, serializer);
+            var expected =
+                new FifoEvents<XmlAttributedTestEventX>(id, storage, serializer);
+
+            var actual = sut.Reverse();
+
+            var fifo = Assert.IsType<FifoEvents<XmlAttributedTestEventX>>(actual);
+            Assert.Equal(expected.Id, fifo.Id);
+            Assert.Equal(expected.Storage, fifo.Storage);
+            Assert.Equal(expected.Serializer, fifo.Serializer);
+        }
     }
 }
