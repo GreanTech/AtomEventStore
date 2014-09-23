@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Grean.AtomEventStore.UnitTests.Demo.UserOnBoarding
+namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
 {
     public class Stories
     {

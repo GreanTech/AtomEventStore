@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Grean.AtomEventStore.UnitTests.Demo.UserOnBoarding
+namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
 {
     public class User
     {
