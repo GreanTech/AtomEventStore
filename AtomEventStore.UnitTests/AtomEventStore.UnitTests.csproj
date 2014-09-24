@@ -122,6 +122,7 @@
     <Compile Include="IXmlAttributedTestEventVisitor.cs" />
     <Compile Include="LifoEventsTests.cs" />
     <Compile Include="TestEventTypeResolver.cs" />
+    <Compile Include="TypeResolutionEntryTests.cs" />
     <Compile Include="TypeResolutionTableTests.cs" />
     <Compile Include="XmlAttributedChangeset.cs" />
     <Compile Include="Conventions.cs" />
