@@ -13,6 +13,9 @@ namespace Grean.AtomEventStore
         public TypeResolutionEntry(
             string xmlNamespace)
         {
+            if (xmlNamespace == null)
+                throw new ArgumentNullException("xmlNamespace");
+
             this.xmlNamespace = xmlNamespace;
         }
 
