@@ -13,6 +13,9 @@ namespace Grean.AtomEventStore
             if (localName == null)
                 throw new ArgumentNullException("localName");
 
+            if (xmlNamespace == null)
+                throw new ArgumentNullException("xmlNamespace");
+
             throw new NotImplementedException();
         }
     }
