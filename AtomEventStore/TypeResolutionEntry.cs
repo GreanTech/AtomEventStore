@@ -21,6 +21,8 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("xmlNamespace");
             if (localName == null)
                 throw new ArgumentNullException("localName");
+            if (resolution == null)
+                throw new ArgumentNullException("resolution");
 
             this.xmlNamespace = xmlNamespace;
             this.localName = localName;
