@@ -17,6 +17,9 @@ namespace Grean.AtomEventStore
 
         public TypeResolutionTable(params TypeResolutionEntry[] entries)
         {
+            if (entries == null)
+                throw new ArgumentNullException("entries");
+
             this.entries = entries;
         }
 
@@ -24,7 +27,6 @@ namespace Grean.AtomEventStore
         {
             if (localName == null)
                 throw new ArgumentNullException("localName");
-
             if (xmlNamespace == null)
                 throw new ArgumentNullException("xmlNamespace");
 
