@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
-    public class TypeResolutionTable
+    public class TypeResolutionTable : ITypeResolver
     {
+        public Type Resolve(string localName, string xmlNamespace)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
