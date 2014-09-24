@@ -10,10 +10,12 @@ namespace Grean.AtomEventStore
     {
         private readonly string xmlNamespace;
         private readonly string localName;
+        private readonly Type resolution;
 
         public TypeResolutionEntry(
             string xmlNamespace,
-            string localName)
+            string localName,
+            Type resolution)
         {
             if (xmlNamespace == null)
                 throw new ArgumentNullException("xmlNamespace");
@@ -22,6 +24,7 @@ namespace Grean.AtomEventStore
 
             this.xmlNamespace = xmlNamespace;
             this.localName = localName;
+            this.resolution = resolution;
         }
 
         public string XmlNamespace
@@ -32,6 +35,11 @@ namespace Grean.AtomEventStore
         public string LocalName
         {
             get { return this.localName; }
+        }
+
+        public Type Resolution
+        {
+            get { return this.resolution; }
         }
     }
 }
