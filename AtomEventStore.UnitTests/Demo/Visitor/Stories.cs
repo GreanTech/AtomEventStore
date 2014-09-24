@@ -18,7 +18,7 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             var pageSize = 25;
             var serializer =
                 new DataContractContentSerializer(new UserTypeResolver());
-            var obs = new AtomEventObserver<object>(
+            var obs = new AtomEventObserver<IUserEvent>(
                 eventStreamId,
                 pageSize,
                 storage,
