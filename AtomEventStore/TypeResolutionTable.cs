@@ -8,6 +8,18 @@ namespace Grean.AtomEventStore
 {
     public class TypeResolutionTable : ITypeResolver
     {
+        private readonly IEnumerable<TypeResolutionEntry> entries;
+
+        public TypeResolutionTable(IEnumerable<TypeResolutionEntry> entries)
+            : this(entries.ToArray())
+        {
+        }
+
+        public TypeResolutionTable(params TypeResolutionEntry[] entries)
+        {
+            this.entries = entries;
+        }
+
         public Type Resolve(string localName, string xmlNamespace)
         {
             if (localName == null)
@@ -17,6 +29,11 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("xmlNamespace");
 
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<TypeResolutionEntry> Entries
+        {
+            get { return this.entries; }
         }
     }
 }
