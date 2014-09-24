@@ -10,6 +10,9 @@ namespace Grean.AtomEventStore
     {
         public Type Resolve(string localName, string xmlNamespace)
         {
+            if (localName == null)
+                throw new ArgumentNullException("localName");
+
             throw new NotImplementedException();
         }
     }
