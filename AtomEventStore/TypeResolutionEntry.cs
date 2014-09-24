@@ -17,6 +17,8 @@ namespace Grean.AtomEventStore
         {
             if (xmlNamespace == null)
                 throw new ArgumentNullException("xmlNamespace");
+            if (localName == null)
+                throw new ArgumentNullException("localName");
 
             this.xmlNamespace = xmlNamespace;
             this.localName = localName;
