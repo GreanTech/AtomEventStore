@@ -16,5 +16,11 @@ namespace Grean.AtomEventStore.UnitTests
         {
             assertion.Verify(typeof(TypeResolutionEntry).GetProperties());
         }
+
+        [Theory, AutoAtomData]
+        public void VerifyGuardClauses(GuardClauseAssertion assertion)
+        {
+            assertion.Verify(typeof(TypeResolutionEntry));
+        }
     }
 }
