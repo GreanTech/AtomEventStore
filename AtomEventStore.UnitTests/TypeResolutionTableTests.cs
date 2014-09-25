@@ -46,11 +46,10 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveReturnsCorrectResult(
-            TypeResolutionEntry[] entries)
+            [FavorArrays]TypeResolutionTable sut)
         {
-            var entry = entries.PickRandom();
+            var entry = sut.Entries.ToArray().PickRandom();
             var expected = entry.Resolution;
-            var sut = new TypeResolutionTable(entries);
 
             var actual = sut.Resolve(entry.LocalName, entry.XmlNamespace);
 
