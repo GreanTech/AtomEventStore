@@ -37,7 +37,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void EntriesIsCorrectWhenInitializedWithEnumerable(
-            [Frozen]IEnumerable<TypeResolutionEntry> expected,
+            [Frozen]IReadOnlyCollection<TypeResolutionEntry> expected,
             [FavorEnumerables]TypeResolutionTable sut)
         {
             var actual = sut.Entries;

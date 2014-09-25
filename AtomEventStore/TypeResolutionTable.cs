@@ -28,7 +28,8 @@ namespace Grean.AtomEventStore
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="entries" /> is <see langword="null" />.
         /// </exception>
-        public TypeResolutionTable(IEnumerable<TypeResolutionEntry> entries)
+        public TypeResolutionTable(
+            IReadOnlyCollection<TypeResolutionEntry> entries)
             : this(entries.ToArray())
         {
         }
@@ -104,7 +105,7 @@ namespace Grean.AtomEventStore
         /// The entries of the resolution table, as originally provided via the
         /// constructor.
         /// </value>
-        /// <seealso cref="TypeResolutionTable(IEnumerable{TypeResolutionEntry})" />
+        /// <seealso cref="TypeResolutionTable(IReadOnlyCollection{TypeResolutionEntry})" />
         public IEnumerable<TypeResolutionEntry> Entries
         {
             get { return this.entries; }
