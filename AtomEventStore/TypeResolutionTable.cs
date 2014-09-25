@@ -96,6 +96,14 @@ namespace Grean.AtomEventStore
             }
         }
 
+        /// <summary>
+        /// Gets the entries of the resolution table.
+        /// </summary>
+        /// <value>
+        /// The entries of the resolution table, as originally provided via the
+        /// constructor.
+        /// </value>
+        /// <seealso cref="TypeResolutionTable(IEnumerable{TypeResolutionEntry})" />
         public IEnumerable<TypeResolutionEntry> Entries
         {
             get { return this.entries; }
