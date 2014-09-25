@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Represents an Entry in a <see cref="TypeResolutionTable"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The TypeResolutionEntry class represents a set of required data in
+    /// order to construct a valid <see cref="TypeResolutionTable"/>.
+    /// </para>
+    /// </remarks>
     public class TypeResolutionEntry
     {
         private readonly string xmlNamespace;
