@@ -61,16 +61,42 @@ namespace Grean.AtomEventStore
             this.resolution = resolution;
         }
 
+        /// <summary>
+        /// Gets the XML namespace of the <see cref="TypeResolutionEntry"/>.
+        /// </summary>
+        /// <value>
+        /// The XML namespace of the <see cref="TypeResolutionEntry"/>, as
+        /// originally provided via the constructor.
+        /// </value>
+        /// <seealso cref="TypeResolutionEntry(string, string, Type)" />
         public string XmlNamespace
         {
             get { return this.xmlNamespace; }
         }
 
+        /// <summary>
+        /// Gets the local name of the <see cref="TypeResolutionEntry"/>.
+        /// </summary>
+        /// <value>
+        /// The local name of the <see cref="TypeResolutionEntry"/>, as
+        /// originally provided via the constructor.
+        /// </value>
+        /// <seealso cref="TypeResolutionEntry(string, string, Type)" />
         public string LocalName
         {
             get { return this.localName; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Type"/> resolved by the XML namespace and the
+        /// local name of the <see cref="TypeResolutionEntry"/>.
+        /// </summary>
+        /// <value>
+        /// The <see cref="Type"/> resolved by the XML namespace and the local
+        /// name of the <see cref="TypeResolutionEntry"/>, as originally
+        /// provided via the constructor.
+        /// </value>
+        /// <seealso cref="TypeResolutionEntry(string, string, Type)" />
         public Type Resolution
         {
             get { return this.resolution; }
