@@ -86,5 +86,21 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Throws<ArgumentException>(() =>
                 sut.Resolve(notMapped.LocalName, mapped.XmlNamespace));
         }
+
+        [Theory, AutoAtomData]
+        public void ResolveThrowsForMappedLocalNameAndUnmappedXmlNamespace(
+            [FavorArrays]TypeResolutionTable sut)
+        {
+            var dummyType = typeof(Version);
+            var notMapped =
+                new TypeResolutionEntry("not", "mapped", dummyType);
+            Assert.False(sut.Entries.Any(x =>
+                x.LocalName == notMapped.LocalName &&
+                x.XmlNamespace == notMapped.XmlNamespace));
+            var mapped = sut.Entries.ToArray().PickRandom();
+
+            Assert.Throws<ArgumentException>(() =>
+                sut.Resolve(mapped.LocalName, notMapped.XmlNamespace));
+        }
     }
 }
