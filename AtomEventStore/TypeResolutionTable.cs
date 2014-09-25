@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Grean.AtomEventStore
 {
+    /// <summary>
+    /// Resolves one or more <see cref="TypeResolutionEntry" /> to a
+    /// <see cref="Type" />.
+    /// </summary>
     public class TypeResolutionTable : ITypeResolver
     {
         private readonly IEnumerable<TypeResolutionEntry> entries;
