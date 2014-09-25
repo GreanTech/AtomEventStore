@@ -89,6 +89,7 @@ namespace Grean.AtomEventStore
             {
                 throw new ArgumentException(
                     string.Format(
+                        System.Globalization.CultureInfo.CurrentCulture,
                         "The provided local name ({0}) and XML namespace ({1}) could not be mapped to a proper type.",
                         localName,
                         xmlNamespace),
