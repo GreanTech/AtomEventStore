@@ -30,7 +30,11 @@ namespace Grean.AtomEventStore
             if (xmlNamespace == null)
                 throw new ArgumentNullException("xmlNamespace");
 
-            throw new NotImplementedException();
+            return this.entries
+                .Single(x =>
+                    x.LocalName == localName &&
+                    x.XmlNamespace == xmlNamespace)
+                .Resolution;
         }
 
         public IEnumerable<TypeResolutionEntry> Entries

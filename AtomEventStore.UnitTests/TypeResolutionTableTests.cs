@@ -1,4 +1,5 @@
-﻿using Ploeh.AutoFixture.Idioms;
+﻿using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.Idioms;
 using Ploeh.AutoFixture.Xunit;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,19 @@ namespace Grean.AtomEventStore.UnitTests
             var sut = new TypeResolutionTable(expected);
             var actual = sut.Entries;
             Assert.True(expected.SequenceEqual(actual));
+        }
+
+        [Theory, AutoAtomData]
+        public void ResolveReturnsCorrectResult(
+            TypeResolutionEntry[] entries)
+        {
+            var entry = entries.PickRandom();
+            var expected = entry.Resolution;
+            var sut = new TypeResolutionTable(entries);
+
+            var actual = sut.Resolve(entry.LocalName, entry.XmlNamespace);
+
+            Assert.Equal(expected, actual);
         }
     }
 }
