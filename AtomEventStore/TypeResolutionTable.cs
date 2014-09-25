@@ -14,11 +14,39 @@ namespace Grean.AtomEventStore
     {
         private readonly IEnumerable<TypeResolutionEntry> entries;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TypeResolutionTable"/>
+        /// class.
+        /// </summary>
+        /// <param name="entries">The entries of the resolution table.</param>
+        /// <remarks>
+        /// <para>
+        /// The constructor arguments are subsequently available on the object
+        /// as properties.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="entries" /> is <see langword="null" />.
+        /// </exception>
         public TypeResolutionTable(IEnumerable<TypeResolutionEntry> entries)
             : this(entries.ToArray())
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TypeResolutionTable"/>
+        /// class.
+        /// </summary>
+        /// <param name="entries">The entries of the resolution table.</param>
+        /// <remarks>
+        /// <para>
+        /// The constructor arguments are subsequently available on the object
+        /// as properties.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="entries" /> is <see langword="null" />.
+        /// </exception>
         public TypeResolutionTable(params TypeResolutionEntry[] entries)
         {
             if (entries == null)
