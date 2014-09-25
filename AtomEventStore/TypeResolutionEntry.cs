@@ -19,7 +19,7 @@ namespace Grean.AtomEventStore
     {
         private readonly string xmlNamespace;
         private readonly string localName;
-        private readonly Type resolution;
+        private readonly Type resolvedType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TypeResolutionEntry"/>
@@ -28,7 +28,7 @@ namespace Grean.AtomEventStore
         /// <param name="xmlNamespace">The XML namespace of the XML name.
         /// </param>
         /// <param name="localName">The local name of the XML name.</param>
-        /// <param name="resolution">The <see cref="Type"/> resolved by the
+        /// <param name="resolvedType">The <see cref="Type"/> resolved by the
         /// XML namespace and the local name of the XML name.
         /// </param>
         /// <remarks>
@@ -42,23 +42,23 @@ namespace Grean.AtomEventStore
         /// or
         /// <paramref name="localName" />
         /// or
-        /// <paramref name="resolution" /> is <see langword="null" />.
+        /// <paramref name="resolvedType" /> is <see langword="null" />.
         /// </exception>
         public TypeResolutionEntry(
             string xmlNamespace,
             string localName,
-            Type resolution)
+            Type resolvedType)
         {
             if (xmlNamespace == null)
                 throw new ArgumentNullException("xmlNamespace");
             if (localName == null)
                 throw new ArgumentNullException("localName");
-            if (resolution == null)
-                throw new ArgumentNullException("resolution");
+            if (resolvedType == null)
+                throw new ArgumentNullException("resolvedType");
 
             this.xmlNamespace = xmlNamespace;
             this.localName = localName;
-            this.resolution = resolution;
+            this.resolvedType = resolvedType;
         }
 
         /// <summary>
@@ -97,9 +97,9 @@ namespace Grean.AtomEventStore
         /// provided via the constructor.
         /// </value>
         /// <seealso cref="TypeResolutionEntry(string, string, Type)" />
-        public Type Resolution
+        public Type ResolvedType
         {
-            get { return this.resolution; }
+            get { return this.resolvedType; }
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Grean.AtomEventStore.UnitTests
             [FavorArrays]TypeResolutionTable sut)
         {
             var entry = sut.Entries.ToArray().PickRandom();
-            var expected = entry.Resolution;
+            var expected = entry.ResolvedType;
 
             var actual = sut.Resolve(entry.LocalName, entry.XmlNamespace);
 

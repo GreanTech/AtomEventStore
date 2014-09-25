@@ -84,7 +84,7 @@ namespace Grean.AtomEventStore
                     .Single(x =>
                         x.LocalName == localName &&
                         x.XmlNamespace == xmlNamespace)
-                    .Resolution;
+                    .ResolvedType;
             }
             catch (InvalidOperationException e)
             {
