@@ -30,11 +30,23 @@ namespace Grean.AtomEventStore
             if (xmlNamespace == null)
                 throw new ArgumentNullException("xmlNamespace");
 
-            return this.entries
-                .Single(x =>
-                    x.LocalName == localName &&
-                    x.XmlNamespace == xmlNamespace)
-                .Resolution;
+            try
+            {
+                return this.entries
+                    .Single(x =>
+                        x.LocalName == localName &&
+                        x.XmlNamespace == xmlNamespace)
+                    .Resolution;
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new ArgumentException(
+                    string.Format(
+                        "The provided local name ({0}) and XML namespace ({1}) could not be mapped to a proper type.",
+                        localName,
+                        xmlNamespace),
+                    e);
+            }
         }
 
         public IEnumerable<TypeResolutionEntry> Entries
