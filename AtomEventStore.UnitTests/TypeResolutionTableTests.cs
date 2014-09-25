@@ -28,9 +28,9 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void EntriesIsCorrectWhenInitializedWithArray(
-            TypeResolutionEntry[] expected)
+            [Frozen]TypeResolutionEntry[] expected,
+            [FavorArrays]TypeResolutionTable sut)
         {
-            var sut = new TypeResolutionTable(expected);
             var actual = sut.Entries;
             Assert.True(expected.SequenceEqual(actual));
         }
