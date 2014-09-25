@@ -27,6 +27,21 @@ namespace Grean.AtomEventStore
             this.entries = entries;
         }
 
+        /// <summary>
+        /// Resolves one or more <see cref="TypeResolutionEntry" /> to a
+        /// <see cref="Type" />.
+        /// </summary>
+        /// <param name="localName">
+        /// The name of an XML element or attribute.
+        /// </param>
+        /// <param name="xmlNamespace">
+        /// The XML namespace in which <paramref name="localName" /> is
+        /// defined.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Type" /> corresponding to
+        /// <paramref name="localName" /> and <paramref name="xmlNamespace" />.
+        /// </returns>
         public Type Resolve(string localName, string xmlNamespace)
         {
             if (localName == null)
