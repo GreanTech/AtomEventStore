@@ -58,10 +58,15 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveThrowsWhenInputCanNotBeMappedToProperType(
-            TypeResolutionEntry notMapped,
-            TypeResolutionEntry[] entries)
+            TypeResolutionTable sut)
         {
-            var sut = new TypeResolutionTable(entries);
+            var dummyType = typeof(Version);
+            var notMapped =
+                new TypeResolutionEntry("not", "mapped", dummyType);
+            Assert.False(sut.Entries.Any(x =>
+                x.LocalName == notMapped.LocalName &&
+                x.XmlNamespace == notMapped.XmlNamespace));
+
             Assert.Throws<ArgumentException>(() =>
                 sut.Resolve(notMapped.LocalName, notMapped.XmlNamespace));
         }
