@@ -46,7 +46,8 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveReturnsCorrectResult(
-            [FavorArrays]TypeResolutionTable sut)
+            TypeResolutionTable sut,
+            Fixture fixture)
         {
             var entry = sut.Entries.ToArray().PickRandom();
             var expected = entry.ResolvedType;
@@ -71,7 +72,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveThrowsForUnmappedLocalNameAndMappedXmlNamespace(
-            [FavorArrays]TypeResolutionTable sut,
+            TypeResolutionTable sut,
             TypeResolutionEntry notMapped)
         {
             Assert.False(sut.Entries.Any(x =>
@@ -85,7 +86,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveThrowsForMappedLocalNameAndUnmappedXmlNamespace(
-            [FavorArrays]TypeResolutionTable sut,
+            TypeResolutionTable sut,
             TypeResolutionEntry notMapped)
         {
             Assert.False(sut.Entries.Any(x =>

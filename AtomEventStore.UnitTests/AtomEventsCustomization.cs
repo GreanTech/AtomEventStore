@@ -17,6 +17,7 @@ namespace Grean.AtomEventStore.UnitTests
             : base(
                 new PageSizeCustomization(),
                 new TypeResolverCustomization(),
+                new ReadOnlyCollectionCustomization(),
                 new ContentSerializerCustomization(),
                 new DirectoryCustomization(),
                 new StreamCustomization(),
@@ -165,6 +166,37 @@ namespace Grean.AtomEventStore.UnitTests
             {
                 fixture.Register<Stream>(
                     () => new MemoryStream());
+            }
+        }
+
+        private class ReadOnlyCollectionCustomization : ICustomization
+        {
+            public void Customize(IFixture fixture)
+            {
+                fixture.Customizations.Add(new ReadOnlyCollectionRelay());
+            }
+
+            private class ReadOnlyCollectionRelay : ISpecimenBuilder
+            {
+                public object Create(object request, ISpecimenContext context)
+                {
+                    if (context == null)
+                        throw new ArgumentNullException("context");
+
+                    var type = request as Type;
+                    if (type == null)
+                        return new NoSpecimen(request);
+
+                    var args = type.GetGenericArguments();
+                    if (args.Length != 1 ||
+                        type.GetGenericTypeDefinition() !=
+                            typeof(IReadOnlyCollection<>))
+                        return new NoSpecimen(request);
+
+                    var relayedType =
+                        typeof(ICollection<>).MakeGenericType(args);
+                    return context.Resolve(relayedType);
+                }
             }
         }
     }
