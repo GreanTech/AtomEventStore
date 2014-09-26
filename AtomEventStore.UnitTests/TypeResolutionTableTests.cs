@@ -58,11 +58,9 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveThrowsWhenInputCanNotBeMappedToProperType(
-            TypeResolutionTable sut)
+            TypeResolutionTable sut,
+            TypeResolutionEntry notMapped)
         {
-            var dummyType = typeof(Version);
-            var notMapped =
-                new TypeResolutionEntry("not", "mapped", dummyType);
             Assert.False(sut.Entries.Any(x =>
                 x.LocalName == notMapped.LocalName &&
                 x.XmlNamespace == notMapped.XmlNamespace));
@@ -73,11 +71,9 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveThrowsForUnmappedLocalNameAndMappedXmlNamespace(
-            [FavorArrays]TypeResolutionTable sut)
+            [FavorArrays]TypeResolutionTable sut,
+            TypeResolutionEntry notMapped)
         {
-            var dummyType = typeof(Version);
-            var notMapped =
-                new TypeResolutionEntry("not", "mapped", dummyType);
             Assert.False(sut.Entries.Any(x =>
                 x.LocalName == notMapped.LocalName &&
                 x.XmlNamespace == notMapped.XmlNamespace));
@@ -89,11 +85,9 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void ResolveThrowsForMappedLocalNameAndUnmappedXmlNamespace(
-            [FavorArrays]TypeResolutionTable sut)
+            [FavorArrays]TypeResolutionTable sut,
+            TypeResolutionEntry notMapped)
         {
-            var dummyType = typeof(Version);
-            var notMapped =
-                new TypeResolutionEntry("not", "mapped", dummyType);
             Assert.False(sut.Entries.Any(x =>
                 x.LocalName == notMapped.LocalName &&
                 x.XmlNamespace == notMapped.XmlNamespace));
