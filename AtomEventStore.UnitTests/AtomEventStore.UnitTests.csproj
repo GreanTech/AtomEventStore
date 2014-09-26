@@ -112,7 +112,6 @@
     <Compile Include="Demo\Visitor\Stories.cs" />
     <Compile Include="Demo\Visitor\User.cs" />
     <Compile Include="Demo\Visitor\UserCreated.cs" />
-    <Compile Include="Demo\Visitor\UserTypeResolver.cs" />
     <Compile Include="Demo\Visitor\UserVisitor.cs" />
     <Compile Include="Disarray.cs" />
     <Compile Include="FifoEventsTests.cs" />

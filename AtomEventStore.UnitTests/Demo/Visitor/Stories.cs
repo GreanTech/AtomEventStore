@@ -17,7 +17,20 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             var storage = new AtomEventsInMemory();
             var pageSize = 25;
             var serializer =
-                new DataContractContentSerializer(new UserTypeResolver());
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "email-changed",
+                            typeof(EmailChanged))));
             var obs = new AtomEventObserver<IUserEvent>(
                 eventStreamId,
                 pageSize,
