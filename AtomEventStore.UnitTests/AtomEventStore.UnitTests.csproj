@@ -104,7 +104,6 @@
     <Compile Include="Demo\AcyclicVisitor\Stories.cs" />
     <Compile Include="Demo\AcyclicVisitor\User.cs" />
     <Compile Include="Demo\AcyclicVisitor\UserCreated.cs" />
-    <Compile Include="Demo\AcyclicVisitor\UserTypeResolver.cs" />
     <Compile Include="Demo\Visitor\EmailChanged.cs" />
     <Compile Include="Demo\Visitor\EmailVerified.cs" />
     <Compile Include="Demo\Visitor\IUserEvent.cs" />

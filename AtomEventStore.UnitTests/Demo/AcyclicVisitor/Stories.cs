@@ -17,8 +17,21 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
                 new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
             var storage = new AtomEventsInMemory();
             var pageSize = 25;
-            var serializer = 
-                new DataContractContentSerializer(new UserTypeResolver());
+            var serializer =
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-changed",
+                            typeof(EmailChanged))));
             IObserver<object> obs = new AtomEventObserver<object>(
                 eventStreamId, // a Guid
                 pageSize,      // an Int32
@@ -45,7 +58,20 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             var storage = new AtomEventsInMemory();
             var pageSize = 25;
             var serializer =
-                new DataContractContentSerializer(new UserTypeResolver());
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-changed",
+                            typeof(EmailChanged))));
             var obs = new AtomEventObserver<object>(
                 eventStreamId, // a Guid
                 pageSize,      // an Int32
@@ -72,7 +98,20 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             var storage = new AtomEventsInMemory();
             var pageSize = 25;
             var serializer =
-                new DataContractContentSerializer(new UserTypeResolver());
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-changed",
+                            typeof(EmailChanged))));
             var obs = new AtomEventObserver<object>(
                 eventStreamId,
                 pageSize, 
@@ -105,7 +144,20 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             var storage = new AtomEventsInMemory();
             var pageSize = 25;
             var serializer =
-                new DataContractContentSerializer(new UserTypeResolver());
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-changed",
+                            typeof(EmailChanged))));
             var obs = new AtomEventObserver<object>(
                 eventStreamId,
                 pageSize,
