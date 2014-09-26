@@ -78,24 +78,19 @@ namespace Grean.AtomEventStore
             if (xmlNamespace == null)
                 throw new ArgumentNullException("xmlNamespace");
 
-            try
-            {
-                return this.entries
-                    .Single(x =>
-                        x.LocalName == localName &&
-                        x.XmlNamespace == xmlNamespace)
-                    .ResolvedType;
-            }
-            catch (InvalidOperationException e)
-            {
+            var result = this.entries
+                .SingleOrDefault(x =>
+                    x.LocalName == localName &&
+                    x.XmlNamespace == xmlNamespace);
+
+            if (result == null)
                 throw new ArgumentException(
                     string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         "The provided local name ({0}) and XML namespace ({1}) could not be mapped to a proper type.",
                         localName,
-                        xmlNamespace),
-                    e);
-            }
+                        xmlNamespace));
+            return result.ResolvedType;
         }
 
         /// <summary>
