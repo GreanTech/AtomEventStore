@@ -10,6 +10,86 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
     public class Stories
     {
         [Fact]
+        public void WriteASingleEventSynchronously()
+        {
+            var eventStreamId =
+                new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
+            var storage = new AtomEventsInMemory();
+            var pageSize = 25;
+            var serializer =
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "email-changed",
+                            typeof(EmailChanged))));
+            IObserver<IUserEvent> obs = new AtomEventObserver<IUserEvent>(
+                eventStreamId, // a Guid
+                pageSize,      // an Int32
+                storage,       // an IAtomEventStorage object
+                serializer);   // an IContentSerializer object
+
+            var userCreated = new UserCreated
+            {
+                UserId = eventStreamId,
+                UserName = "ploeh",
+                Password = "12345",
+                Email = "ploeh@fnaah.com"
+            };
+            obs.OnNext(userCreated);
+
+            Assert.NotEmpty(storage);
+        }
+
+        [Fact]
+        public async Task WriteASingleEventAsynchronously()
+        {
+            var eventStreamId =
+                new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
+            var storage = new AtomEventsInMemory();
+            var pageSize = 25;
+            var serializer =
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-sign-up",
+                            "email-changed",
+                            typeof(EmailChanged))));
+            var obs = new AtomEventObserver<IUserEvent>(
+                eventStreamId, // a Guid
+                pageSize,      // an Int32
+                storage,       // an IAtomEventStorage object
+                serializer);   // an IContentSerializer object
+
+            var userCreated = new UserCreated
+            {
+                UserId = eventStreamId,
+                UserName = "ploeh",
+                Password = "12345",
+                Email = "ploeh@fnaah.com"
+            };
+            await obs.AppendAsync(userCreated);
+
+            Assert.NotEmpty(storage);
+        }
+
+        [Fact]
         public void ReadMultipleEvents()
         {
             var eventStreamId =
