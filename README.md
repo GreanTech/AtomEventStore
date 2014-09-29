@@ -4,13 +4,15 @@ A server-less .NET Event Store based on the Atom syndication format.
 
 ## Highlights:
 
+AtomEventStore is designed to be a lightweight Event Store implementation. It offers the following benefits:
+
 - No server required; only storage
 - Human-readable storage format
 - Supports file storage
 - Supports in-memory storage
 - Supports Azure Blob storage
-- Designed to be scalable
-- Extensible
+- Designed to be [scalable](https://github.com/GreanTech/AtomEventStore/wiki/Scalable)
+- [Extensible](https://github.com/GreanTech/AtomEventStore/wiki/Reusable)
 
 Due to its flexible design and simple storage requirements, you can easily implement a storage implementation on top of your favourite storage mechanism: document databases, relational database, and so on. All you have to do is to implement a *single interface with two methods!* If you are interested in contributing a storage implementation, please first [submit an issue](https://github.com/GreanTech/AtomEventStore/issues) to start the discussion.
 
