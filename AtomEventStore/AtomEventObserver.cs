@@ -173,12 +173,12 @@ namespace Grean.AtomEventStore
         /// AtomEventObserver&lt;T&gt; uses the standard Task Parallel Library
         /// (TPL) model, you can use it with 'async' and 'await'.
         /// <code>
-        /// var obs = new AtomEventObserver&lt;object&gt;(
+        /// var obs = new AtomEventObserver&lt;IUserEvent&gt;(
         ///     eventStreamId, // a Guid
         ///     pageSize,      // an Int32
         ///     storage,       // an IAtomEventStorage object
         ///     serializer);   // an IContentSerializer object
-        /// 
+        ///
         /// var userCreated = new UserCreated
         /// {
         ///     UserId = eventStreamId,
@@ -456,12 +456,12 @@ namespace Grean.AtomEventStore
         /// to make it clearer that 'obs' can be treated as an
         /// <see cref="IEnumerable{T}" />.
         /// <code>
-        /// IObserver&lt;object&gt; obs = new AtomEventObserver&lt;object&gt;(
+        /// IObserver&lt;IUserEvent&gt; obs = new AtomEventObserver&lt;IUserEvent&gt;(
         ///     eventStreamId, // a Guid
         ///     pageSize,      // an Int32
         ///     storage,       // an IAtomEventStorage object
         ///     serializer);   // an IContentSerializer object
-        /// 
+        ///
         /// var userCreated = new UserCreated
         /// {
         ///     UserId = eventStreamId,
