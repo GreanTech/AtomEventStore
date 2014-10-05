@@ -77,14 +77,13 @@ namespace Grean.AtomEventStore.UnitTests
         public void CreateWithAssemblyWithoutAnnotatedTypesThrows()
         {
             var assembly = typeof(Version).Assembly;
-            var annotatedTypes =
+            Assert.Empty(
                 from t in assembly.GetTypes()
                 from a in t.GetCustomAttributes(
                               typeof(DataContractAttribute), inherit: false)
                            .Cast<DataContractAttribute>()
                 where t.IsDefined(a.GetType(), inherit: false)
-                select t;
-            Assert.Empty(annotatedTypes);
+                select t);
 
             Assert.Throws<InvalidOperationException>(() =>
                 DataContractContentSerializer.Create(assembly));
@@ -95,14 +94,13 @@ namespace Grean.AtomEventStore.UnitTests
             DataContractTestEventX dctex)
         {
             var assembly = typeof(DataContractTestEventX).Assembly;
-            var annotatedTypes =
+            Assert.NotEmpty(
                 from t in assembly.GetTypes()
                 from a in t.GetCustomAttributes(
                               typeof(DataContractAttribute), inherit: false)
                            .Cast<DataContractAttribute>()
                 where t.IsDefined(a.GetType(), inherit: false)
-                select t;
-            Assert.NotEmpty(annotatedTypes);
+                select t);
             var sut = DataContractContentSerializer.Create(assembly);
 
             var sb = new StringBuilder();
@@ -126,14 +124,13 @@ namespace Grean.AtomEventStore.UnitTests
             DataContractTestEventX dctex)
         {
             var assembly = typeof(DataContractTestEventX).Assembly;
-            var annotatedTypes =
+            Assert.NotEmpty(
                 from t in assembly.GetTypes()
                 from a in t.GetCustomAttributes(
                               typeof(DataContractAttribute), inherit: false)
                            .Cast<DataContractAttribute>()
                 where t.IsDefined(a.GetType(), inherit: false)
-                select t;
-            Assert.NotEmpty(annotatedTypes);
+                select t);
             var sut = DataContractContentSerializer.Create(assembly);
 
             using (var ms = new MemoryStream())
