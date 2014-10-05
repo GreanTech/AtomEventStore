@@ -64,5 +64,12 @@ namespace Grean.AtomEventStore.UnitTests
                 }
             }
         }
+
+        [Fact]
+        public void CreateWithNullAssemblyThrows()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+                DataContractContentSerializer.Create(null));
+        }
     }
 }
