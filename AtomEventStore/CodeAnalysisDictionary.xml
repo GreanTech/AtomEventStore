@@ -11,6 +11,7 @@
       <Word>iri</Word>
       <Word>fifo</Word>
       <Word>lifo</Word>
+      <Word>DataContractAttribute</Word>
     </Recognized>
     <Deprecated>
       <Term PreferredAlternate=""></Term>
