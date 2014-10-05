@@ -107,6 +107,25 @@ namespace Grean.AtomEventStore
             return new XmlAtomContent(value);
         }
 
+        /// <summary>
+        /// Creates a new instance of the
+        /// <see cref="DataContractContentSerializer"/> class.
+        /// </summary>
+        /// <param name="assembly">
+        /// An <see cref="Assembly" /> used to find all types annotated with
+        /// <see cref="System.Runtime.Serialization.DataContractAttribute"/>
+        /// attributes, and pull the associated local and namespace names
+        /// out of them.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="assembly" /> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="assembly" /> doesn't contain any public types
+        /// annotated with
+        /// <see cref="System.Runtime.Serialization.DataContractAttribute"/>
+        /// class.
+        /// </exception>
         public static DataContractContentSerializer Create(Assembly assembly)
         {
             if (assembly == null)
