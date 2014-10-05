@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Ploeh.AutoFixture.Xunit;
 using Moq;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -70,6 +71,23 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.Throws<ArgumentNullException>(() =>
                 DataContractContentSerializer.Create(null));
+        }
+
+        [Fact]
+        public void CreateWithAssemblyWithoutAnnotatedTypesThrows()
+        {
+            var assembly = typeof(Version).Assembly;
+            var annotatedTypes =
+                from t in assembly.GetTypes()
+                from a in t.GetCustomAttributes(
+                              typeof(DataContractAttribute), inherit: false)
+                           .Cast<DataContractAttribute>()
+                where t.IsDefined(a.GetType(), inherit: false)
+                select t;
+            Assert.Empty(annotatedTypes);
+
+            Assert.Throws<InvalidOperationException>(() =>
+                DataContractContentSerializer.Create(assembly));
         }
     }
 }
