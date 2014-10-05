@@ -132,7 +132,7 @@ namespace Grean.AtomEventStore
                 throw new ArgumentNullException("assembly");
 
             var entries =
-                (from t in assembly.GetTypes()
+                (from t in assembly.GetExportedTypes()
                  from a in t.GetCustomAttributes(
                                typeof(DataContractAttribute), inherit: false)
                             .Cast<DataContractAttribute>()
