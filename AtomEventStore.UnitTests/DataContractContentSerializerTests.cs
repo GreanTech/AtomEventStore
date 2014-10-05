@@ -89,5 +89,36 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Throws<InvalidOperationException>(() =>
                 DataContractContentSerializer.Create(assembly));
         }
+
+        [Theory, AutoData]
+        public void CreateWithAssemblyCorrectlySerializesAttributedClassInstance(
+            DataContractTestEventX dctex)
+        {
+            var assembly = typeof(DataContractTestEventX).Assembly;
+            var annotatedTypes =
+                from t in assembly.GetTypes()
+                from a in t.GetCustomAttributes(
+                              typeof(DataContractAttribute), inherit: false)
+                           .Cast<DataContractAttribute>()
+                where t.IsDefined(a.GetType(), inherit: false)
+                select t;
+            Assert.NotEmpty(annotatedTypes);
+            var sut = DataContractContentSerializer.Create(assembly);
+
+            var sb = new StringBuilder();
+            using (var w = XmlWriter.Create(sb))
+            {
+                sut.Serialize(w, dctex);
+                w.Flush();
+                var actual = sb.ToString();
+
+                var expected = XDocument.Parse(
+                    "<test-event-x xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://grean.rocks/dc\">" +
+                    "  <number>" + dctex.Number + "</number>" +
+                    "  <text>" + dctex.Text + "</text>" +
+                    "</test-event-x>");
+                Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
+            }
+        }
     }
 }

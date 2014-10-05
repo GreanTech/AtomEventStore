@@ -112,18 +112,23 @@ namespace Grean.AtomEventStore
             if (assembly == null)
                 throw new ArgumentNullException("assembly");
 
-            var annotatedTypes =
-                from t in assembly.GetTypes()
-                from a in t.GetCustomAttributes(
-                              typeof(DataContractAttribute), inherit: false)
-                           .Cast<DataContractAttribute>()
-                where t.IsDefined(a.GetType(), inherit: false)
-                select t;
-            if (!annotatedTypes.Any())
+            var entries =
+                (from t in assembly.GetTypes()
+                 from a in t.GetCustomAttributes(
+                               typeof(DataContractAttribute), inherit: false)
+                            .Cast<DataContractAttribute>()
+                 where t.IsDefined(a.GetType(), inherit: false)
+                 select new TypeResolutionEntry(a.Namespace, a.Name, t))
+                 .ToArray();
+
+            if (!entries.Any())
                 throw new InvalidOperationException(
                     "This assembly doesn't contain any public types annotated with DataContractAttribute.");
 
-            throw new NotImplementedException();
+            var serializer =
+                new DataContractContentSerializer(
+                    new TypeResolutionTable(entries));
+            return serializer;
         }
     }
 }
