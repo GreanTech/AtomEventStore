@@ -126,7 +126,7 @@ namespace Grean.AtomEventStore
         /// <see cref="System.Runtime.Serialization.DataContractAttribute"/>
         /// class.
         /// </exception>
-        public static DataContractContentSerializer Create(Assembly assembly)
+        public static ITypeResolver CreateTypeResolver(Assembly assembly)
         {
             if (assembly == null)
                 throw new ArgumentNullException("assembly");
@@ -144,10 +144,7 @@ namespace Grean.AtomEventStore
                 throw new ArgumentException(
                     "This assembly doesn't contain any public types annotated with DataContractAttribute.");
 
-            var serializer =
-                new DataContractContentSerializer(
-                    new TypeResolutionTable(entries));
-            return serializer;
+            return new TypeResolutionTable(entries);
         }
     }
 }

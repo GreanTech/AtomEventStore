@@ -67,18 +67,18 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Fact]
-        public void CreateWithNullAssemblyThrows()
+        public void CreateTypeResolverWithNullAssemblyThrows()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                DataContractContentSerializer.Create(null));
+                DataContractContentSerializer.CreateTypeResolver(null));
         }
 
         [Fact]
-        public void CreateWithAssemblyWithoutAnnotatedTypesThrows()
+        public void CreateTypeResolverWithAssemblyWithoutAnnotatedTypesThrows()
         {
             var assembly = typeof(Version).Assembly;
             Assert.Empty(
-                from t in assembly.GetTypes()
+                from t in assembly.GetExportedTypes()
                 from a in t.GetCustomAttributes(
                               typeof(DataContractAttribute), inherit: false)
                            .Cast<DataContractAttribute>()
@@ -86,68 +86,30 @@ namespace Grean.AtomEventStore.UnitTests
                 select t);
 
             Assert.Throws<ArgumentException>(() =>
-                DataContractContentSerializer.Create(assembly));
+                DataContractContentSerializer.CreateTypeResolver(assembly));
         }
 
-        [Theory, AutoData]
-        public void CreateWithAssemblyCorrectlySerializesAttributedClassInstance(
-            DataContractTestEventX dctex)
+        [Fact]
+        public void CreateTypeResolverReturnsCorrectResult()
         {
-            var assembly = typeof(DataContractTestEventX).Assembly;
-            Assert.NotEmpty(
-                from t in assembly.GetTypes()
-                from a in t.GetCustomAttributes(
-                              typeof(DataContractAttribute), inherit: false)
-                           .Cast<DataContractAttribute>()
-                where t.IsDefined(a.GetType(), inherit: false)
-                select t);
-            var sut = DataContractContentSerializer.Create(assembly);
-
-            var sb = new StringBuilder();
-            using (var w = XmlWriter.Create(sb))
+            var assembly = typeof(DataContractContentSerializerTests).Assembly;
+            var mappings =
+                (from t in assembly.GetExportedTypes()
+                 from a in t.GetCustomAttributes(
+                               typeof(DataContractAttribute), inherit: false)
+                            .Cast<DataContractAttribute>()
+                 where t.IsDefined(a.GetType(), inherit: false)
+                 select new TypeResolutionEntry(a.Namespace, a.Name, t))
+                 .ToArray();
+            Assert.NotEmpty(mappings);
+            var sut =
+                DataContractContentSerializer.CreateTypeResolver(assembly);
+            Array.ForEach(mappings, entry =>
             {
-                sut.Serialize(w, dctex);
-                w.Flush();
-                var actual = sb.ToString();
-
-                var expected = XDocument.Parse(
-                    "<test-event-x xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://grean.rocks/dc\">" +
-                    "  <number>" + dctex.Number + "</number>" +
-                    "  <text>" + dctex.Text + "</text>" +
-                    "</test-event-x>");
-                Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
-            }
-        }
-
-        [Theory, AutoData]
-        public void CreateWithAssemblyCanRoundTripAttributedClassInstance(
-            DataContractTestEventX dctex)
-        {
-            var assembly = typeof(DataContractTestEventX).Assembly;
-            Assert.NotEmpty(
-                from t in assembly.GetTypes()
-                from a in t.GetCustomAttributes(
-                              typeof(DataContractAttribute), inherit: false)
-                           .Cast<DataContractAttribute>()
-                where t.IsDefined(a.GetType(), inherit: false)
-                select t);
-            var sut = DataContractContentSerializer.Create(assembly);
-
-            using (var ms = new MemoryStream())
-            using (var w = XmlWriter.Create(ms))
-            {
-                sut.Serialize(w, dctex);
-                w.Flush();
-                ms.Position = 0;
-                using (var r = XmlReader.Create(ms))
-                {
-                    var content = sut.Deserialize(r);
-
-                    var actual = Assert.IsAssignableFrom<DataContractTestEventX>(content.Item);
-                    Assert.Equal(dctex.Number, actual.Number);
-                    Assert.Equal(dctex.Text, actual.Text);
-                }
-            }
+                var expected = entry.ResolvedType;
+                var actual = sut.Resolve(entry.LocalName, entry.XmlNamespace);
+                Assert.Equal(expected, actual);
+            });
         }
     }
 }
