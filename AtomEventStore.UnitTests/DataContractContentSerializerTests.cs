@@ -120,5 +120,37 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
             }
         }
+
+        [Theory, AutoData]
+        public void CreateWithAssemblyCanRoundTripAttributedClassInstance(
+            DataContractTestEventX dctex)
+        {
+            var assembly = typeof(DataContractTestEventX).Assembly;
+            var annotatedTypes =
+                from t in assembly.GetTypes()
+                from a in t.GetCustomAttributes(
+                              typeof(DataContractAttribute), inherit: false)
+                           .Cast<DataContractAttribute>()
+                where t.IsDefined(a.GetType(), inherit: false)
+                select t;
+            Assert.NotEmpty(annotatedTypes);
+            var sut = DataContractContentSerializer.Create(assembly);
+
+            using (var ms = new MemoryStream())
+            using (var w = XmlWriter.Create(ms))
+            {
+                sut.Serialize(w, dctex);
+                w.Flush();
+                ms.Position = 0;
+                using (var r = XmlReader.Create(ms))
+                {
+                    var content = sut.Deserialize(r);
+
+                    var actual = Assert.IsAssignableFrom<DataContractTestEventX>(content.Item);
+                    Assert.Equal(dctex.Number, actual.Number);
+                    Assert.Equal(dctex.Text, actual.Text);
+                }
+            }
+        }
     }
 }
