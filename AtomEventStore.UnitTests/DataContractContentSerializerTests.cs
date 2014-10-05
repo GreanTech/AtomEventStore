@@ -85,7 +85,7 @@ namespace Grean.AtomEventStore.UnitTests
                 where t.IsDefined(a.GetType(), inherit: false)
                 select t);
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<ArgumentException>(() =>
                 DataContractContentSerializer.Create(assembly));
         }
 

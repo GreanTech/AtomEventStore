@@ -141,7 +141,7 @@ namespace Grean.AtomEventStore
                  .ToArray();
 
             if (!entries.Any())
-                throw new InvalidOperationException(
+                throw new ArgumentException(
                     "This assembly doesn't contain any public types annotated with DataContractAttribute.");
 
             var serializer =
