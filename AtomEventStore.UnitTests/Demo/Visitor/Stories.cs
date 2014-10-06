@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,39 +15,53 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
         {
             var eventStreamId =
                 new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
-            var storage = new AtomEventsInMemory();
-            var pageSize = 25;
-            var serializer =
-                new DataContractContentSerializer(
-                    new TypeResolutionTable(
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "user-created",
-                            typeof(UserCreated)),
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "email-verified",
-                            typeof(EmailVerified)),
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "email-changed",
-                            typeof(EmailChanged))));
-            IObserver<IUserEvent> obs = new AtomEventObserver<IUserEvent>(
-                eventStreamId, // a Guid
-                pageSize,      // an Int32
-                storage,       // an IAtomEventStorage object
-                serializer);   // an IContentSerializer object
-
-            var userCreated = new UserCreated
+            /* Uses file storage to provide a documentation example of how to
+             * do that. */
+            var directory = 
+                new DirectoryInfo(
+                    Path.Combine(
+                        Environment.CurrentDirectory,
+                        Guid.NewGuid().ToString("N")));
+            try
             {
-                UserId = eventStreamId,
-                UserName = "ploeh",
-                Password = "12345",
-                Email = "ploeh@fnaah.com"
-            };
-            obs.OnNext(userCreated);
+                var storage = new AtomEventsInFiles(directory);
+                var pageSize = 25;
+                var serializer =
+                    new DataContractContentSerializer(
+                        new TypeResolutionTable(
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "user-created",
+                                typeof(UserCreated)),
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "email-verified",
+                                typeof(EmailVerified)),
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "email-changed",
+                                typeof(EmailChanged))));
+                IObserver<IUserEvent> obs = new AtomEventObserver<IUserEvent>(
+                    eventStreamId, // a Guid
+                    pageSize,      // an Int32
+                    storage,       // an IAtomEventStorage object
+                    serializer);   // an IContentSerializer object
 
-            Assert.NotEmpty(storage);
+                var userCreated = new UserCreated
+                {
+                    UserId = eventStreamId,
+                    UserName = "ploeh",
+                    Password = "12345",
+                    Email = "ploeh@fnaah.com"
+                };
+                obs.OnNext(userCreated);
+
+                Assert.NotEmpty(storage);
+            }
+            finally
+            {
+                directory.Delete(recursive: true);
+            }
         }
 
         [Fact]
