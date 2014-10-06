@@ -69,39 +69,41 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
         {
             var eventStreamId =
                 new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
-            var storage = new AtomEventsInMemory();
-            var pageSize = 25;
-            var serializer =
-                new DataContractContentSerializer(
-                    new TypeResolutionTable(
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "user-created",
-                            typeof(UserCreated)),
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "email-verified",
-                            typeof(EmailVerified)),
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "email-changed",
-                            typeof(EmailChanged))));
-            var obs = new AtomEventObserver<IUserEvent>(
-                eventStreamId, // a Guid
-                pageSize,      // an Int32
-                storage,       // an IAtomEventStorage object
-                serializer);   // an IContentSerializer object
-
-            var userCreated = new UserCreated
+            using (var storage = new AtomEventsInMemory())
             {
-                UserId = eventStreamId,
-                UserName = "ploeh",
-                Password = "12345",
-                Email = "ploeh@fnaah.com"
-            };
-            await obs.AppendAsync(userCreated);
+                var pageSize = 25;
+                var serializer =
+                    new DataContractContentSerializer(
+                        new TypeResolutionTable(
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "user-created",
+                                typeof(UserCreated)),
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "email-verified",
+                                typeof(EmailVerified)),
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "email-changed",
+                                typeof(EmailChanged))));
+                var obs = new AtomEventObserver<IUserEvent>(
+                    eventStreamId, // a Guid
+                    pageSize,      // an Int32
+                    storage,       // an IAtomEventStorage object
+                    serializer);   // an IContentSerializer object
 
-            Assert.NotEmpty(storage);
+                var userCreated = new UserCreated
+                {
+                    UserId = eventStreamId,
+                    UserName = "ploeh",
+                    Password = "12345",
+                    Email = "ploeh@fnaah.com"
+                };
+                await obs.AppendAsync(userCreated);
+
+                Assert.NotEmpty(storage);
+            }
         }
 
         [Fact]
@@ -109,57 +111,59 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
         {
             var eventStreamId =
                 new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
-            var storage = new AtomEventsInMemory();
-            var pageSize = 25;
-            var serializer =
-                new DataContractContentSerializer(
-                    new TypeResolutionTable(
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "user-created",
-                            typeof(UserCreated)),
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "email-verified",
-                            typeof(EmailVerified)),
-                        new TypeResolutionEntry(
-                            "urn:grean:samples:user-sign-up",
-                            "email-changed",
-                            typeof(EmailChanged))));
-            var obs = new AtomEventObserver<IUserEvent>(
-                eventStreamId,
-                pageSize,
-                storage,
-                serializer);
-            obs.OnNext(new UserCreated
+            using (var storage = new AtomEventsInMemory())
             {
-                UserId = eventStreamId,
-                UserName = "ploeh",
-                Password = "12345",
-                Email = "ploeh@fnaah.dk"
-            });
-            obs.OnNext(new EmailVerified
-            {
-                UserId = eventStreamId,
-                Email = "ploeh@fnaah.dk"
-            });
-            obs.OnNext(new EmailChanged
-            {
-                UserId = eventStreamId,
-                NewEmail = "fnaah@ploeh.dk"
-            });
+                var pageSize = 25;
+                var serializer =
+                    new DataContractContentSerializer(
+                        new TypeResolutionTable(
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "user-created",
+                                typeof(UserCreated)),
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "email-verified",
+                                typeof(EmailVerified)),
+                            new TypeResolutionEntry(
+                                "urn:grean:samples:user-sign-up",
+                                "email-changed",
+                                typeof(EmailChanged))));
+                var obs = new AtomEventObserver<IUserEvent>(
+                    eventStreamId,
+                    pageSize,
+                    storage,
+                    serializer);
+                obs.OnNext(new UserCreated
+                {
+                    UserId = eventStreamId,
+                    UserName = "ploeh",
+                    Password = "12345",
+                    Email = "ploeh@fnaah.dk"
+                });
+                obs.OnNext(new EmailVerified
+                {
+                    UserId = eventStreamId,
+                    Email = "ploeh@fnaah.dk"
+                });
+                obs.OnNext(new EmailChanged
+                {
+                    UserId = eventStreamId,
+                    NewEmail = "fnaah@ploeh.dk"
+                });
 
-            var events = new FifoEvents<IUserEvent>(
-                eventStreamId, // a Guid
-                storage,       // an IAtomEventStorage object
-                serializer);   // an IContentSerializer object
-            var user = User.Fold(events);
+                var events = new FifoEvents<IUserEvent>(
+                    eventStreamId, // a Guid
+                    storage,       // an IAtomEventStorage object
+                    serializer);   // an IContentSerializer object
+                var user = User.Fold(events);
 
-            Assert.Equal(eventStreamId, user.Id);
-            Assert.Equal("ploeh", user.Name);
-            Assert.Equal("12345", user.Password);
-            Assert.Equal("fnaah@ploeh.dk", user.Email);
-            Assert.False(user.EmailVerified);
+                Assert.Equal(eventStreamId, user.Id);
+                Assert.Equal("ploeh", user.Name);
+                Assert.Equal("12345", user.Password);
+                Assert.Equal("fnaah@ploeh.dk", user.Email);
+                Assert.False(user.EmailVerified);
+            }
         }
     }
 }
