@@ -110,7 +110,7 @@ namespace Grean.AtomEventStore
         /// <summary>
         /// Creates a new instance of the <see cref="ITypeResolver"/> class.
         /// </summary>
-        /// <param name="assembly">
+        /// <param name="assemblyToScanForEvents">
         /// An <see cref="Assembly" /> used to find all types annotated with
         /// <see cref="System.Runtime.Serialization.DataContractAttribute"/>
         /// attributes, and pull the associated local and namespace names
@@ -122,21 +122,22 @@ namespace Grean.AtomEventStore
         /// to a <see cref="Type" />.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="assembly" /> is <see langword="null" />.
+        /// <paramref name="assemblyToScanForEvents" /> is <see langword="null" />.
         /// </exception>
         /// <exception cref="System.ArgumentException">
-        /// <paramref name="assembly" /> doesn't contain any public types
+        /// <paramref name="assemblyToScanForEvents" /> doesn't contain any public types
         /// annotated with
         /// <see cref="System.Runtime.Serialization.DataContractAttribute"/>
         /// class.
         /// </exception>
-        public static ITypeResolver CreateTypeResolver(Assembly assembly)
+        public static ITypeResolver CreateTypeResolver(
+            Assembly assemblyToScanForEvents)
         {
-            if (assembly == null)
-                throw new ArgumentNullException("assembly");
+            if (assemblyToScanForEvents == null)
+                throw new ArgumentNullException("assemblyToScanForEvents");
 
             var entries =
-                (from t in assembly.GetExportedTypes()
+                (from t in assemblyToScanForEvents.GetExportedTypes()
                  from a in t.GetCustomAttributes(
                                typeof(DataContractAttribute), inherit: false)
                             .Cast<DataContractAttribute>()
@@ -146,7 +147,7 @@ namespace Grean.AtomEventStore
 
             if (!entries.Any())
                 throw new ArgumentException(
-                    "This assembly doesn't contain any public types annotated with DataContractAttribute.");
+                    "The provided assembly to scan for events doesn't contain any public types annotated with DataContractAttribute.");
 
             return new TypeResolutionTable(entries);
         }

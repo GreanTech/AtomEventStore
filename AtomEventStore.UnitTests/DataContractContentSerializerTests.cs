@@ -92,9 +92,10 @@ namespace Grean.AtomEventStore.UnitTests
         [Fact]
         public void CreateTypeResolverReturnsCorrectResult()
         {
-            var assembly = typeof(DataContractContentSerializerTests).Assembly;
+            var assemblyToScanForEvents =
+                typeof(DataContractContentSerializerTests).Assembly;
             var mappings =
-                (from t in assembly.GetExportedTypes()
+                (from t in assemblyToScanForEvents.GetExportedTypes()
                  from a in t.GetCustomAttributes(
                                typeof(DataContractAttribute), inherit: false)
                             .Cast<DataContractAttribute>()
@@ -103,7 +104,8 @@ namespace Grean.AtomEventStore.UnitTests
                  .ToArray();
             Assert.NotEmpty(mappings);
             var sut =
-                DataContractContentSerializer.CreateTypeResolver(assembly);
+                DataContractContentSerializer.CreateTypeResolver(
+                    assemblyToScanForEvents);
             Array.ForEach(mappings, entry =>
             {
                 var expected = entry.ResolvedType;
