@@ -153,5 +153,30 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Throws<ArgumentException>(() =>
                 XmlContentSerializer.CreateTypeResolver(assembly));
         }
+
+        [Fact]
+        public void CreateTypeResolverReturnsCorrectResult()
+        {
+            var assemblyToScanForEvents =
+                typeof(XmlContentSerializerTests).Assembly;
+            var mappings =
+                (from t in assemblyToScanForEvents.GetExportedTypes()
+                 from a in t.GetCustomAttributes(
+                               typeof(XmlRootAttribute), inherit: false)
+                            .Cast<XmlRootAttribute>()
+                 where t.IsDefined(a.GetType(), inherit: false)
+                 select new TypeResolutionEntry(a.Namespace, a.ElementName, t))
+                 .ToArray();
+            Assert.NotEmpty(mappings);
+            var sut =
+                XmlContentSerializer.CreateTypeResolver(
+                    assemblyToScanForEvents);
+            Array.ForEach(mappings, entry =>
+            {
+                var expected = entry.ResolvedType;
+                var actual = sut.Resolve(entry.LocalName, entry.XmlNamespace);
+                Assert.Equal(expected, actual);
+            });
+        }
     }
 }

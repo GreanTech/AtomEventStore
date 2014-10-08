@@ -120,14 +120,14 @@ namespace Grean.AtomEventStore
                                typeof(XmlRootAttribute), inherit: false)
                             .Cast<XmlRootAttribute>()
                  where t.IsDefined(a.GetType(), inherit: false)
-                 select t)
+                 select new TypeResolutionEntry(a.Namespace, a.ElementName, t))
                  .ToArray();
 
             if (!entries.Any())
                 throw new ArgumentException(
                     "The provided assembly to scan for events doesn't contain any public types annotated with XmlRootAttribute.");
 
-            throw new NotImplementedException();
+            return new TypeResolutionTable(entries);
         }
     }
 }
