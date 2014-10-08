@@ -108,6 +108,29 @@ namespace Grean.AtomEventStore
             return new XmlAtomContent(value);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="ITypeResolver"/> class.
+        /// </summary>
+        /// <param name="assemblyToScanForEvents">
+        /// An <see cref="Assembly" /> used to find all types annotated with
+        /// <see cref="System.Xml.Serialization.XmlRootAttribute"/>
+        /// attributes, and pull the associated local and namespace names
+        /// out of them.
+        /// </param>
+        /// <returns>
+        /// An <see cref="ITypeResolver" /> object resolving an XML name,
+        /// consisting of a local name, and a namepace,
+        /// to a <see cref="Type" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="assemblyToScanForEvents" /> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// <paramref name="assemblyToScanForEvents" /> doesn't contain any public types
+        /// annotated with
+        /// <see cref="System.Xml.Serialization.XmlRootAttribute"/>
+        /// class.
+        /// </exception>
         public static ITypeResolver CreateTypeResolver(
             Assembly assemblyToScanForEvents)
         {
