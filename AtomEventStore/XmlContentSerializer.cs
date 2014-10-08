@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -105,6 +106,15 @@ namespace Grean.AtomEventStore
             var value = serializer.Deserialize(xmlReader);
 
             return new XmlAtomContent(value);
+        }
+
+        public static ITypeResolver CreateTypeResolver(
+            Assembly assemblyToScanForEvents)
+        {
+            if (assemblyToScanForEvents == null)
+                throw new ArgumentNullException("assemblyToScanForEvents");
+
+            throw new NotImplementedException();
         }
     }
 }

@@ -129,5 +129,12 @@ namespace Grean.AtomEventStore.UnitTests
                 }
             }
         }
+
+        [Fact]
+        public void CreateTypeResolverWithNullAssemblyThrows()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+                XmlContentSerializer.CreateTypeResolver(null));
+        }
     }
 }
