@@ -114,6 +114,19 @@ namespace Grean.AtomEventStore
             if (assemblyToScanForEvents == null)
                 throw new ArgumentNullException("assemblyToScanForEvents");
 
+            var entries =
+                (from t in assemblyToScanForEvents.GetExportedTypes()
+                 from a in t.GetCustomAttributes(
+                               typeof(XmlRootAttribute), inherit: false)
+                            .Cast<XmlRootAttribute>()
+                 where t.IsDefined(a.GetType(), inherit: false)
+                 select t)
+                 .ToArray();
+
+            if (!entries.Any())
+                throw new ArgumentException(
+                    "The provided assembly to scan for events doesn't contain any public types annotated with XmlRootAttribute.");
+
             throw new NotImplementedException();
         }
     }

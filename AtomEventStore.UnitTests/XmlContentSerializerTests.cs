@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System.IO;
 using Ploeh.AutoFixture.Xunit;
 using Moq;
+using System.Xml.Serialization;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -135,6 +136,22 @@ namespace Grean.AtomEventStore.UnitTests
         {
             Assert.Throws<ArgumentNullException>(() =>
                 XmlContentSerializer.CreateTypeResolver(null));
+        }
+
+        [Fact]
+        public void CreateTypeResolverWithAssemblyWithoutAnnotatedTypesThrows()
+        {
+            var assembly = typeof(Version).Assembly;
+            Assert.Empty(
+                from t in assembly.GetExportedTypes()
+                from a in t.GetCustomAttributes(
+                              typeof(XmlRootAttribute), inherit: false)
+                           .Cast<XmlRootAttribute>()
+                where t.IsDefined(a.GetType(), inherit: false)
+                select t);
+
+            Assert.Throws<ArgumentException>(() =>
+                XmlContentSerializer.CreateTypeResolver(assembly));
         }
     }
 }
