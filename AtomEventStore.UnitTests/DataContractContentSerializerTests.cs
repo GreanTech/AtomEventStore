@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Ploeh.AutoFixture.Xunit;
 using Moq;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -63,6 +64,54 @@ namespace Grean.AtomEventStore.UnitTests
                     Assert.Equal(dctex.Text, actual.Text);
                 }
             }
+        }
+
+        [Fact]
+        public void CreateTypeResolverWithNullAssemblyThrows()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+                DataContractContentSerializer.CreateTypeResolver(null));
+        }
+
+        [Fact]
+        public void CreateTypeResolverWithAssemblyWithoutAnnotatedTypesThrows()
+        {
+            var assembly = typeof(Version).Assembly;
+            Assert.Empty(
+                from t in assembly.GetExportedTypes()
+                from a in t.GetCustomAttributes(
+                              typeof(DataContractAttribute), inherit: false)
+                           .Cast<DataContractAttribute>()
+                where t.IsDefined(a.GetType(), inherit: false)
+                select t);
+
+            Assert.Throws<ArgumentException>(() =>
+                DataContractContentSerializer.CreateTypeResolver(assembly));
+        }
+
+        [Fact]
+        public void CreateTypeResolverReturnsCorrectResult()
+        {
+            var assemblyToScanForEvents =
+                typeof(DataContractContentSerializerTests).Assembly;
+            var mappings =
+                (from t in assemblyToScanForEvents.GetExportedTypes()
+                 from a in t.GetCustomAttributes(
+                               typeof(DataContractAttribute), inherit: false)
+                            .Cast<DataContractAttribute>()
+                 where t.IsDefined(a.GetType(), inherit: false)
+                 select new TypeResolutionEntry(a.Namespace, a.Name, t))
+                 .ToArray();
+            Assert.NotEmpty(mappings);
+            var sut =
+                DataContractContentSerializer.CreateTypeResolver(
+                    assemblyToScanForEvents);
+            Array.ForEach(mappings, entry =>
+            {
+                var expected = entry.ResolvedType;
+                var actual = sut.Resolve(entry.LocalName, entry.XmlNamespace);
+                Assert.Equal(expected, actual);
+            });
         }
     }
 }
