@@ -13,7 +13,7 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
         [Fact]
         public void WriteASingleEventSynchronously()
         {
-            var eventStreamId = 
+            var eventStreamId =
                 new Guid("A0E50259-7345-48F9-84B4-BEEB5CEC662C");
             using (var storage = new AtomEventsInMemory())
             {
@@ -117,21 +117,21 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
                 /* This is an example of how to use the TypeResolutionEntry
                  * class, so it should not be refactored to one of the terser
                  * alternatives. */
-                var serializer =
-                    new DataContractContentSerializer(
-                        new TypeResolutionTable(
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "user-created",
-                                typeof(UserCreated)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-verified",
-                                typeof(EmailVerified)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-changed",
-                                typeof(EmailChanged))));
+                var resolver =
+                    new TypeResolutionTable(
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "user-created",
+                            typeof(UserCreated)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-verified",
+                            typeof(EmailVerified)),
+                        new TypeResolutionEntry(
+                            "urn:grean:samples:user-on-boarding",
+                            "email-changed",
+                            typeof(EmailChanged)));
+                var serializer = new DataContractContentSerializer(resolver);
                 var obs = new AtomEventObserver<object>(
                     eventStreamId,
                     pageSize,
