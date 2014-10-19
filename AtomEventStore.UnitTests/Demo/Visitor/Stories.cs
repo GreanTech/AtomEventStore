@@ -26,9 +26,14 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             {
                 var storage = new AtomEventsInFiles(directory);
                 var pageSize = 25;
-                var serializer = new DataContractContentSerializer(
+                /* This is an example of using
+                 * DataContractContentSerializer.CreateTypeResolver, so it
+                 * should not be refactored to one of the terser
+                 * alternatives. */
+                var resolver =
                     DataContractContentSerializer.CreateTypeResolver(
-                        typeof(UserCreated).Assembly));
+                        typeof(UserCreated).Assembly);
+                var serializer = new DataContractContentSerializer(resolver);
                 IObserver<IUserEvent> obs = new AtomEventObserver<IUserEvent>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
