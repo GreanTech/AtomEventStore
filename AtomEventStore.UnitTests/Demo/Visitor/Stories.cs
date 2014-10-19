@@ -26,21 +26,9 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             {
                 var storage = new AtomEventsInFiles(directory);
                 var pageSize = 25;
-                var serializer =
-                    new DataContractContentSerializer(
-                        new TypeResolutionTable(
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "user-created",
-                                typeof(UserCreated)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "email-verified",
-                                typeof(EmailVerified)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "email-changed",
-                                typeof(EmailChanged))));
+                var serializer = new DataContractContentSerializer(
+                    DataContractContentSerializer.CreateTypeResolver(
+                        typeof(UserCreated).Assembly));
                 IObserver<IUserEvent> obs = new AtomEventObserver<IUserEvent>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
@@ -72,21 +60,9 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer =
-                    new DataContractContentSerializer(
-                        new TypeResolutionTable(
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "user-created",
-                                typeof(UserCreated)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "email-verified",
-                                typeof(EmailVerified)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "email-changed",
-                                typeof(EmailChanged))));
+                var serializer = new DataContractContentSerializer(
+                    DataContractContentSerializer.CreateTypeResolver(
+                        typeof(UserCreated).Assembly));
                 var obs = new AtomEventObserver<IUserEvent>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
@@ -114,21 +90,9 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer =
-                    new DataContractContentSerializer(
-                        new TypeResolutionTable(
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "user-created",
-                                typeof(UserCreated)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "email-verified",
-                                typeof(EmailVerified)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-sign-up",
-                                "email-changed",
-                                typeof(EmailChanged))));
+                var serializer = new DataContractContentSerializer(
+                    DataContractContentSerializer.CreateTypeResolver(
+                        typeof(UserCreated).Assembly));
                 var obs = new AtomEventObserver<IUserEvent>(
                     eventStreamId,
                     pageSize,

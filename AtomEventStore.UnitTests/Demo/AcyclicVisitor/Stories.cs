@@ -18,21 +18,9 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer =
-                    new DataContractContentSerializer(
-                        new TypeResolutionTable(
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "user-created",
-                                typeof(UserCreated)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-verified",
-                                typeof(EmailVerified)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-changed",
-                                typeof(EmailChanged))));
+                var serializer = new DataContractContentSerializer(
+                    DataContractContentSerializer.CreateTypeResolver(
+                        typeof(UserCreated).Assembly));
                 IObserver<object> obs = new AtomEventObserver<object>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
@@ -60,21 +48,9 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer =
-                    new DataContractContentSerializer(
-                        new TypeResolutionTable(
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "user-created",
-                                typeof(UserCreated)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-verified",
-                                typeof(EmailVerified)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-changed",
-                                typeof(EmailChanged))));
+                var serializer = new DataContractContentSerializer(
+                    DataContractContentSerializer.CreateTypeResolver(
+                        typeof(UserCreated).Assembly));
                 var obs = new AtomEventObserver<object>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
@@ -102,21 +78,9 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer =
-                    new DataContractContentSerializer(
-                        new TypeResolutionTable(
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "user-created",
-                                typeof(UserCreated)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-verified",
-                                typeof(EmailVerified)),
-                            new TypeResolutionEntry(
-                                "urn:grean:samples:user-on-boarding",
-                                "email-changed",
-                                typeof(EmailChanged))));
+                var serializer = new DataContractContentSerializer(
+                    DataContractContentSerializer.CreateTypeResolver(
+                        typeof(UserCreated).Assembly));
                 var obs = new AtomEventObserver<object>(
                     eventStreamId,
                     pageSize,
@@ -150,6 +114,9 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
+                /* This is an example of how to use the TypeResolutionEntry
+                 * class, so it should not be refactored to one of the terser
+                 * alternatives. */
                 var serializer =
                     new DataContractContentSerializer(
                         new TypeResolutionTable(
