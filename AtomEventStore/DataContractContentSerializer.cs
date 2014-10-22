@@ -156,8 +156,10 @@ namespace Grean.AtomEventStore
         {
             if (assemblyToScanForEvents == null)
                 throw new ArgumentNullException("assemblyToScanForEvents");
-
-            throw new NotImplementedException();
+            var resolver =
+                DataContractContentSerializer.CreateTypeResolver(
+                    assemblyToScanForEvents);
+            return new DataContractContentSerializer(resolver);
         }
     }
 }
