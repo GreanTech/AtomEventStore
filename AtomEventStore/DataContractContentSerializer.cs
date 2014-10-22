@@ -156,6 +156,7 @@ namespace Grean.AtomEventStore
         {
             if (assemblyToScanForEvents == null)
                 throw new ArgumentNullException("assemblyToScanForEvents");
+
             var resolver =
                 DataContractContentSerializer.CreateTypeResolver(
                     assemblyToScanForEvents);
