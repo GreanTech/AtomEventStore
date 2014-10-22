@@ -152,6 +152,24 @@ namespace Grean.AtomEventStore
             return new TypeResolutionTable(entries);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="IContentSerializer"/>
+        /// class.
+        /// </summary>
+        /// <param name="assemblyToScanForEvents">
+        /// An <see cref="Assembly" /> used to find all types annotated with
+        /// <see cref="System.Runtime.Serialization.DataContractAttribute"/>
+        /// attributes, and pull the associated local and namespace names
+        /// out of them.
+        /// </param>
+        /// <returns>
+        /// An <see cref="IContentSerializer" /> object for serializing and
+        /// deserializing object to XML.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="assemblyToScanForEvents" /> is
+        /// <see langword="null" />.
+        /// </exception>
         public static IContentSerializer Scan(Assembly assemblyToScanForEvents)
         {
             if (assemblyToScanForEvents == null)
