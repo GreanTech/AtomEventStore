@@ -144,5 +144,30 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
             }
         }
+
+        [Theory, AutoAtomData]
+        public void ScanCanRoundTripAttributedClassInstance(
+            DataContractTestEventX dctex)
+        {
+            var assemblyToScanForEvents = dctex.GetType().Assembly;
+            var sut =
+                Assert.IsAssignableFrom<DataContractContentSerializer>(
+                    DataContractContentSerializer.Scan(assemblyToScanForEvents));
+            using (var ms = new MemoryStream())
+            using (var w = XmlWriter.Create(ms))
+            {
+                sut.Serialize(w, dctex);
+                w.Flush();
+                ms.Position = 0;
+                using (var r = XmlReader.Create(ms))
+                {
+                    var content = sut.Deserialize(r);
+
+                    var actual = Assert.IsAssignableFrom<DataContractTestEventX>(content.Item);
+                    Assert.Equal(dctex.Number, actual.Number);
+                    Assert.Equal(dctex.Text, actual.Text);
+                }
+            }
+        }
     }
 }
