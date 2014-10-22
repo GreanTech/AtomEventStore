@@ -113,5 +113,12 @@ namespace Grean.AtomEventStore.UnitTests
                 Assert.Equal(expected, actual);
             });
         }
+
+        [Fact]
+        public void ScanWithNullAssemblyThrows()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+                DataContractContentSerializer.Scan(null));
+        }
     }
 }

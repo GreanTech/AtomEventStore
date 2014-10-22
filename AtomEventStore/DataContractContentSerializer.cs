@@ -151,5 +151,13 @@ namespace Grean.AtomEventStore
 
             return new TypeResolutionTable(entries);
         }
+
+        public static IContentSerializer Scan(Assembly assemblyToScanForEvents)
+        {
+            if (assemblyToScanForEvents == null)
+                throw new ArgumentNullException("assemblyToScanForEvents");
+
+            throw new NotImplementedException();
+        }
     }
 }
