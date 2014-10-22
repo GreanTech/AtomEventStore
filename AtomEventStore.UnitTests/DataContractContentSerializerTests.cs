@@ -127,7 +127,7 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var assemblyToScanForEvents = dctex.GetType().Assembly;
             var sut =
-                Assert.IsAssignableFrom<DataContractContentSerializer>(
+                Assert.IsType<DataContractContentSerializer>(
                     DataContractContentSerializer.Scan(assemblyToScanForEvents));
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb))
