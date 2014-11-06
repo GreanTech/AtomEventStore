@@ -97,6 +97,7 @@
     <Compile Include="AtomEventStreamTests.cs" />
     <Compile Include="DataContractContentSerializerTests.cs" />
     <Compile Include="DataContractEnvelope.cs" />
+    <Compile Include="DataContractTestEventEnvy.cs" />
     <Compile Include="DataContractTestEventX.cs" />
     <Compile Include="DataContractTestEventY.cs" />
     <Compile Include="Demo\AcyclicVisitor\EmailChanged.cs" />

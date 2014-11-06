@@ -121,28 +121,21 @@ namespace Grean.AtomEventStore.UnitTests
                 DataContractContentSerializer.Scan(null));
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoData]
         public void ScanCorrectlySerializesAttributedClassInstance(
-            DataContractTestEventX dctex)
+            DataContractTestEventX @event)
         {
-            var assemblyToScanForEvents = dctex.GetType().Assembly;
-            var sut =
-                Assert.IsType<DataContractContentSerializer>(
-                    DataContractContentSerializer.Scan(assemblyToScanForEvents));
-            var sb = new StringBuilder();
-            using (var w = XmlWriter.Create(sb))
-            {
-                sut.Serialize(w, dctex);
-                w.Flush();
-                var actual = sb.ToString();
+            var actual = DataContractContentSerializer.Scan(@event.GetType().Assembly);
 
-                var expected = XDocument.Parse(
-                    "<test-event-x xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://grean.rocks/dc\">" +
-                    "  <number>" + dctex.Number + "</number>" +
-                    "  <text>" + dctex.Text + "</text>" +
-                    "</test-event-x>");
-                Assert.Equal(expected, XDocument.Parse(actual), new XNodeEqualityComparer());
-            }
+           var expected = XDocument.Parse(
+                "<test-event-x xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://grean.rocks/dc\">" +
+                "  <number>" + @event.Number + "</number>" +
+                "  <text>" + @event.Text + "</text>" +
+                "</test-event-x>");
+            Assert.Equal(
+                expected,
+                XDocument.Parse(@event.AsSerializedString(actual)),
+                new XNodeEqualityComparer());
         }
 
         [Theory, AutoAtomData]
