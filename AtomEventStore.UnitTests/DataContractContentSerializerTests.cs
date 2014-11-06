@@ -125,7 +125,8 @@ namespace Grean.AtomEventStore.UnitTests
         public void ScanCorrectlySerializesAttributedClassInstance(
             DataContractTestEventX @event)
         {
-            var actual = DataContractContentSerializer.Scan(@event.GetType().Assembly);
+            var actual =
+                DataContractContentSerializer.Scan(@event.GetType().Assembly);
 
            var expected = XDocument.Parse(
                 "<test-event-x xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://grean.rocks/dc\">" +
