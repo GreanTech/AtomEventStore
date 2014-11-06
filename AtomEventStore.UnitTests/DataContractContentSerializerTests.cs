@@ -138,29 +138,18 @@ namespace Grean.AtomEventStore.UnitTests
                 new XNodeEqualityComparer());
         }
 
-        [Theory, AutoAtomData]
+        [Theory, AutoData]
         public void ScanCanRoundTripAttributedClassInstance(
-            DataContractTestEventX dctex)
+            DataContractTestEventX @event)
         {
-            var assemblyToScanForEvents = dctex.GetType().Assembly;
-            var sut =
-                Assert.IsType<DataContractContentSerializer>(
-                    DataContractContentSerializer.Scan(assemblyToScanForEvents));
-            using (var ms = new MemoryStream())
-            using (var w = XmlWriter.Create(ms))
-            {
-                sut.Serialize(w, dctex);
-                w.Flush();
-                ms.Position = 0;
-                using (var r = XmlReader.Create(ms))
-                {
-                    var content = sut.Deserialize(r);
+            var actual =
+                DataContractContentSerializer.Scan(@event.GetType().Assembly);
 
-                    var actual = Assert.IsAssignableFrom<DataContractTestEventX>(content.Item);
-                    Assert.Equal(dctex.Number, actual.Number);
-                    Assert.Equal(dctex.Text, actual.Text);
-                }
-            }
+            var expected =
+                Assert.IsAssignableFrom<DataContractTestEventX>(
+                    @event.RoundTrip(actual));
+            Assert.Equal(expected.Number, @event.Number);
+            Assert.Equal(expected.Text, @event.Text);
         }
     }
 }
