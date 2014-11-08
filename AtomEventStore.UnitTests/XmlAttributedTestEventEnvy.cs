@@ -22,5 +22,20 @@ namespace Grean.AtomEventStore.UnitTests
             }
             return sb.ToString();
         }
+
+        internal static object RoundTrip(
+            this IXmlAttributedTestEvent @event,
+            IContentSerializer serializer)
+        {
+            using (var ms = new MemoryStream())
+            using (var w = XmlWriter.Create(ms))
+            {
+                serializer.Serialize(w, @event);
+                w.Flush();
+                ms.Position = 0;
+                using (var r = XmlReader.Create(ms))
+                    return serializer.Deserialize(r).Item;
+            }
+        }
     }
 }
