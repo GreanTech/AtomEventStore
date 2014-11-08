@@ -185,5 +185,23 @@ namespace Grean.AtomEventStore.UnitTests
             Assert.Throws<ArgumentNullException>(() =>
                 XmlContentSerializer.Scan(null));
         }
+
+        [Theory, AutoData]
+        public void ScanCorrectlySerializesAttributedClassInstance(
+            XmlAttributedTestEventX @event)
+        {
+            var actual =
+                XmlContentSerializer.Scan(@event.GetType().Assembly);
+
+            var expected = XDocument.Parse(
+                 "<test-event-x xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"http://grean:rocks\">" +
+                 "  <number>" + @event.Number + "</number>" +
+                 "  <text>" + @event.Text + "</text>" +
+                 "</test-event-x>");
+            Assert.Equal(
+                expected,
+                XDocument.Parse(@event.AsSerializedString(actual)),
+                new XNodeEqualityComparer());
+        }
     }
 }
