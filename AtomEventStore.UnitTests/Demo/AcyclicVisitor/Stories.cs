@@ -18,9 +18,8 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer = new DataContractContentSerializer(
-                    DataContractContentSerializer.CreateTypeResolver(
-                        typeof(UserCreated).Assembly));
+                var serializer = DataContractContentSerializer.Scan(
+                    typeof(UserCreated).Assembly);
                 IObserver<object> obs = new AtomEventObserver<object>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
@@ -48,9 +47,8 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer = new DataContractContentSerializer(
-                    DataContractContentSerializer.CreateTypeResolver(
-                        typeof(UserCreated).Assembly));
+                var serializer = DataContractContentSerializer.Scan(
+                    typeof(UserCreated).Assembly);
                 var obs = new AtomEventObserver<object>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
@@ -78,9 +76,8 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer = new DataContractContentSerializer(
-                    DataContractContentSerializer.CreateTypeResolver(
-                        typeof(UserCreated).Assembly));
+                var serializer = DataContractContentSerializer.Scan(
+                    typeof(UserCreated).Assembly);
                 var obs = new AtomEventObserver<object>(
                     eventStreamId,
                     pageSize,

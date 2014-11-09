@@ -65,9 +65,8 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer = new DataContractContentSerializer(
-                    DataContractContentSerializer.CreateTypeResolver(
-                        typeof(UserCreated).Assembly));
+                var serializer = DataContractContentSerializer.Scan(
+                    typeof(UserCreated).Assembly);
                 var obs = new AtomEventObserver<IUserEvent>(
                     eventStreamId, // a Guid
                     pageSize,      // an Int32
@@ -95,9 +94,8 @@ namespace Grean.AtomEventStore.UnitTests.Demo.Visitor
             using (var storage = new AtomEventsInMemory())
             {
                 var pageSize = 25;
-                var serializer = new DataContractContentSerializer(
-                    DataContractContentSerializer.CreateTypeResolver(
-                        typeof(UserCreated).Assembly));
+                var serializer = DataContractContentSerializer.Scan(
+                    typeof(UserCreated).Assembly);
                 var obs = new AtomEventObserver<IUserEvent>(
                     eventStreamId,
                     pageSize,
