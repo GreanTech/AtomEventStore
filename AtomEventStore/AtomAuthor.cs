@@ -62,7 +62,7 @@ namespace Grean.AtomEventStore
         /// This method mostly exists to make <see cref="AtomAuthor" />
         /// consistent with the other Atom classes with similar methods. The
         /// method also exists for future compatibility reasons. However,
-        /// currently, since AtomAuthor only contains the saingle
+        /// currently, since AtomAuthor only contains the single
         /// <see cref="Name" /> property, there are no other properties to hold
         /// constant. However, clients can use this method as a more robust,
         /// forward-compatible way of copying an AtomAuthor instance with a new
