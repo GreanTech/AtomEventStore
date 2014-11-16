@@ -408,8 +408,6 @@ namespace Grean.AtomEventStore.UnitTests
             var index = FindIndex(pages, id);
             var firstLink = index.Links.SingleOrDefault(l => l.IsFirstLink);
             Assert.NotNull(firstLink);
-            //Guid g;
-            //Assert.True(Guid.TryParse(firstLink.Href.ToString(), out g));
             var firstPage = pages.SingleOrDefault(f => f.Links.Single(l => l.IsSelfLink).Href == firstLink.Href);
             Assert.NotNull(firstPage);
             return firstPage;
@@ -419,8 +417,6 @@ namespace Grean.AtomEventStore.UnitTests
         {
             var nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
             Assert.NotNull(nextLink);
-            //Guid g;
-            //Assert.True(Guid.TryParse(nextLink.Href.ToString(), out g));
             var nextPage = pages.SingleOrDefault(f => f.Links.Single(l => l.IsSelfLink).Href == nextLink.Href);
             Assert.NotNull(nextPage);
             return nextPage;
