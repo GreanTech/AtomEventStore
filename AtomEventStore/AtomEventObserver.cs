@@ -203,17 +203,18 @@ namespace Grean.AtomEventStore
                     .DefaultIfEmpty(AtomLink.CreateFirstLink(this.CreateNewFeedAddress()))
                     .Single();
                 var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
-                var lastLinkChanged = false;
+                var lastLinkAdded = false;
                 if (lastLink == null)
                 {
                     lastLink = firstLink.ToLastLink();
-                    lastLinkChanged = true;
+                    lastLinkAdded = true;
                 }
                 var lastPage = this.ReadLastPage(lastLink.Href);
+                var lastLinkCorrected = false;
                 if (lastPage.Links.Single(l => l.IsSelfLink).Href != lastLink.Href)
                 {
                     lastLink = lastPage.Links.Single(l => l.IsSelfLink).ToLastLink();
-                    lastLinkChanged = true;
+                    lastLinkCorrected = true;
                 }
                 index = index.WithLinks(index.Links.Union(new[] { firstLink }));
                 index = index.WithLinks(index.Links
@@ -252,7 +253,9 @@ namespace Grean.AtomEventStore
                     lastPage = AddEntryTo(lastPage, entry, now);
 
                     this.Write(lastPage);
-                    if (lastLinkChanged)
+                    if (lastLinkAdded)
+                        this.Write(index);
+                    else if(lastLinkCorrected)
                         try { this.Write(index); } catch { }
                 }
             });

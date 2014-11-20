@@ -69,6 +69,39 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
         [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
+        public void WriteFirstEventFailsIfWritingIndexFails(
+            AtomEventWriteUsage usage,
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen]Mock<IAtomEventStorage> storeStub,
+            AtomEventsInMemory innerStorage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            XmlAttributedTestEventX @event)
+        {
+            storeStub
+                .Setup(s => s.CreateFeedReaderFor(It.IsAny<Uri>()))
+                .Returns((Uri u) => innerStorage.CreateFeedReaderFor(u));
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(
+                    It.Is<AtomFeed>(f => f.Id != sut.Id)))
+                .Returns((AtomFeed f) => innerStorage.CreateFeedWriterFor(f));
+            var expected = new Exception("On-purpose write failure.");
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(
+                    It.Is<AtomFeed>(f => f.Id == sut.Id)))
+                .Throws(expected);
+
+            var ae = Assert.Throws<AggregateException>(() =>
+                writerFactory.Create(usage).WriteTo(sut, @event));
+            Assert.True(
+                ae.InnerExceptions.Any(expected.Equals),
+                "Expected exception not thrown.");
+        }
+
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteTwoEventsOnlyWritesIndexOnce(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
