@@ -429,6 +429,71 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
         [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
+        public void AttemptToCorrecLastLinkDoesNotThrowOnFailure(
+            AtomEventWriteUsage usage,
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen]Mock<IAtomEventStorage> storeStub,
+            AtomEventsInMemory innerStorage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            // Fixture setup
+            storeStub
+                .Setup(s => s.CreateFeedReaderFor(It.IsAny<Uri>()))
+                .Returns((Uri u) => innerStorage.CreateFeedReaderFor(u));
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(It.IsAny<AtomFeed>()))
+                .Returns((AtomFeed f) => innerStorage.CreateFeedWriterFor(f));
+            var writer = writerFactory.Create(usage);
+            var events = eventGenerator.Take(sut.PageSize * 2 + 1).ToList();
+            events.ForEach(e => writer.WriteTo(sut, e));
+
+            /* Point the 'last' link to the second page, instead of to the last
+             * page. This simulates that when the true last page was created,
+             * the index wasn't correctly updated. This could for example
+             * happen due to a network failure. */
+            var writtenFeeds = innerStorage.Feeds.Select(ParseAtomFeed);
+            var index = FindIndex(writtenFeeds, sut.Id);
+            var firstPage = FindFirstPage(writtenFeeds, sut.Id);
+            var nextPage = FindNextPage(firstPage, writtenFeeds);
+            var incorrectLastLink =
+                nextPage.Links.Single(l => l.IsSelfLink).ToLastLink();
+            index = index.WithLinks(index.Links
+                .Where(l => !l.IsLastLink)
+                .Concat(new[] { incorrectLastLink }));
+            using (var w = innerStorage.CreateFeedWriterFor(index))
+                index.WriteTo(w, sut.Serializer);
+
+            /* Configure storage to fail when writing the index, but not for
+             * other documents. */
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(
+                    It.Is<AtomFeed>(f => f.Id != index.Id)))
+                .Returns((AtomFeed f) => innerStorage.CreateFeedWriterFor(f));
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(
+                    It.Is<AtomFeed>(f => f.Id == index.Id)))
+                .Throws(new Exception("On-purpose write failure."));
+
+            var expected = eventGenerator.First();
+
+            // Exercise system
+            writer.WriteTo(sut, expected);
+
+            // Verify outcome
+            writtenFeeds = innerStorage.Feeds.Select(ParseAtomFeed);
+            var lastPage = FindLastPage(writtenFeeds, sut.Id);
+            Assert.True(
+                lastPage.Entries.Select(e => e.Content.Item).Any(expected.Equals),
+                "Last written event should be present.");
+            // Teardown
+        }
+
+        [Theory]
+        [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanPageSizeEventsAddsNextPageWithPreviousLink(
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,

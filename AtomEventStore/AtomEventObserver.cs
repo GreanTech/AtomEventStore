@@ -253,7 +253,7 @@ namespace Grean.AtomEventStore
 
                     this.Write(lastPage);
                     if (lastLinkChanged)
-                        this.Write(index);
+                        try { this.Write(index); } catch { }
                 }
             });
         }
