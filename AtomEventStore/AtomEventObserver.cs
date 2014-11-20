@@ -190,6 +190,7 @@ namespace Grean.AtomEventStore
         /// </code>
         /// </example>
         /// <seealso cref="OnNext" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception will can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
         public Task AppendAsync(T @event)
         {
             return Task.Factory.StartNew(() =>
@@ -244,7 +245,7 @@ namespace Grean.AtomEventStore
 
                     this.Write(nextPage);
                     this.Write(previousPage);
-                    this.Write(index);
+                    try { this.Write(index); } catch { }
                 }
                 else
                 {

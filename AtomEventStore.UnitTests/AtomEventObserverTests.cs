@@ -9,6 +9,7 @@ using Grean.AtomEventStore;
 using Ploeh.AutoFixture.Xunit;
 using Xunit;
 using Ploeh.AutoFixture;
+using Moq;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -202,6 +203,63 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory]
+        [InlineAutoAtomData(1, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(1, AtomEventWriteUsage.OnNext)]
+        [InlineAutoAtomData(2, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(2, AtomEventWriteUsage.OnNext)]
+        public void WriteMoreThanPageSizeDoesNotThrowWhenLastWriteFails(
+            int pageCount,
+            AtomEventWriteUsage usage,
+            [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
+            [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
+            [Frozen]Mock<IAtomEventStorage> storeStub,
+            AtomEventsInMemory innerStorage,
+            AtomEventWriterFactory<XmlAttributedTestEventX> writerFactory,
+            AtomEventObserver<XmlAttributedTestEventX> sut,
+            Generator<XmlAttributedTestEventX> eventGenerator)
+        {
+            // Fixture setup
+            storeStub
+                .Setup(s => s.CreateFeedReaderFor(It.IsAny<Uri>()))
+                .Returns((Uri u) => innerStorage.CreateFeedReaderFor(u));
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(It.IsAny<AtomFeed>()))
+                .Returns((AtomFeed f) => innerStorage.CreateFeedWriterFor(f));
+            var writer = writerFactory.Create(usage);
+
+            /* Write some pages full. */
+            var events = eventGenerator.Take(sut.PageSize * pageCount).ToList();
+            events.ForEach(e => writer.WriteTo(sut, e));
+
+            /* Find the index. */
+            var writtenFeeds = innerStorage.Feeds.Select(ParseAtomFeed);
+            var index = FindIndex(writtenFeeds, sut.Id);
+
+            /* Configure storage to fail when writing the index, but not for
+             * other documents. */
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(
+                    It.Is<AtomFeed>(f => f.Id != index.Id)))
+                .Returns((AtomFeed f) => innerStorage.CreateFeedWriterFor(f));
+            storeStub
+                .Setup(s => s.CreateFeedWriterFor(
+                    It.Is<AtomFeed>(f => f.Id == index.Id)))
+                .Throws(new Exception("On-purpose write failure."));
+
+            // Exercise system
+            var @event = eventGenerator.First();
+            writer.WriteTo(sut, @event);
+
+            // Verify outcome
+            writtenFeeds = innerStorage.Feeds.Select(ParseAtomFeed);
+            var lastPage = FindLastPage(writtenFeeds, sut.Id);
+            Assert.True(
+                lastPage.Entries.Select(e => e.Content.Item).Any(@event.Equals),
+                "Last written event should be present.");
+            // Teardown
+        }
+
+        [Theory]
         [InlineAutoAtomData(AtomEventWriteUsage.AppendAsync)]
         [InlineAutoAtomData(AtomEventWriteUsage.OnNext)]
         public void WriteCorrectlyStoresLastLinkOnIndex(
@@ -388,7 +446,7 @@ namespace Grean.AtomEventStore.UnitTests
             var writtenFeeds = storage.Feeds.Select(ParseAtomFeed);
             var firstPage = FindFirstPage(writtenFeeds, sut.Id);
             var nextPage = FindNextPage(firstPage, writtenFeeds);
-            var previousLink = 
+            var previousLink =
                 nextPage.Links.SingleOrDefault(l => l.IsPreviousLink);
             Assert.NotNull(previousLink);
             Assert.Equal(
@@ -420,6 +478,15 @@ namespace Grean.AtomEventStore.UnitTests
             var nextPage = pages.SingleOrDefault(f => f.Links.Single(l => l.IsSelfLink).Href == nextLink.Href);
             Assert.NotNull(nextPage);
             return nextPage;
+        }
+
+        private static AtomFeed FindLastPage(IEnumerable<AtomFeed> pages, UuidIri id)
+        {
+            var page = FindFirstPage(pages, id);
+            while (page.Links.Any(l => l.IsNextLink))
+                page = FindNextPage(page, pages);
+
+            return page;
         }
 
         private static AtomFeed ParseAtomFeed(string xml)
