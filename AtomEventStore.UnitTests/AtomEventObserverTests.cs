@@ -240,7 +240,7 @@ namespace Grean.AtomEventStore.UnitTests
         [InlineAutoAtomData(1, AtomEventWriteUsage.OnNext)]
         [InlineAutoAtomData(2, AtomEventWriteUsage.AppendAsync)]
         [InlineAutoAtomData(2, AtomEventWriteUsage.OnNext)]
-        public void WriteMoreThanPageSizeDoesNotThrowWhenLastWriteFails(
+        public void WriteMoreThanPageSizeDoesNotThrowWhenIndexWriteFails(
             int pageCount,
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
