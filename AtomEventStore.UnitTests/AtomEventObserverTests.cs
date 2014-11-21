@@ -289,20 +289,27 @@ namespace Grean.AtomEventStore.UnitTests
                     It.Is<AtomFeed>(f => f.Id == index.Id)))
                 .Throws(new Exception("On-purpose write failure."));
 
-            // Exercise system
+            /* Write some more pages, this time with the index update
+             * consistently failing. */
             eventGenerator
                 .Take(sut.PageSize * secondaryPageCount)
                 .ToList()
                 .ForEach(e => writer.WriteTo(sut, e));
-            var expected = eventGenerator.First();
-            writer.WriteTo(sut, expected);
+
+            // Exercise system
+            var expected = eventGenerator.Take(sut.PageSize).ToList();
+            expected.ForEach(e => writer.WriteTo(sut, e));
 
             // Verify outcome
             writtenFeeds = innerStorage.Feeds.Select(ParseAtomFeed);
             var lastPage = FindLastPage(writtenFeeds, sut.Id);
             Assert.True(
-                lastPage.Entries.Select(e => e.Content.Item).Any(expected.Equals),
-                "Last written event should be present.");
+                lastPage.Entries
+                    .Select(e => e.Content.Item)
+                    .Reverse()
+                    .SequenceEqual(expected),
+                "Last written events should be present."
+                );
             // Teardown
         }
 
