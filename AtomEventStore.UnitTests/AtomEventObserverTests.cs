@@ -236,12 +236,21 @@ namespace Grean.AtomEventStore.UnitTests
         }
 
         [Theory]
-        [InlineAutoAtomData(1, AtomEventWriteUsage.AppendAsync)]
-        [InlineAutoAtomData(1, AtomEventWriteUsage.OnNext)]
-        [InlineAutoAtomData(2, AtomEventWriteUsage.AppendAsync)]
-        [InlineAutoAtomData(2, AtomEventWriteUsage.OnNext)]
+        [InlineAutoAtomData(1, 0, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(1, 0, AtomEventWriteUsage.OnNext)]
+        [InlineAutoAtomData(2, 0, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(2, 0, AtomEventWriteUsage.OnNext)]
+        [InlineAutoAtomData(1, 1, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(1, 1, AtomEventWriteUsage.OnNext)]
+        [InlineAutoAtomData(2, 1, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(2, 1, AtomEventWriteUsage.OnNext)]
+        [InlineAutoAtomData(1, 3, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(1, 3, AtomEventWriteUsage.OnNext)]
+        [InlineAutoAtomData(2, 3, AtomEventWriteUsage.AppendAsync)]
+        [InlineAutoAtomData(2, 3, AtomEventWriteUsage.OnNext)]
         public void WriteMoreThanPageSizeDoesNotThrowWhenIndexWriteFails(
-            int pageCount,
+            int initialPageCount,
+            int secondaryPageCount,
             AtomEventWriteUsage usage,
             [Frozen(As = typeof(ITypeResolver))]TestEventTypeResolver dummyResolver,
             [Frozen(As = typeof(IContentSerializer))]XmlContentSerializer dummySerializer,
@@ -261,7 +270,8 @@ namespace Grean.AtomEventStore.UnitTests
             var writer = writerFactory.Create(usage);
 
             /* Write some pages full. */
-            var events = eventGenerator.Take(sut.PageSize * pageCount).ToList();
+            var events =
+                eventGenerator.Take(sut.PageSize * initialPageCount).ToList();
             events.ForEach(e => writer.WriteTo(sut, e));
 
             /* Find the index. */
@@ -280,14 +290,18 @@ namespace Grean.AtomEventStore.UnitTests
                 .Throws(new Exception("On-purpose write failure."));
 
             // Exercise system
-            var @event = eventGenerator.First();
-            writer.WriteTo(sut, @event);
+            eventGenerator
+                .Take(sut.PageSize * secondaryPageCount)
+                .ToList()
+                .ForEach(e => writer.WriteTo(sut, e));
+            var expected = eventGenerator.First();
+            writer.WriteTo(sut, expected);
 
             // Verify outcome
             writtenFeeds = innerStorage.Feeds.Select(ParseAtomFeed);
             var lastPage = FindLastPage(writtenFeeds, sut.Id);
             Assert.True(
-                lastPage.Entries.Select(e => e.Content.Item).Any(@event.Equals),
+                lastPage.Entries.Select(e => e.Content.Item).Any(expected.Equals),
                 "Last written event should be present.");
             // Teardown
         }
