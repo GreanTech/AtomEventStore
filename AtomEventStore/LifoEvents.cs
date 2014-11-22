@@ -189,16 +189,7 @@ namespace Grean.AtomEventStore
                 return null;
 
             var page = this.ReadPage(lastLink.Href);
-
-            // Correct for stale "last" link
-            var nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
-            while (nextLink != null)
-            {
-                page = this.ReadPage(nextLink.Href);
-                nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
-            }
-
-            return page;
+            return this.CorrectForStaleLastLink(page);
         }
 
         private AtomFeed ReadPrevious(AtomFeed page)
@@ -217,6 +208,19 @@ namespace Grean.AtomEventStore
                     ((Guid)this.id) + "/" + ((Guid)this.id),
                     UriKind.Relative);
             return this.ReadPage(indexAddress);
+        }
+
+        private AtomFeed CorrectForStaleLastLink(AtomFeed page)
+        {
+            var p = page;
+            var nextLink = p.Links.SingleOrDefault(l => l.IsNextLink);
+            while (nextLink != null)
+            {
+                p = this.ReadPage(nextLink.Href);
+                nextLink = p.Links.SingleOrDefault(l => l.IsNextLink);
+            }
+
+            return p;
         }
 
         private AtomFeed ReadPage(Uri address)
