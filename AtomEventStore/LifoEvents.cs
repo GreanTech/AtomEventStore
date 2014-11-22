@@ -188,7 +188,17 @@ namespace Grean.AtomEventStore
             if (lastLink == null)
                 return null;
 
-            return this.ReadPage(lastLink.Href);
+            var page = this.ReadPage(lastLink.Href);
+
+            // Correct for stale "last" link
+            var nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
+            while (nextLink != null)
+            {
+                page = this.ReadPage(nextLink.Href);
+                nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
+            }
+
+            return page;
         }
 
         private AtomFeed ReadPrevious(AtomFeed page)
