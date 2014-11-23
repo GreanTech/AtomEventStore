@@ -223,7 +223,7 @@ namespace Grean.AtomEventStore
 
                 var entry = CreateEntry(@event, now);
 
-                if (lastPage.Entries.Count() >= this.pageSize)
+                if (this.PageSizeReached(lastPage))
                 {
                     var nextAddress = this.CreateNewFeedAddress();
                     var nextPage = this.ReadPage(nextAddress);
@@ -338,6 +338,11 @@ namespace Grean.AtomEventStore
         {
             using (var w = this.storage.CreateFeedWriterFor(feed))
                 feed.WriteTo(w, this.serializer);
+        }
+
+        private bool PageSizeReached(AtomFeed page)
+        {
+            return page.Entries.Count() >= this.pageSize;
         }
 
         /// <summary>
