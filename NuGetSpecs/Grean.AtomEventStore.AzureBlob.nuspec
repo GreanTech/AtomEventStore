@@ -13,6 +13,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Azure Blog Storage persistence library for an event store implementation based on the Atom syndication format.</description>
     <projectUrl>https://github.com/GreanTech/AtomEventStore</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/GreanTech/AtomEventStore/master/Logos/logo_450.png</iconUrl>
     <licenseUrl>https://raw.githubusercontent.com/GreanTech/AtomEventStore/master/LICENSE</licenseUrl>
     <copyright>Copyright Grean ApS 2013, 2014</copyright>
     <tags>EventSourcing Atom</tags>
