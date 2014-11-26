@@ -225,11 +225,11 @@ namespace Grean.AtomEventStore
 
                 if (this.PageSizeReached(lastPage))
                 {
-                    var nextAddress = this.CreateNewFeedAddress();
-                    var nextPage = this.ReadPage(nextAddress);
-                    nextPage = AddEntryTo(nextPage, entry, now);
+                    var newAddress = this.CreateNewFeedAddress();
+                    var newPage = this.ReadPage(newAddress);
+                    newPage = AddEntryTo(newPage, entry, now);
 
-                    var nextLink = AtomLink.CreateNextLink(nextAddress);
+                    var nextLink = AtomLink.CreateNextLink(newAddress);
 
                     var previousPage = lastPage
                         .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
@@ -238,13 +238,13 @@ namespace Grean.AtomEventStore
                         .Single(l => l.IsSelfLink)
                         .ToPreviousLink();
 
-                    nextPage = nextPage.WithLinks(
-                        nextPage.Links.Concat(new[] { previousLink }));
+                    newPage = newPage.WithLinks(
+                        newPage.Links.Concat(new[] { previousLink }));
                     index = index.WithLinks(index.Links
                         .Where(l => !l.IsLastLink)
                         .Concat(new[] { nextLink.ToLastLink() }));
 
-                    this.Write(nextPage);
+                    this.Write(newPage);
                     this.Write(previousPage);
                     try { this.Write(index); } catch { }
                 }
