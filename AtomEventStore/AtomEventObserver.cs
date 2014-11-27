@@ -314,15 +314,8 @@ namespace Grean.AtomEventStore
             DateTimeOffset now)
         {
             var entries = new[] { entry }.Concat(page.Entries);
-            return CreateNewPage(entries, page.Links, now);
-        }
 
-        private static AtomFeed CreateNewPage(
-            IEnumerable<AtomEntry> entries,
-            IEnumerable<AtomLink> links,
-            DateTimeOffset now)
-        {
-            var selfLink = links.Single(l => l.IsSelfLink);
+            var selfLink = page.Links.Single(l => l.IsSelfLink);
             var id = AtomEventStorage.GetIdFromHref(selfLink.Href);
 
             return new AtomFeed(
@@ -331,7 +324,7 @@ namespace Grean.AtomEventStore
                 now,
                 new AtomAuthor("Grean"),
                 entries,
-                links);
+                page.Links);
         }
 
         private void Write(AtomFeed feed)
