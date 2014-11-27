@@ -314,17 +314,9 @@ namespace Grean.AtomEventStore
             DateTimeOffset now)
         {
             var entries = new[] { entry }.Concat(page.Entries);
-
-            var selfLink = page.Links.Single(l => l.IsSelfLink);
-            var id = AtomEventStorage.GetIdFromHref(selfLink.Href);
-
-            return new AtomFeed(
-                id,
-                "Partial event stream",
-                now,
-                new AtomAuthor("Grean"),
-                entries,
-                page.Links);
+            return page
+                .WithEntries(entries)
+                .WithUpdated(now);
         }
 
         private void Write(AtomFeed feed)
