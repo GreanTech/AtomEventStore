@@ -202,6 +202,8 @@ namespace Grean.AtomEventStore
                     .Where(l => l.IsFirstLink)
                     .DefaultIfEmpty(AtomLink.CreateFirstLink(this.CreateNewFeedAddress()))
                     .Single();
+                index = index.WithLinks(index.Links.Union(new[] { firstLink }));
+
                 var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
                 var lastLinkAdded = false;
                 if (lastLink == null)
@@ -216,7 +218,6 @@ namespace Grean.AtomEventStore
                     lastLink = lastPage.Links.Single(l => l.IsSelfLink).ToLastLink();
                     lastLinkCorrected = true;
                 }
-                index = index.WithLinks(index.Links.Union(new[] { firstLink }));
                 index = index.WithLinks(index.Links
                     .Where(l => !l.IsLastLink)
                     .Concat(new[] { lastLink }));
