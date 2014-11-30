@@ -209,7 +209,7 @@ namespace Grean.AtomEventStore
                     lastLink = firstLink.ToLastLink();
                     lastLinkAdded = true;
                 }
-                var lastPage = this.ReadLastPage(lastLink.Href);
+                var lastPage = this.ReadTrueLastPage(lastLink.Href);
                 var lastLinkCorrected = false;
                 if (lastPage.Links.Single(l => l.IsSelfLink).Href != lastLink.Href)
                 {
@@ -282,7 +282,7 @@ namespace Grean.AtomEventStore
                 return AtomFeed.ReadFrom(r, this.serializer);
         }
 
-        private AtomFeed ReadLastPage(Uri address)
+        private AtomFeed ReadTrueLastPage(Uri address)
         {
             var page = this.ReadPage(address);
             var nextLink = page.Links.SingleOrDefault(l => l.IsNextLink);
