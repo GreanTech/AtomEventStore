@@ -225,30 +225,7 @@ namespace Grean.AtomEventStore
                 var entry = CreateEntry(@event, now);
 
                 if (this.PageSizeReached(lastPage))
-                {
-                    var newAddress = this.CreateNewFeedAddress();
-                    var newPage = this.ReadPage(newAddress);
-                    newPage = AddEntryTo(newPage, entry, now);
-
-                    var nextLink = AtomLink.CreateNextLink(newAddress);
-
-                    var previousPage = lastPage
-                        .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
-
-                    var previousLink = previousPage.Links
-                        .Single(l => l.IsSelfLink)
-                        .ToPreviousLink();
-
-                    newPage = newPage.WithLinks(
-                        newPage.Links.Concat(new[] { previousLink }));
-                    index = index.WithLinks(index.Links
-                        .Where(l => !l.IsLastLink)
-                        .Concat(new[] { nextLink.ToLastLink() }));
-
-                    this.Write(newPage);
-                    this.Write(previousPage);
-                    try { this.Write(index); } catch { }
-                }
+                    this.AddEntryToNewPage(entry, index, lastPage, now);
                 else
                 {
                     lastPage = AddEntryTo(lastPage, entry, now);
@@ -260,6 +237,37 @@ namespace Grean.AtomEventStore
                         try { this.Write(index); } catch { }
                 }
             });
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception will can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
+        private void AddEntryToNewPage(
+            AtomEntry entry,
+            AtomFeed index,
+            AtomFeed lastPage,
+            DateTimeOffset now)
+        {
+            var newAddress = this.CreateNewFeedAddress();
+            var newPage = this.ReadPage(newAddress);
+            newPage = AddEntryTo(newPage, entry, now);
+
+            var nextLink = AtomLink.CreateNextLink(newAddress);
+
+            var previousPage = lastPage
+                .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
+
+            var previousLink = previousPage.Links
+                .Single(l => l.IsSelfLink)
+                .ToPreviousLink();
+
+            newPage = newPage.WithLinks(
+                newPage.Links.Concat(new[] { previousLink }));
+            index = index.WithLinks(index.Links
+                .Where(l => !l.IsLastLink)
+                .Concat(new[] { nextLink.ToLastLink() }));
+
+            this.Write(newPage);
+            this.Write(previousPage);
+            try { this.Write(index); } catch { }
         }
 
         private Uri CreateNewFeedAddress()
