@@ -239,7 +239,7 @@ namespace Grean.AtomEventStore
             });
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception will can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
         private void AddEntryToNewPage(
             AtomEntry entry,
             AtomFeed index,
