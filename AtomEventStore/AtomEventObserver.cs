@@ -225,7 +225,7 @@ namespace Grean.AtomEventStore
                 var entry = CreateEntry(@event, now);
 
                 if (this.PageSizeReached(lastPage))
-                    this.AddEntryToNewPage(entry, index, lastPage, now);
+                    this.WriteEntryToNewPage(entry, index, lastPage, now);
                 else
                 {
                     lastPage = AddEntryTo(lastPage, entry, now);
@@ -240,7 +240,7 @@ namespace Grean.AtomEventStore
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
-        private void AddEntryToNewPage(
+        private void WriteEntryToNewPage(
             AtomEntry entry,
             AtomFeed index,
             AtomFeed lastPage,
