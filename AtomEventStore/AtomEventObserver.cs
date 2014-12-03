@@ -231,9 +231,9 @@ namespace Grean.AtomEventStore
                 var entry = CreateEntry(@event, now);
 
                 if (this.PageSizeReached(lastPage))
-                    this.WriteEntryToNewPage(entry, index, ctx);
+                    this.WriteEntryToNewPage(entry, ctx);
                 else
-                    this.WriteEntryToExistingPage(entry, index, ctx);
+                    this.WriteEntryToExistingPage(entry, ctx);
             });
         }
 
@@ -263,7 +263,6 @@ namespace Grean.AtomEventStore
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
         private void WriteEntryToNewPage(
             AtomEntry entry,
-            AtomFeed index,
             AppendContext context)
         {
             var newAddress = this.CreateNewFeedAddress();
@@ -281,7 +280,7 @@ namespace Grean.AtomEventStore
 
             newPage = newPage.WithLinks(
                 newPage.Links.Concat(new[] { previousLink }));
-            index = index.WithLinks(index.Links
+            var index = context.Index.WithLinks(context.Index.Links
                 .Where(l => !l.IsLastLink)
                 .Concat(new[] { nextLink.ToLastLink() }));
 
@@ -293,16 +292,15 @@ namespace Grean.AtomEventStore
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
         private void WriteEntryToExistingPage(
             AtomEntry entry,
-            AtomFeed index,
             AppendContext context)
         {
             var lastPage = AddEntryTo(context.LastPage, entry, context.Now);
 
             this.Write(lastPage);
             if (context.LastLinkAdded)
-                this.Write(index);
+                this.Write(context.Index);
             else if (context.LastLinkCorrected)
-                try { this.Write(index); } catch { }
+                try { this.Write(context.Index); } catch { }
         }
 
         private Uri CreateNewFeedAddress()
