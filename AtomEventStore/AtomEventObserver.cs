@@ -231,9 +231,9 @@ namespace Grean.AtomEventStore
                 var entry = CreateEntry(@event, now);
 
                 if (this.PageSizeReached(lastPage))
-                    this.WriteEntryToNewPage(entry, index, lastPage, ctx);
+                    this.WriteEntryToNewPage(entry, index, ctx);
                 else
-                    this.WriteEntryToExistingPage(entry, index, lastPage, ctx);
+                    this.WriteEntryToExistingPage(entry, index, ctx);
             });
         }
 
@@ -264,7 +264,6 @@ namespace Grean.AtomEventStore
         private void WriteEntryToNewPage(
             AtomEntry entry,
             AtomFeed index,
-            AtomFeed lastPage,
             AppendContext context)
         {
             var newAddress = this.CreateNewFeedAddress();
@@ -273,8 +272,8 @@ namespace Grean.AtomEventStore
 
             var nextLink = AtomLink.CreateNextLink(newAddress);
 
-            var previousPage = lastPage
-                .WithLinks(lastPage.Links.Concat(new[] { nextLink }));
+            var previousPage = context.LastPage
+                .WithLinks(context.LastPage.Links.Concat(new[] { nextLink }));
 
             var previousLink = previousPage.Links
                 .Single(l => l.IsSelfLink)
@@ -295,10 +294,9 @@ namespace Grean.AtomEventStore
         private void WriteEntryToExistingPage(
             AtomEntry entry,
             AtomFeed index,
-            AtomFeed lastPage,
             AppendContext context)
         {
-            lastPage = AddEntryTo(lastPage, entry, context.Now);
+            var lastPage = AddEntryTo(context.LastPage, entry, context.Now);
 
             this.Write(lastPage);
             if (context.LastLinkAdded)
