@@ -221,13 +221,43 @@ namespace Grean.AtomEventStore
                     .Where(l => !l.IsLastLink)
                     .Concat(new[] { lastLink }));
 
+                var ctx = new AppendContext(
+                    index,
+                    lastPage,
+                    now,
+                    lastLinkAdded,
+                    lastLinkCorrected);
+
                 var entry = CreateEntry(@event, now);
 
                 if (this.PageSizeReached(lastPage))
-                    this.WriteEntryToNewPage(entry, index, lastPage, now, lastLinkAdded, lastLinkCorrected);
+                    this.WriteEntryToNewPage(entry, index, lastPage, now, lastLinkAdded, lastLinkCorrected, ctx);
                 else
-                    this.WriteEntryToExistingPage(entry, index, lastPage, now, lastLinkAdded, lastLinkCorrected);
+                    this.WriteEntryToExistingPage(entry, index, lastPage, now, lastLinkAdded, lastLinkCorrected, ctx);
             });
+        }
+
+        private class AppendContext
+        {
+            public readonly AtomFeed Index;
+            public readonly AtomFeed LastPage;
+            public readonly DateTimeOffset Now;
+            public readonly bool LastLinkAdded;
+            public readonly bool LastLinkCorrected;
+
+            public AppendContext(
+                AtomFeed index,
+                AtomFeed lastPage,
+                DateTimeOffset now,
+                bool lastLinkAdded,
+                bool lastLinkCorrected)
+            {
+                this.Index = index;
+                this.LastPage = lastPage;
+                this.Now = now;
+                this.LastLinkAdded = lastLinkAdded;
+                this.LastLinkCorrected = lastLinkCorrected;
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Since the offending exception handling block wraps around a piece of behaviour that ultimately is implemented behind an interface, there's no way to know what type of exception can be thrown. Since it's important to suppress any exceptions in this special case, all exception types must be suppressed. Frankly, I can't think of a better solution, but I'm open to suggestions.")]
@@ -237,7 +267,8 @@ namespace Grean.AtomEventStore
             AtomFeed lastPage,
             DateTimeOffset now,
             bool lastLinkAdded,
-            bool lastLinkCorrected)
+            bool lastLinkCorrected,
+            AppendContext context)
         {
             var newAddress = this.CreateNewFeedAddress();
             var newPage = this.ReadPage(newAddress);
@@ -270,7 +301,8 @@ namespace Grean.AtomEventStore
             AtomFeed lastPage,
             DateTimeOffset now,
             bool lastLinkAdded,
-            bool lastLinkCorrected)
+            bool lastLinkCorrected,
+            AppendContext context)
         {
             lastPage = AddEntryTo(lastPage, entry, now);
 
