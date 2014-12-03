@@ -307,9 +307,9 @@ namespace Grean.AtomEventStore
             lastPage = AddEntryTo(lastPage, entry, now);
 
             this.Write(lastPage);
-            if (lastLinkAdded)
+            if (context.LastLinkAdded)
                 this.Write(index);
-            else if (lastLinkCorrected)
+            else if (context.LastLinkCorrected)
                 try { this.Write(index); } catch { }
         }
 
