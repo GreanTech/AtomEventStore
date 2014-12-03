@@ -224,7 +224,7 @@ namespace Grean.AtomEventStore
                 var entry = CreateEntry(@event, now);
 
                 if (this.PageSizeReached(lastPage))
-                    this.WriteEntryToNewPage(entry, index, lastPage, now);
+                    this.WriteEntryToNewPage(entry, index, lastPage, now, lastLinkAdded, lastLinkCorrected);
                 else
                     this.WriteEntryToExistingPage(entry, index, lastPage, now, lastLinkAdded, lastLinkCorrected);
             });
@@ -235,7 +235,9 @@ namespace Grean.AtomEventStore
             AtomEntry entry,
             AtomFeed index,
             AtomFeed lastPage,
-            DateTimeOffset now)
+            DateTimeOffset now,
+            bool lastLinkAdded,
+            bool lastLinkCorrected)
         {
             var newAddress = this.CreateNewFeedAddress();
             var newPage = this.ReadPage(newAddress);
