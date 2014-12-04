@@ -234,13 +234,12 @@ namespace Grean.AtomEventStore
                 .Where(l => !l.IsLastLink)
                 .Concat(new[] { lastLink }));
 
-            var ctx = new AppendContext(
+            return new AppendContext(
                 index,
                 lastPage,
                 now,
                 lastLinkAdded,
                 lastLinkCorrected);
-            return ctx;
         }
 
         private class AppendContext
