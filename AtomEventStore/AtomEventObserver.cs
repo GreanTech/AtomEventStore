@@ -230,7 +230,7 @@ namespace Grean.AtomEventStore
 
                 var entry = CreateEntry(@event, now);
 
-                if (this.PageSizeReached(lastPage))
+                if (this.PageSizeReached(ctx.LastPage))
                     this.WriteEntryToNewPage(entry, ctx);
                 else
                     this.WriteEntryToExistingPage(entry, ctx);
