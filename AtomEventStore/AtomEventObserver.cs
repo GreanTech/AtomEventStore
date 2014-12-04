@@ -196,37 +196,7 @@ namespace Grean.AtomEventStore
             {
                 var now = DateTimeOffset.Now;
 
-                var index = this.ReadIndex();
-                var firstLink = index.Links
-                    .Where(l => l.IsFirstLink)
-                    .DefaultIfEmpty(AtomLink.CreateFirstLink(this.CreateNewFeedAddress()))
-                    .Single();
-                index = index.WithLinks(index.Links.Union(new[] { firstLink }));
-
-                var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
-                var lastLinkAdded = false;
-                if (lastLink == null)
-                {
-                    lastLink = firstLink.ToLastLink();
-                    lastLinkAdded = true;
-                }
-                var lastPage = this.ReadTrueLastPage(lastLink.Href);
-                var lastLinkCorrected = false;
-                if (lastPage.Links.Single(l => l.IsSelfLink).Href != lastLink.Href)
-                {
-                    lastLink = lastPage.Links.Single(l => l.IsSelfLink).ToLastLink();
-                    lastLinkCorrected = true;
-                }
-                index = index.WithLinks(index.Links
-                    .Where(l => !l.IsLastLink)
-                    .Concat(new[] { lastLink }));
-
-                var ctx = new AppendContext(
-                    index,
-                    lastPage,
-                    now,
-                    lastLinkAdded,
-                    lastLinkCorrected);
+                var ctx = this.Prepare(now);
 
                 var entry = CreateEntry(@event, now);
 
@@ -235,6 +205,42 @@ namespace Grean.AtomEventStore
                 else
                     this.WriteEntryToExistingPage(entry, ctx);
             });
+        }
+
+        private AppendContext Prepare(DateTimeOffset now)
+        {
+            var index = this.ReadIndex();
+            var firstLink = index.Links
+                .Where(l => l.IsFirstLink)
+                .DefaultIfEmpty(AtomLink.CreateFirstLink(this.CreateNewFeedAddress()))
+                .Single();
+            index = index.WithLinks(index.Links.Union(new[] { firstLink }));
+
+            var lastLink = index.Links.SingleOrDefault(l => l.IsLastLink);
+            var lastLinkAdded = false;
+            if (lastLink == null)
+            {
+                lastLink = firstLink.ToLastLink();
+                lastLinkAdded = true;
+            }
+            var lastPage = this.ReadTrueLastPage(lastLink.Href);
+            var lastLinkCorrected = false;
+            if (lastPage.Links.Single(l => l.IsSelfLink).Href != lastLink.Href)
+            {
+                lastLink = lastPage.Links.Single(l => l.IsSelfLink).ToLastLink();
+                lastLinkCorrected = true;
+            }
+            index = index.WithLinks(index.Links
+                .Where(l => !l.IsLastLink)
+                .Concat(new[] { lastLink }));
+
+            var ctx = new AppendContext(
+                index,
+                lastPage,
+                now,
+                lastLinkAdded,
+                lastLinkCorrected);
+            return ctx;
         }
 
         private class AppendContext
