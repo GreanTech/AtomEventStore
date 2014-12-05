@@ -53,6 +53,7 @@
     <Compile Include="TestDsl.fs" />
     <Compile Include="XmlEventStreamFacadeTests.fs" />
     <Compile Include="DataContractEventsFacadeTests.fs" />
+    <Compile Include="UserSignUpDemo.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
   </ItemGroup>
