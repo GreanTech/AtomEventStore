@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,7 +57,7 @@ namespace Grean.AtomEventStore
             XmlWriterSettings settings)
         {
             if (xmlWritable == null)
-                throw new ArgumentNullException("xmlWritable");
+                throw new ArgumentNullException(nameof(xmlWritable));
 
             var sb = new StringBuilder();
             using (var w = XmlWriter.Create(sb, settings))

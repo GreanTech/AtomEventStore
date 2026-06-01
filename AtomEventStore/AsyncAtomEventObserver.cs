@@ -65,9 +65,9 @@ namespace Grean.AtomEventStore
             IContentSerializer serializer)
         {
             if (storage == null)
-                throw new ArgumentNullException("storage");
+                throw new ArgumentNullException(nameof(storage));
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
 
             this.id = id;
             this.pageSize = pageSize;
@@ -153,7 +153,7 @@ namespace Grean.AtomEventStore
                 lastLinkCorrected);
         }
 
-        private class AppendContext
+        private sealed class AppendContext
         {
             public readonly AtomFeed Index;
             public readonly AtomFeed LastPage;
@@ -276,7 +276,7 @@ namespace Grean.AtomEventStore
                 now,
                 new AtomAuthor("Grean"),
                 new XmlAtomContent(@event),
-                new AtomLink[0]);
+                Array.Empty<AtomLink>());
         }
 
         private static AtomFeed AddEntryTo(

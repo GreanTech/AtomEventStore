@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, dotnetcore ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test-pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # Build the shipped library in Release. This enforces the analyzer quality
+      # gate (EnableNETAnalyzers + TreatWarningsAsErrors), so a CA violation
+      # fails the build.
+      - name: Build core (analyzer gate)
+        run: dotnet build AtomEventStore/AtomEventStore.csproj -c Release
+
+      - name: C# unit tests
+        run: dotnet test AtomEventStore.UnitTests/AtomEventStore.UnitTests.csproj -c Release
+
+      - name: F# async tests
+        run: dotnet test AtomEventStore.UnitTests.Async.FSharp/AtomEventStore.UnitTests.Async.FSharp.fsproj -c Release
+
+      # Azure integration tests skip automatically unless the repository defines
+      # the ATOMEVENTSTORE_AZURE_CONNECTION secret (a test-account connection
+      # string). They never fail the build merely for being unconfigured.
+      - name: Azure adapter integration tests
+        env:
+          ATOMEVENTSTORE_AZURE_CONNECTION: ${{ secrets.ATOMEVENTSTORE_AZURE_CONNECTION }}
+        run: dotnet test AtomEventStore.AzureBlobAsync.Tests/AtomEventStore.AzureBlobAsync.Tests.csproj -c Release
+
+      - name: Pack
+        run: dotnet pack AtomEventStore/AtomEventStore.csproj -c Release -o ./artifacts
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: ./artifacts/*.nupkg

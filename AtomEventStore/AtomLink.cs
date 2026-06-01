@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -47,9 +47,9 @@ namespace Grean.AtomEventStore
         public AtomLink(string rel, Uri href)
         {
             if (rel == null)
-                throw new ArgumentNullException("rel");
+                throw new ArgumentNullException(nameof(rel));
             if (href == null)
-                throw new ArgumentNullException("href");
+                throw new ArgumentNullException(nameof(href));
 
             this.rel = rel;
             this.href = href;
@@ -92,7 +92,7 @@ namespace Grean.AtomEventStore
         public AtomLink WithRel(string newRel)
         {
             if (newRel == null)
-                throw new ArgumentNullException("newRel");
+                throw new ArgumentNullException(nameof(newRel));
 
             return new AtomLink(newRel, this.href);
         }
@@ -110,7 +110,7 @@ namespace Grean.AtomEventStore
         public AtomLink WithHref(Uri newHref)
         {
             if (newHref == null)
-                throw new ArgumentNullException("newHref");
+                throw new ArgumentNullException(nameof(newHref));
 
             return new AtomLink(this.rel, newHref);
         }
@@ -169,7 +169,7 @@ namespace Grean.AtomEventStore
         public void WriteTo(XmlWriter xmlWriter)
         {
             if (xmlWriter == null)
-                throw new ArgumentNullException("xmlWriter");
+                throw new ArgumentNullException(nameof(xmlWriter));
 
             xmlWriter.WriteStartElement("link", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("href", this.href.ToString());
@@ -199,7 +199,7 @@ namespace Grean.AtomEventStore
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
 
             this.WriteTo(xmlWriter);
         }
@@ -219,7 +219,7 @@ namespace Grean.AtomEventStore
         public static AtomLink Parse(string xml)
         {
             if (xml == null)
-                throw new ArgumentNullException("xml");
+                throw new ArgumentNullException(nameof(xml));
 
             var sr = new StringReader(xml);
             try
@@ -257,7 +257,7 @@ namespace Grean.AtomEventStore
         public static AtomLink ReadFrom(XmlReader xmlReader)
         {
             if (xmlReader == null)
-                throw new ArgumentNullException("xmlReader");
+                throw new ArgumentNullException(nameof(xmlReader));
 
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
@@ -270,7 +270,7 @@ namespace Grean.AtomEventStore
                 .Select(x => x.Value)
                 .SingleOrDefault();
             if (href == null)
-                throw new ArgumentException("The supplied XML reader contains an atom:link element without an href attribute. An atom:link element must have an href attribute.", "xmlReader");
+                throw new ArgumentException("The supplied XML reader contains an atom:link element without an href attribute. An atom:link element must have an href attribute.", nameof(xmlReader));
 
             var rel = navigator
                 .Select("/atom:link/@rel", resolver)
@@ -278,7 +278,7 @@ namespace Grean.AtomEventStore
                 .Select(x => x.Value)
                 .SingleOrDefault();
             if (rel == null)
-                throw new ArgumentException("The supplied XML reader contains an atom:link element without a rel attribute. An atom:link element must have a rel attribute.", "xmlReader");
+                throw new ArgumentException("The supplied XML reader contains an atom:link element without a rel attribute. An atom:link element must have a rel attribute.", nameof(xmlReader));
 
             return new AtomLink(rel, new Uri(href, UriKind.RelativeOrAbsolute));
         }

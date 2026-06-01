@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,7 +31,7 @@ namespace Grean.AtomEventStore
         public AtomAuthor(string name)
         {
             if (name == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
 
             this.name = name;
         }
@@ -73,7 +73,7 @@ namespace Grean.AtomEventStore
         public AtomAuthor WithName(string newName)
         {
             if (newName == null)
-                throw new ArgumentNullException("newName");
+                throw new ArgumentNullException(nameof(newName));
 
             return new AtomAuthor(newName);
         }
@@ -123,7 +123,7 @@ namespace Grean.AtomEventStore
         public void WriteTo(XmlWriter xmlWriter)
         {
             if (xmlWriter == null)
-                throw new ArgumentNullException("xmlWriter");
+                throw new ArgumentNullException(nameof(xmlWriter));
 
             xmlWriter.WriteStartElement("author", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteElementString("name", this.name);
@@ -151,7 +151,7 @@ namespace Grean.AtomEventStore
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
 
             this.WriteTo(xmlWriter);
         }
@@ -171,7 +171,7 @@ namespace Grean.AtomEventStore
         public static AtomAuthor ReadFrom(XmlReader xmlReader)
         {
             if (xmlReader == null)
-                throw new ArgumentNullException("xmlReader");
+                throw new ArgumentNullException(nameof(xmlReader));
 
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
@@ -200,7 +200,7 @@ namespace Grean.AtomEventStore
         public static AtomAuthor Parse(string xml)
         {
             if (xml == null)
-                throw new ArgumentNullException("xml");
+                throw new ArgumentNullException(nameof(xml));
 
             var sr = new StringReader(xml);
             try

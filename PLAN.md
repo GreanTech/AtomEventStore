@@ -216,20 +216,40 @@ rewrite.
    bucket) is the practical way to produce this corpus rather than hand-picking
    from millions of blobs.
 
-## Suggested sequencing
+## Sequencing — status
 
-1. SDK conversion + `netstandard2.0` retarget of the core (already proven to
-   compile unchanged) → green build.
-2. Modernize the C# test suite (xUnit 2 / AutoFixture 4 / record projections)
-   → restore regression coverage on the synchronous core. Also relocate the
-   golden-master fixtures from `tools/AtomFixtureScrubber/fixtures/`
-   (`chain/` + `shapes/`) into the test project, e.g.
-   `test/AtomEventStore.UnitTests/Fixtures/golden-master/`.
-3. Add the async family (interfaces, backends, observer, readers) + F# async
-   tests.
-4. Stand up `AtomEventStore.AzureBlobAsync` (separate solution, Azure SDK v12)
-   as the reference implementation + its tests.
-5. Wire CI (GitHub Actions), the analyzer gate, and `dotnet pack`; cut 2.0.0.
+1. ✅ **Done.** SDK conversion + `netstandard2.0` retarget of the core; green build.
+2. ✅ **Done.** C# test suite modernized (xUnit 2 / AutoFixture 4 / record
+   projections); 276/276. Plus guard-clause hardening of the core. _(Fixture
+   relocation into the test project remains deferred — fixtures still live under
+   `tools/AtomFixtureScrubber/fixtures/`.)_
+3. ✅ **Done.** Async family (`IAsyncAtomEventStorage`, `AsyncAtomEventObserver`,
+   `AsyncFifoEvents`/`AsyncLifoEvents`, async backends, `[Obsolete]` on the
+   fake-async `AppendAsync`) + F# async tests (4/4).
+4. ✅ **Done.** `AtomEventStore.AzureBlobAsync` reference/sample on Azure SDK v12
+   + its own solution + integration tests (verified 2/2 against a real test
+   account).
+5. ✅ **Done.** CI (`.github/workflows/ci.yml`), analyzer quality gate, and
+   `dotnet pack` (produces `Grean.AtomEventStore.2.0.0.nupkg`); version cut to
+   2.0.0.
+   - Quality gate: `EnableNETAnalyzers` + `AnalysisLevel=latest-recommended` +
+     `TreatWarningsAsErrors` on the core. Cleanup: string-literal parameter names
+     → `nameof`, `Array.Empty<T>()`, sealed internal types, `Length`/`TryGetValue`.
+     Opted out in `.editorconfig` (documented): `CA1200` (doc-cref style) plus
+     `CA1006`/`CA2210` carried over from the legacy ruleset. Existing
+     `[SuppressMessage]` attributes were kept — they correctly suppress the
+     modern CA rules (CA1031/CA1710/CA1822) and are load-bearing, not stale.
+   - Pruned the orphaned FxCop config (`AtomEventStore.ruleset`,
+     `CodeAnalysisDictionary.xml`).
+
+## Remaining (deferred; none block the 2.0.0 core release)
+
+- Relocate the golden-master fixtures from `tools/` into the test project.
+- Modernize or formally retire the legacy `AtomEventStore.UnitTests.FSharp` and
+  `AtomEventStore.AzureBlob` (net45) projects, and consolidate/clean up the
+  transitional `.sln` files.
+- Apply the analyzer gate to the `AtomEventStore.AzureBlobAsync` sample (it
+  currently builds without `TreatWarningsAsErrors`, being a sample).
 
 ---
 

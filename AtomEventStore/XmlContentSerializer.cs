@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -40,7 +40,7 @@ namespace Grean.AtomEventStore
         public XmlContentSerializer(ITypeResolver resolver)
         {
             if (resolver == null)
-                throw new ArgumentNullException("resolver");
+                throw new ArgumentNullException(nameof(resolver));
 
             this.resolver = resolver;
         }
@@ -62,9 +62,9 @@ namespace Grean.AtomEventStore
         public void Serialize(XmlWriter xmlWriter, object value)
         {
             if (xmlWriter == null)
-                throw new ArgumentNullException("xmlWriter");
+                throw new ArgumentNullException(nameof(xmlWriter));
             if (value == null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             
             var serializer = new XmlSerializer(value.GetType());
             serializer.Serialize(xmlWriter, value);
@@ -95,7 +95,7 @@ namespace Grean.AtomEventStore
         public XmlAtomContent Deserialize(XmlReader xmlReader)
         {
             if (xmlReader == null)
-                throw new ArgumentNullException("xmlReader");
+                throw new ArgumentNullException(nameof(xmlReader));
 
             xmlReader.MoveToContent();
             var localName = xmlReader.Name;
@@ -135,7 +135,7 @@ namespace Grean.AtomEventStore
             Assembly assemblyToScanForEvents)
         {
             if (assemblyToScanForEvents == null)
-                throw new ArgumentNullException("assemblyToScanForEvents");
+                throw new ArgumentNullException(nameof(assemblyToScanForEvents));
 
             var entries =
                 (from t in assemblyToScanForEvents.GetExportedTypes()
@@ -146,7 +146,7 @@ namespace Grean.AtomEventStore
                  select new TypeResolutionEntry(a.Namespace, a.ElementName, t))
                  .ToArray();
 
-            if (!entries.Any())
+            if (entries.Length == 0)
                 throw new ArgumentException(
                     "The provided assembly to scan for events doesn't contain any public types annotated with XmlRootAttribute.");
 
@@ -174,7 +174,7 @@ namespace Grean.AtomEventStore
         public static IContentSerializer Scan(Assembly assemblyToScanForEvents)
         {
             if (assemblyToScanForEvents == null)
-                throw new ArgumentNullException("assemblyToScanForEvents");
+                throw new ArgumentNullException(nameof(assemblyToScanForEvents));
 
             var resolver =
                 XmlContentSerializer.CreateTypeResolver(

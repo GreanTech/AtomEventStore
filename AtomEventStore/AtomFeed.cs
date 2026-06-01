@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -67,13 +67,13 @@ namespace Grean.AtomEventStore
             IEnumerable<AtomLink> links)
         {
             if (title == null)
-                throw new ArgumentNullException("title");
+                throw new ArgumentNullException(nameof(title));
             if (author == null)
-                throw new ArgumentNullException("author");
+                throw new ArgumentNullException(nameof(author));
             if (entries == null)
-                throw new ArgumentNullException("entries");
+                throw new ArgumentNullException(nameof(entries));
             if (links == null)
-                throw new ArgumentNullException("links");
+                throw new ArgumentNullException(nameof(links));
 
             this.id = id;
             this.title = title;
@@ -173,7 +173,7 @@ namespace Grean.AtomEventStore
         public AtomFeed WithTitle(string newTitle)
         {
             if (newTitle == null)
-                throw new ArgumentNullException("newTitle");
+                throw new ArgumentNullException(nameof(newTitle));
 
             return new AtomFeed(
                 this.id,
@@ -218,7 +218,7 @@ namespace Grean.AtomEventStore
         public AtomFeed WithAuthor(AtomAuthor newAuthor)
         {
             if (newAuthor == null)
-                throw new ArgumentNullException("newAuthor");
+                throw new ArgumentNullException(nameof(newAuthor));
 
             return new AtomFeed(
                 this.id,
@@ -242,7 +242,7 @@ namespace Grean.AtomEventStore
         public AtomFeed WithEntries(IEnumerable<AtomEntry> newEntries)
         {
             if (newEntries == null)
-                throw new ArgumentNullException("newEntries");
+                throw new ArgumentNullException(nameof(newEntries));
 
             return new AtomFeed(
                 this.id,
@@ -266,7 +266,7 @@ namespace Grean.AtomEventStore
         public AtomFeed WithLinks(IEnumerable<AtomLink> newLinks)
         {
             if (newLinks == null)
-                throw new ArgumentNullException("newLinks");
+                throw new ArgumentNullException(nameof(newLinks));
 
             return new AtomFeed(
                 this.id,
@@ -295,7 +295,7 @@ namespace Grean.AtomEventStore
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
-                throw new ArgumentNullException("xmlWriter");
+                throw new ArgumentNullException(nameof(xmlWriter));
 
             xmlWriter.WriteStartElement("feed", "http://www.w3.org/2005/Atom");
 
@@ -357,9 +357,9 @@ namespace Grean.AtomEventStore
             IContentSerializer serializer)
         {
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
             if (xmlReader == null)
-                throw new ArgumentNullException("xmlReader");
+                throw new ArgumentNullException(nameof(xmlReader));
 
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
@@ -419,7 +419,7 @@ namespace Grean.AtomEventStore
         public AtomFeed AddLink(AtomLink newLink)
         {
             if (newLink == null)
-                throw new ArgumentNullException("newLink");
+                throw new ArgumentNullException(nameof(newLink));
             
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
@@ -445,9 +445,9 @@ namespace Grean.AtomEventStore
         public static AtomFeed Parse(string xml, IContentSerializer serializer)
         {
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
             if (xml == null)
-                throw new ArgumentNullException("xml");
+                throw new ArgumentNullException(nameof(xml));
 
             var sr = new StringReader(xml);
             try

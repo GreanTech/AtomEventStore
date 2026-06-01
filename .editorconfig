@@ -1,0 +1,19 @@
+root = true
+
+[*.cs]
+
+# =============================================================================
+# Analyzer quality gate (plan step 5). The shipped library (AtomEventStore)
+# builds with EnableNETAnalyzers + TreatWarningsAsErrors, so the severities
+# below are enforced as build errors there. This ports the intent of the legacy
+# AtomEventStore.ruleset (a strict, correctness-focused gate) to the modern
+# in-box .NET analyzers.
+# =============================================================================
+
+# Explicit opt-outs carried over from the legacy ruleset:
+dotnet_diagnostic.CA1006.severity = none   # Do not nest generic types in member signatures
+dotnet_diagnostic.CA2210.severity = none   # Assemblies should have valid strong names (unsigned by design)
+
+# Cosmetic XML-doc rule: the documentation uses cref prefixes (e.g. "T:") on
+# purpose; not worth churning the doc comments for a 2.0.
+dotnet_diagnostic.CA1200.severity = none   # Avoid using cref tags with a prefix

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -46,7 +46,7 @@ namespace Grean.AtomEventStore
         public XmlAtomContent(object item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             this.item = item;
         }
@@ -88,7 +88,7 @@ namespace Grean.AtomEventStore
         public XmlAtomContent WithItem(object newItem)
         {
             if (newItem == null)
-                throw new ArgumentNullException("newItem");
+                throw new ArgumentNullException(nameof(newItem));
 
             return new XmlAtomContent(newItem);
         }
@@ -152,9 +152,9 @@ namespace Grean.AtomEventStore
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
-                throw new ArgumentNullException("xmlWriter");
+                throw new ArgumentNullException(nameof(xmlWriter));
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
 
             xmlWriter.WriteStartElement("content", "http://www.w3.org/2005/Atom");
             xmlWriter.WriteAttributeString("type", "application/xml");
@@ -188,9 +188,9 @@ namespace Grean.AtomEventStore
             IContentSerializer serializer)
         {
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
             if (xml == null)
-                throw new ArgumentNullException("xml");
+                throw new ArgumentNullException(nameof(xml));
 
             var sr = new StringReader(xml);
             try
@@ -234,9 +234,9 @@ namespace Grean.AtomEventStore
             IContentSerializer serializer)
         {
             if (xmlReader == null)
-                throw new ArgumentNullException("xmlReader");
+                throw new ArgumentNullException(nameof(xmlReader));
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
             GuardContentElement(xmlReader);
 
             xmlReader.Read();
@@ -253,27 +253,23 @@ namespace Grean.AtomEventStore
                     string.Format(
                         CultureInfo.CurrentCulture,
                         "The containing XML element of an Atom XML content entry must have the local name \"content\", but the name was \"{0}\". The name comparison is case-sensitive.",
-                        xmlReader.LocalName),
-                    "xmlReader");
+                        xmlReader.LocalName), nameof(xmlReader));
             if (xmlReader.NamespaceURI != "http://www.w3.org/2005/Atom")
                 throw new ArgumentException(
                     string.Format(
                         CultureInfo.CurrentCulture,
                         "The containing XML element of an Atom XML content entry must have the XML namespace \"http://www.w3.org/2005/Atom\", but the XML namespace was \"{0}\". The namespace comparison is case-sensitive.",
-                        xmlReader.NamespaceURI),
-                    "xmlReader");
+                        xmlReader.NamespaceURI), nameof(xmlReader));
 
             if (!xmlReader.MoveToAttribute("type"))
                 throw new ArgumentException(
-                    "The containing XML element of an Atom XML content entry must have a \"type\" attribute, but none was found. The attribute name comparison is case-sensitive.",
-                    "xmlReader");
+                    "The containing XML element of an Atom XML content entry must have a \"type\" attribute, but none was found. The attribute name comparison is case-sensitive.", nameof(xmlReader));
             if (xmlReader.Value != "application/xml")
                 throw new ArgumentException(
                     string.Format(
                         CultureInfo.CurrentCulture,
                         "The containing XML element of an Atom XML content entry must have a \"type\" attribute with the value \"application/xml\", but the value was \"{0}\". The value comparison is case-sensitive.",
-                        xmlReader.Value),
-                    "xmlReader");
+                        xmlReader.Value), nameof(xmlReader));
         }
     }
 }

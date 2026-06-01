@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ namespace Grean.AtomEventStore
         /// </exception>
         public TypeResolutionTable(
             IReadOnlyCollection<TypeResolutionEntry> entries)
-            : this((entries ?? throw new ArgumentNullException("entries")).ToArray())
+            : this((entries ?? throw new ArgumentNullException(nameof(entries))).ToArray())
         {
         }
 
@@ -51,7 +51,7 @@ namespace Grean.AtomEventStore
         public TypeResolutionTable(params TypeResolutionEntry[] entries)
         {
             if (entries == null)
-                throw new ArgumentNullException("entries");
+                throw new ArgumentNullException(nameof(entries));
 
             this.entries = entries;
         }
@@ -74,9 +74,9 @@ namespace Grean.AtomEventStore
         public Type Resolve(string localName, string xmlNamespace)
         {
             if (localName == null)
-                throw new ArgumentNullException("localName");
+                throw new ArgumentNullException(nameof(localName));
             if (xmlNamespace == null)
-                throw new ArgumentNullException("xmlNamespace");
+                throw new ArgumentNullException(nameof(xmlNamespace));
 
             var result = this.entries
                 .SingleOrDefault(x =>

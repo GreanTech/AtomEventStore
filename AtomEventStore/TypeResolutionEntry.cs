@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,11 +50,11 @@ namespace Grean.AtomEventStore
             Type resolvedType)
         {
             if (xmlNamespace == null)
-                throw new ArgumentNullException("xmlNamespace");
+                throw new ArgumentNullException(nameof(xmlNamespace));
             if (localName == null)
-                throw new ArgumentNullException("localName");
+                throw new ArgumentNullException(nameof(localName));
             if (resolvedType == null)
-                throw new ArgumentNullException("resolvedType");
+                throw new ArgumentNullException(nameof(resolvedType));
 
             this.xmlNamespace = xmlNamespace;
             this.localName = localName;

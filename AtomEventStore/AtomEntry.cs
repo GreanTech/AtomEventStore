@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -69,13 +69,13 @@ namespace Grean.AtomEventStore
             IEnumerable<AtomLink> links)
         {
             if (title == null)
-                throw new ArgumentNullException("title");
+                throw new ArgumentNullException(nameof(title));
             if (author == null)
-                throw new ArgumentNullException("author");
+                throw new ArgumentNullException(nameof(author));
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
             if (links == null)
-                throw new ArgumentNullException("links");
+                throw new ArgumentNullException(nameof(links));
             
             this.id = id;
             this.title = title;
@@ -190,7 +190,7 @@ namespace Grean.AtomEventStore
         public AtomEntry WithTitle(string newTitle)
         {
             if (newTitle == null)
-                throw new ArgumentNullException("newTitle");
+                throw new ArgumentNullException(nameof(newTitle));
 
             return new AtomEntry(
                 this.id,
@@ -237,7 +237,7 @@ namespace Grean.AtomEventStore
         public AtomEntry WithAuthor(AtomAuthor newAuthor)
         {
             if (newAuthor == null)
-                throw new ArgumentNullException("newAuthor");
+                throw new ArgumentNullException(nameof(newAuthor));
 
             return new AtomEntry(
                 this.id,
@@ -262,7 +262,7 @@ namespace Grean.AtomEventStore
         public AtomEntry WithContent(XmlAtomContent newContent)
         {
             if (newContent == null)
-                throw new ArgumentNullException("newContent");
+                throw new ArgumentNullException(nameof(newContent));
 
             return new AtomEntry(
                 this.id,
@@ -287,7 +287,7 @@ namespace Grean.AtomEventStore
         public AtomEntry WithLinks(IEnumerable<AtomLink> newLinks)
         {
             if (newLinks == null)
-                throw new ArgumentNullException("newLinks");
+                throw new ArgumentNullException(nameof(newLinks));
 
             return new AtomEntry(
                 this.id,
@@ -319,9 +319,9 @@ namespace Grean.AtomEventStore
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
             if (xmlWriter == null)
-                throw new ArgumentNullException("xmlWriter");
+                throw new ArgumentNullException(nameof(xmlWriter));
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
 
             xmlWriter.WriteStartElement("entry", "http://www.w3.org/2005/Atom");
 
@@ -383,9 +383,9 @@ namespace Grean.AtomEventStore
             IContentSerializer serializer)
         {
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
             if (xmlReader == null)
-                throw new ArgumentNullException("xmlReader");
+                throw new ArgumentNullException(nameof(xmlReader));
 
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
@@ -450,7 +450,7 @@ namespace Grean.AtomEventStore
         public AtomEntry AddLink(AtomLink newLink)
         {
             if (newLink == null)
-                throw new ArgumentNullException("newLink");
+                throw new ArgumentNullException(nameof(newLink));
 
             return this.WithLinks(this.links.Concat(new[] { newLink }));
         }
@@ -477,9 +477,9 @@ namespace Grean.AtomEventStore
         public static AtomEntry Parse(string xml, IContentSerializer serializer)
         {
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
             if (xml == null)
-                throw new ArgumentNullException("xml");
+                throw new ArgumentNullException(nameof(xml));
 
             var sr = new StringReader(xml);
             try

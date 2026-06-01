@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -108,9 +108,9 @@ namespace Grean.AtomEventStore
             IContentSerializer contentSerializer)
         {
             if (storage == null)
-                throw new ArgumentNullException("storage");
+                throw new ArgumentNullException(nameof(storage));
             if (contentSerializer == null)
-                throw new ArgumentNullException("contentSerializer");
+                throw new ArgumentNullException(nameof(contentSerializer));
             
             this.id = id;
             this.storage = storage;
@@ -171,7 +171,7 @@ namespace Grean.AtomEventStore
         public Task AppendAsync(T @event)
         {
             if (@event == null)
-                throw new ArgumentNullException("event");
+                throw new ArgumentNullException(nameof(@event));
 
             return Task.Factory.StartNew(() =>
             {
@@ -222,7 +222,7 @@ namespace Grean.AtomEventStore
                 now,
                 new AtomAuthor("Grean"),
                 new XmlAtomContent(@event),
-                new AtomLink[0]);
+                Array.Empty<AtomLink>());
         }
 
         private AtomFeed AddEntryTo(
@@ -476,7 +476,7 @@ namespace Grean.AtomEventStore
         public void OnNext(T value)
         {
             if (value is null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
 
             this.AppendAsync(value).Wait();
         }
@@ -581,7 +581,7 @@ namespace Grean.AtomEventStore
         public static bool IsPreviousFeedLink(AtomLink link)
         {
             if (link == null)
-                throw new ArgumentNullException("link");
+                throw new ArgumentNullException(nameof(link));
 
             Guid g;
             return link.IsPreviousLink

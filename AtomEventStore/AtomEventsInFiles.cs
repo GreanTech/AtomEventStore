@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,7 +37,7 @@ namespace Grean.AtomEventStore
         public AtomEventsInFiles(DirectoryInfo directory)
         {
             if (directory == null)
-                throw new ArgumentNullException("directory");
+                throw new ArgumentNullException(nameof(directory));
 
             this.directory = directory;
         }
@@ -69,7 +69,7 @@ namespace Grean.AtomEventStore
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             if (href == null)
-                throw new ArgumentNullException("href");
+                throw new ArgumentNullException(nameof(href));
 
             var fileName = this.CreateFileName(href);
 
@@ -101,7 +101,7 @@ namespace Grean.AtomEventStore
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
             if (atomFeed == null)
-                throw new ArgumentNullException("atomFeed");
+                throw new ArgumentNullException(nameof(atomFeed));
 
             var fileName = this.CreateFileName(atomFeed.Links);
             var dir = Path.GetDirectoryName(fileName);
@@ -134,7 +134,7 @@ namespace Grean.AtomEventStore
             // Validate synchronously (fail fast) before entering the async state
             // machine, so the guard isn't dormant inside the returned Task.
             if (href == null)
-                throw new ArgumentNullException("href");
+                throw new ArgumentNullException(nameof(href));
 
             return this.CreateFeedReaderForAsyncImpl(href, cancellationToken);
         }
@@ -190,9 +190,9 @@ namespace Grean.AtomEventStore
             // Validate synchronously (fail fast) before entering the async state
             // machine, so the guards aren't dormant inside the returned Task.
             if (atomFeed == null)
-                throw new ArgumentNullException("atomFeed");
+                throw new ArgumentNullException(nameof(atomFeed));
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             return this.WriteFeedAsyncImpl(atomFeed, content, cancellationToken);
         }

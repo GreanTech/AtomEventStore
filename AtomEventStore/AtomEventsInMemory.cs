@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -57,7 +57,7 @@ namespace Grean.AtomEventStore
         public XmlWriter CreateFeedWriterFor(AtomFeed atomFeed)
         {
             if (atomFeed == null)
-                throw new ArgumentNullException("atomFeed");
+                throw new ArgumentNullException(nameof(atomFeed));
 
             var id = GetHrefFrom(atomFeed.Links);
             var sb = new StringBuilder();
@@ -101,7 +101,7 @@ namespace Grean.AtomEventStore
                 this.indexes.Add(atomFeed.Id);
         }
 
-        private class CallBackXmlWriter : XmlTextWriter
+        private sealed class CallBackXmlWriter : XmlTextWriter
         {
             private readonly Action callback;
 
@@ -136,13 +136,13 @@ namespace Grean.AtomEventStore
         public XmlReader CreateFeedReaderFor(Uri href)
         {
             if (href == null)
-                throw new ArgumentNullException("href");
+                throw new ArgumentNullException(nameof(href));
 
             this.rwLock.EnterReadLock();
             try
             {
-                if (this.feeds.ContainsKey(href))
-                    return CreateReaderOver(this.feeds[href].ToString());
+                if (this.feeds.TryGetValue(href, out var sb))
+                    return CreateReaderOver(sb.ToString());
                 else
                     return AtomEventStorage.CreateNewFeed(href);
             }
@@ -216,9 +216,9 @@ namespace Grean.AtomEventStore
             CancellationToken cancellationToken)
         {
             if (atomFeed == null)
-                throw new ArgumentNullException("atomFeed");
+                throw new ArgumentNullException(nameof(atomFeed));
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
             cancellationToken.ThrowIfCancellationRequested();
 
             var id = GetHrefFrom(atomFeed.Links);

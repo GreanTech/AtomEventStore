@@ -7,6 +7,13 @@
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- Quality gate (plan step 5): .NET analyzers + warnings-as-errors.
+         Rule severities (and the few deliberately-disabled rules ported from the
+         legacy AtomEventStore.ruleset) live in the repo-root .editorconfig. -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +27,7 @@
        (Grean.AtomEventStore). Version is the in-progress 2.0 line (prerelease);
        confirm the exact published PackageId before the step-5 release. -->
   <PropertyGroup>
-    <Version>2.0.0-alpha</Version>
+    <Version>2.0.0</Version>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <Title>Atom Event Store</Title>

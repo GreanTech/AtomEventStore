@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,9 +96,9 @@ namespace Grean.AtomEventStore
             IContentSerializer serializer)
         {
             if (storage == null)
-                throw new ArgumentNullException("storage");
+                throw new ArgumentNullException(nameof(storage));
             if (serializer == null)
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
 
             this.id = id;
             this.storage = storage;
@@ -143,7 +143,7 @@ namespace Grean.AtomEventStore
             while (page != null)
             {
                 var entries = page.Entries.ToArray();
-                if (!entries.Any())
+                if (entries.Length == 0)
                     yield break;
 
                 yield return (T)entries.First().Content.Item;
