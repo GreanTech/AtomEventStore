@@ -10,6 +10,15 @@
 
   <ItemGroup>
     <Compile Include="AsyncRoundTripTests.fs" />
+    <Compile Include="GoldenMasterTests.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Real, scrubbed production Atom feeds (content payloads removed). Copied
+         next to the test assembly so the golden-master tests can read them. -->
+    <Content Include="Fixtures\**\*.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

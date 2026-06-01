@@ -244,7 +244,12 @@ rewrite.
 
 ## Remaining (deferred; none block the 2.0.0 core release)
 
-- Relocate the golden-master fixtures from `tools/` into the test project.
+- ✅ **Done.** Golden-master fixtures relocated (via `git mv`) into
+  `AtomEventStore.UnitTests.Async.FSharp/Fixtures/golden-master/` and now
+  consumed by F# tests (`GoldenMasterTests.fs`): a structural/linkage check of
+  the multi-page chain, and an `AsyncFifoEvents` traversal whose event count is
+  validated against the corpus — read payload-agnostically via a pass-through
+  `IContentSerializer`.
 - Modernize or formally retire the legacy `AtomEventStore.UnitTests.FSharp` and
   `AtomEventStore.AzureBlob` (net45) projects, and consolidate/clean up the
   transitional `.sln` files.
