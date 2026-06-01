@@ -190,6 +190,7 @@ namespace Grean.AtomEventStore
         /// </code>
         /// </example>
         /// <seealso cref="OnNext" />
+        [Obsolete("AppendAsync on AtomEventObserver<T> is not genuinely asynchronous: it offloads synchronous I/O to the thread pool via Task.Factory.StartNew. For real asynchronous I/O, use AsyncAtomEventObserver<T> together with an IAsyncAtomEventStorage implementation. This member remains for backward compatibility.")]
         public Task AppendAsync(T @event)
         {
             return Task.Factory.StartNew(() =>
@@ -516,7 +517,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="AppendAsync(T)" />
         public void OnNext(T value)
         {
+#pragma warning disable 618 // OnNext intentionally delegates to the (obsolete) AppendAsync.
             this.AppendAsync(value).Wait();
+#pragma warning restore 618
         }
     }
 }

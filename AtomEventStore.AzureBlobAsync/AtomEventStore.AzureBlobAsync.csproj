@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    REFERENCE / SAMPLE (not a published, supported package).
+    Demonstrates IAsyncAtomEventStorage implemented against the modern
+    Azure.Storage.Blobs (v12) SDK. Lives in its own solution
+    (AtomEventStore.AzureBlobAsync.sln) and references the core via a project
+    reference. Consumers are expected to copy/adapt this rather than depend on it.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Grean.AtomEventStore.AzureBlobAsync</RootNamespace>
+    <AssemblyName>Grean.AtomEventStore.AzureBlobAsync</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AtomEventStore\AtomEventStore.csproj" />
+  </ItemGroup>
+
+</Project>

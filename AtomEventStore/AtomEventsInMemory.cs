@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace Grean.AtomEventStore
@@ -22,7 +23,8 @@ namespace Grean.AtomEventStore
     /// </para>
     /// </remarks>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
-    public class AtomEventsInMemory : IAtomEventStorage, IEnumerable<UuidIri>, IDisposable
+    public class AtomEventsInMemory :
+        IAtomEventStorage, IAsyncAtomEventStorage, IEnumerable<UuidIri>, IDisposable
     {
         private readonly ReaderWriterLockSlim rwLock;
         private readonly Dictionary<Uri, StringBuilder> feeds;
@@ -164,6 +166,74 @@ namespace Grean.AtomEventStore
                 sr.Dispose();
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Asynchronously creates an <see cref="XmlReader" /> for reading an
+        /// Atom feed from the provided <see cref="Uri" />.
+        /// </summary>
+        /// <param name="href">
+        /// The relative <see cref="Uri" /> of the Atom feed to read.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token that can be used to cancel the operation.
+        /// </param>
+        /// <returns>
+        /// A completed task containing an <see cref="XmlReader" /> over the Atom
+        /// feed identified by <paramref name="href" />. In-memory storage has no
+        /// I/O, so the work is performed synchronously.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="href" /> is <see langword="null" />.
+        /// </exception>
+        public Task<XmlReader> CreateFeedReaderForAsync(
+            Uri href,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(this.CreateFeedReaderFor(href));
+        }
+
+        /// <summary>
+        /// Asynchronously persists the rendered content of the provided
+        /// <see cref="AtomFeed" />.
+        /// </summary>
+        /// <param name="atomFeed">The Atom feed being written.</param>
+        /// <param name="content">
+        /// The already-rendered XML representation of the feed.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token that can be used to cancel the operation.
+        /// </param>
+        /// <returns>A completed task; in-memory storage has no I/O.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="atomFeed" /> or <paramref name="content" /> is
+        /// <see langword="null" />.
+        /// </exception>
+        public Task WriteFeedAsync(
+            AtomFeed atomFeed,
+            string content,
+            CancellationToken cancellationToken)
+        {
+            if (atomFeed == null)
+                throw new ArgumentNullException("atomFeed");
+            if (content == null)
+                throw new ArgumentNullException("content");
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var id = GetHrefFrom(atomFeed.Links);
+            this.rwLock.EnterWriteLock();
+            try
+            {
+                this.AddToIndexesIfIndex(atomFeed);
+                this.feeds[id] = new StringBuilder(content);
+            }
+            finally
+            {
+                this.rwLock.ExitWriteLock();
+            }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

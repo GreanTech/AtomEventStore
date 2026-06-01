@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace Grean.AtomEventStore
@@ -11,7 +13,8 @@ namespace Grean.AtomEventStore
     /// Stores events in Atom Feeds as files on disk.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Suppressed following discussion at http://bit.ly/11T4eZe")]
-    public class AtomEventsInFiles : IAtomEventStorage, IEnumerable<UuidIri>
+    public class AtomEventsInFiles :
+        IAtomEventStorage, IAsyncAtomEventStorage, IEnumerable<UuidIri>
     {
         private readonly DirectoryInfo directory;
 
@@ -104,6 +107,117 @@ namespace Grean.AtomEventStore
             var dir = Path.GetDirectoryName(fileName);
             System.IO.Directory.CreateDirectory(dir);
             return XmlWriter.Create(fileName);
+        }
+
+        /// <summary>
+        /// Asynchronously creates an <see cref="XmlReader" /> for reading an
+        /// Atom feed from the provided <see cref="Uri" />.
+        /// </summary>
+        /// <param name="href">
+        /// The relative <see cref="Uri" /> of the Atom feed to read.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token that can be used to cancel the operation.
+        /// </param>
+        /// <returns>
+        /// A task that, when completed, contains an <see cref="XmlReader" />
+        /// over the Atom feed identified by <paramref name="href" />. If no file
+        /// is found, the reader is over an empty Atom feed.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="href" /> is <see langword="null" />.
+        /// </exception>
+        public Task<XmlReader> CreateFeedReaderForAsync(
+            Uri href,
+            CancellationToken cancellationToken)
+        {
+            // Validate synchronously (fail fast) before entering the async state
+            // machine, so the guard isn't dormant inside the returned Task.
+            if (href == null)
+                throw new ArgumentNullException("href");
+
+            return this.CreateFeedReaderForAsyncImpl(href, cancellationToken);
+        }
+
+        private async Task<XmlReader> CreateFeedReaderForAsyncImpl(
+            Uri href,
+            CancellationToken cancellationToken)
+        {
+            var fileName = this.CreateFileName(href);
+            if (!File.Exists(fileName))
+                return AtomEventStorage.CreateNewFeed(href);
+
+            var buffer = new MemoryStream();
+            using (var source = new FileStream(
+                fileName,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read,
+                bufferSize: 4096,
+                useAsync: true))
+            {
+                await source.CopyToAsync(buffer, 81920, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
+            buffer.Position = 0;
+            return XmlReader.Create(
+                buffer,
+                new XmlReaderSettings { CloseInput = true });
+        }
+
+        /// <summary>
+        /// Asynchronously persists the rendered content of the provided
+        /// <see cref="AtomFeed" /> to a file.
+        /// </summary>
+        /// <param name="atomFeed">The Atom feed being written.</param>
+        /// <param name="content">
+        /// The already-rendered XML representation of the feed.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A token that can be used to cancel the operation.
+        /// </param>
+        /// <returns>A task representing the asynchronous write operation.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="atomFeed" /> or <paramref name="content" /> is
+        /// <see langword="null" />.
+        /// </exception>
+        public Task WriteFeedAsync(
+            AtomFeed atomFeed,
+            string content,
+            CancellationToken cancellationToken)
+        {
+            // Validate synchronously (fail fast) before entering the async state
+            // machine, so the guards aren't dormant inside the returned Task.
+            if (atomFeed == null)
+                throw new ArgumentNullException("atomFeed");
+            if (content == null)
+                throw new ArgumentNullException("content");
+
+            return this.WriteFeedAsyncImpl(atomFeed, content, cancellationToken);
+        }
+
+        private async Task WriteFeedAsyncImpl(
+            AtomFeed atomFeed,
+            string content,
+            CancellationToken cancellationToken)
+        {
+            var fileName = this.CreateFileName(atomFeed.Links);
+            var dir = Path.GetDirectoryName(fileName);
+            System.IO.Directory.CreateDirectory(dir);
+
+            var bytes = Encoding.UTF8.GetBytes(content);
+            using (var destination = new FileStream(
+                fileName,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 4096,
+                useAsync: true))
+            {
+                await destination.WriteAsync(bytes, 0, bytes.Length, cancellationToken)
+                    .ConfigureAwait(false);
+            }
         }
 
         /// <summary>

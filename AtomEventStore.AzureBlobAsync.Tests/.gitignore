@@ -1,0 +1,7 @@
+# Build output
+bin/
+obj/
+
+# Local secret: Azure Blob connection string for integration tests. Never commit.
+azure.connection
+*.connection

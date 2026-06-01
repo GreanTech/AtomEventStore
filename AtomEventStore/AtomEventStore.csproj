@@ -9,6 +9,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Provides IAsyncEnumerable<T>/IAsyncDisposable on netstandard2.0 for the
+         async read API (AsyncFifoEvents/AsyncLifoEvents). -->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+  </ItemGroup>
+
   <!-- Package / assembly metadata migrated from the retired AssemblyInfo.cs and
        NuGetSpecs/Grean.AtomEventStore.nuspec. PackageId defaults to AssemblyName
        (Grean.AtomEventStore). Version is the in-progress 2.0 line (prerelease);
