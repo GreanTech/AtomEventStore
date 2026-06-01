@@ -30,7 +30,7 @@ namespace Grean.AtomEventStore
         /// </exception>
         public TypeResolutionTable(
             IReadOnlyCollection<TypeResolutionEntry> entries)
-            : this(entries.ToArray())
+            : this((entries ?? throw new ArgumentNullException("entries")).ToArray())
         {
         }
 

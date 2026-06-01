@@ -1,16 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Extensions;
 using Grean.AtomEventStore;
-using Ploeh.AutoFixture.Xunit;
-using Ploeh.SemanticComparison.Fluent;
+using AutoFixture.Xunit2;
 using System.Xml;
 using System.Xml.Linq;
-using Ploeh.AutoFixture;
+using AutoFixture;
 using System.IO;
 using Moq;
 
@@ -88,10 +86,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomEntry actual = sut.WithTitle(newTitle);
 
-            var expected = sut.AsSource().OfLikeness<AtomEntry>()
-                .With(x => x.Title).EqualsWhen(
-                    (s, d) => object.Equals(newTitle, d.Title));
-            expected.ShouldEqual(actual);
+            Assert.Equal(sut.Id, actual.Id);
+            Assert.Equal(newTitle, actual.Title);
+            Assert.Equal(sut.Published, actual.Published);
+            Assert.Equal(sut.Updated, actual.Updated);
+            Assert.Equal(sut.Author, actual.Author);
+            Assert.Equal(sut.Content, actual.Content);
+            Assert.Equal(sut.Links, actual.Links);
         }
 
         [Theory, AutoAtomData]
@@ -101,10 +102,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomEntry actual = sut.WithUpdated(newUpdated);
 
-            var expected = sut.AsSource().OfLikeness<AtomEntry>()
-                .With(x => x.Updated).EqualsWhen(
-                    (s, d) => object.Equals(newUpdated, d.Updated));
-            expected.ShouldEqual(actual);
+            Assert.Equal(sut.Id, actual.Id);
+            Assert.Equal(sut.Title, actual.Title);
+            Assert.Equal(sut.Published, actual.Published);
+            Assert.Equal(newUpdated, actual.Updated);
+            Assert.Equal(sut.Author, actual.Author);
+            Assert.Equal(sut.Content, actual.Content);
+            Assert.Equal(sut.Links, actual.Links);
         }
 
         [Theory, AutoAtomData]
@@ -114,10 +118,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomEntry actual = sut.WithAuthor(newAuthor);
 
-            var expected = sut.AsSource().OfLikeness<AtomEntry>()
-                .With(x => x.Author).EqualsWhen(
-                    (s, d) => object.Equals(newAuthor, d.Author));
-            expected.ShouldEqual(actual);
+            Assert.Equal(sut.Id, actual.Id);
+            Assert.Equal(sut.Title, actual.Title);
+            Assert.Equal(sut.Published, actual.Published);
+            Assert.Equal(sut.Updated, actual.Updated);
+            Assert.Equal(newAuthor, actual.Author);
+            Assert.Equal(sut.Content, actual.Content);
+            Assert.Equal(sut.Links, actual.Links);
         }
 
         [Theory, AutoAtomData]
@@ -127,10 +134,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomEntry actual = sut.WithContent(newContent);
 
-            var expected = sut.AsSource().OfLikeness<AtomEntry>()
-                .With(x => x.Content).EqualsWhen(
-                    (s, d) => object.Equals(newContent, d.Content));
-            expected.ShouldEqual(actual);
+            Assert.Equal(sut.Id, actual.Id);
+            Assert.Equal(sut.Title, actual.Title);
+            Assert.Equal(sut.Published, actual.Published);
+            Assert.Equal(sut.Updated, actual.Updated);
+            Assert.Equal(sut.Author, actual.Author);
+            Assert.Equal(newContent, actual.Content);
+            Assert.Equal(sut.Links, actual.Links);
         }
 
         [Theory, AutoAtomData]
@@ -140,10 +150,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomEntry actual = sut.WithLinks(newLinks);
 
-            var expected = sut.AsSource().OfLikeness<AtomEntry>()
-                .With(x => x.Links).EqualsWhen(
-                    (s, d) => newLinks.SequenceEqual(d.Links));
-            expected.ShouldEqual(actual);
+            Assert.Equal(sut.Id, actual.Id);
+            Assert.Equal(sut.Title, actual.Title);
+            Assert.Equal(sut.Published, actual.Published);
+            Assert.Equal(sut.Updated, actual.Updated);
+            Assert.Equal(sut.Author, actual.Author);
+            Assert.Equal(sut.Content, actual.Content);
+            Assert.Equal(newLinks, actual.Links);
         }
 
         [Theory, AutoAtomData]
@@ -237,10 +250,13 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomEntry actual = sut.AddLink(newLink);
 
-            var expected = sut.AsSource().OfLikeness<AtomEntry>()
-                .With(x => x.Links).EqualsWhen(
-                    (s, d) => sut.Links.Concat(new[] { newLink }).SequenceEqual(d.Links));
-            expected.ShouldEqual(actual);
+            Assert.Equal(sut.Id, actual.Id);
+            Assert.Equal(sut.Title, actual.Title);
+            Assert.Equal(sut.Published, actual.Published);
+            Assert.Equal(sut.Updated, actual.Updated);
+            Assert.Equal(sut.Author, actual.Author);
+            Assert.Equal(sut.Content, actual.Content);
+            Assert.Equal(sut.Links.Concat(new[] { newLink }), actual.Links);
         }
 
         [Theory, AutoAtomData]

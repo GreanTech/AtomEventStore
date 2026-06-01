@@ -1,17 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit.Extensions;
 using Grean.AtomEventStore;
-using Ploeh.AutoFixture.Xunit;
+using AutoFixture.Xunit2;
 using Xunit;
-using Ploeh.SemanticComparison.Fluent;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
-using Ploeh.AutoFixture.Idioms;
+using AutoFixture.Idioms;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -40,10 +38,7 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomAuthor actual = sut.WithName(newName);
 
-            var expected = actual.AsSource().OfLikeness<AtomAuthor>()
-                .With(x => x.Name).EqualsWhen(
-                    (s, d) => object.Equals(newName, s.Name));
-            expected.ShouldEqual(actual);
+            Assert.Equal(newName, actual.Name);
         }
 
         [Theory, AutoAtomData]

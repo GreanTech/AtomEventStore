@@ -1,15 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit.Extensions;
 using Grean.AtomEventStore;
 using Xunit;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
-using Ploeh.AutoFixture.Xunit;
+using AutoFixture.Xunit2;
 using Moq;
 using System.Xml.Serialization;
 

@@ -1,17 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ploeh.AutoFixture.Xunit;
-using Xunit.Extensions;
+using AutoFixture.Xunit2;
 using Grean.AtomEventStore;
 using Xunit;
-using Ploeh.SemanticComparison.Fluent;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
-using Ploeh.AutoFixture.Idioms;
+using AutoFixture.Idioms;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -45,10 +43,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomLink actual = sut.WithRel(newRel);
 
-            var expected = sut.AsSource().OfLikeness<AtomLink>()
-                .With(x => x.Rel).EqualsWhen(
-                    (s, d) => object.Equals(newRel, d.Rel));
-            expected.ShouldEqual(actual);
+            Assert.Equal(newRel, actual.Rel);
+            Assert.Equal(sut.Href, actual.Href);
         }
 
         [Theory, AutoAtomData]
@@ -58,10 +54,8 @@ namespace Grean.AtomEventStore.UnitTests
         {
             AtomLink actual = sut.WithHref(newHref);
 
-            var expected = sut.AsSource().OfLikeness<AtomLink>()
-                .With(x => x.Href).EqualsWhen(
-                    (s, d) => object.Equals(newHref, d.Href));
-            expected.ShouldEqual(actual);
+            Assert.Equal(sut.Rel, actual.Rel);
+            Assert.Equal(newHref, actual.Href);
         }
 
         [Theory]

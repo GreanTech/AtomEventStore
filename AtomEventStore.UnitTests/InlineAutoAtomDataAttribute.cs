@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ploeh.AutoFixture.Xunit;
+using AutoFixture.Xunit2;
 
 namespace Grean.AtomEventStore.UnitTests
 {

@@ -189,6 +189,8 @@ namespace Grean.AtomEventStore
         {
             if (serializer == null)
                 throw new ArgumentNullException("serializer");
+            if (xml == null)
+                throw new ArgumentNullException("xml");
 
             var sr = new StringReader(xml);
             try

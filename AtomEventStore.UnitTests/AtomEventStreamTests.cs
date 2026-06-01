@@ -1,18 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ploeh.AutoFixture.Xunit;
-using Xunit.Extensions;
+using AutoFixture.Xunit2;
 using Grean.AtomEventStore;
 using Xunit;
 using Moq;
 using System.Xml;
 using System.IO;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.Idioms;
-using Ploeh.Albedo;
+using AutoFixture;
+using AutoFixture.Idioms;
 
 namespace Grean.AtomEventStore.UnitTests
 {
@@ -22,9 +20,13 @@ namespace Grean.AtomEventStore.UnitTests
         [Theory, AutoAtomData]
         public void VerifyGuardClauses(GuardClauseAssertion assertion)
         {
+            // OnError legitimately accepts null (no-op), so exclude it from
+            // guard-clause verification. (Was Albedo's Methods<T>().Select(...).)
+            var onError = typeof(AtomEventStream<DataContractTestEventX>)
+                .GetMethod("OnError");
             assertion.Verify(
                 typeof(AtomEventStream<DataContractTestEventX>).GetMembers()
-                    .Where(m => new Methods<AtomEventStream<DataContractTestEventX>>().Select(x => x.OnError(null)) != m));
+                    .Where(m => m != onError));
         }
 
         [Theory, AutoAtomData]
@@ -124,7 +126,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeed(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             XmlAttributedTestEventX expectedEvent)
@@ -142,7 +144,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncCorrectlyStoresFeeds(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             XmlAttributedTestEventX event1,
@@ -163,7 +165,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncPageSizeEventsSavesAllEntriesInIndex(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -185,7 +187,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsOnlyStoresOverflowingEvent(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -209,7 +211,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsAddsLinkToPreviousPageToIndex(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -229,7 +231,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncLessThanPageSizeEventsDoesNotAddLinkToPreviousPageToIndex(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -249,7 +251,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsStoresPreviousPage(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -276,7 +278,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanPageSizeEventsStoresOldestEventsInPreviousPage(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -308,7 +310,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncExactlyTwicePageSizeEventsStoresTwoFeedPages(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
@@ -319,7 +321,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanTwicePageSizeEventsCreatesThreeFeedPages(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
@@ -330,7 +332,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncMoreThanTwicePageSizeEventAddsPreviousLinkToMiddlePage(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -358,7 +360,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void AppendAsyncTwicePageSizeEventDoesNotAddPreviousLinkToPreviousPage(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory storage,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory storage,
             AtomFeedParser<XmlContentSerializer> parser,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
@@ -392,7 +394,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutIsInitiallyEmpty(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory dummyInjectedIntoSut,
             AtomEventStream<DataContractTestEventX> sut)
         {
             Assert.False(sut.Any(), "Intial event stream should be empty.");
@@ -401,7 +403,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutYieldsCorrectEvents(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory dummyInjectedIntoSut,
             AtomEventStream<XmlAttributedTestEventX> sut,
             List<XmlAttributedTestEventX> events)
         {
@@ -418,7 +420,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutYieldsPagedEvents(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory dummyInjectedIntoSut,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {
@@ -437,7 +439,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanAppendAndYieldPolymorphicEvents(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory dummyInjectedIntoSut,
             AtomEventStream<IXmlAttributedTestEvent> sut,
             XmlAttributedTestEventX tex,
             XmlAttributedTestEventY tey)
@@ -451,7 +453,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void SutCanAppendAndYieldEnclosedPolymorphicEvents(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory dummyInjectedIntoSut,
             AtomEventStream<DataContractEnvelope<IDataContractTestEvent>> sut,
             DataContractEnvelope<DataContractTestEventX> texEnvelope,
             DataContractEnvelope<DataContractTestEventY> teyEnvelope)
@@ -478,7 +480,7 @@ namespace Grean.AtomEventStore.UnitTests
 
         [Theory, AutoAtomData]
         public void OnNextAppendsItem(
-            [Frozen(As = typeof(IAtomEventStorage))]AtomEventsInMemory dummyInjectedIntoSut,
+            [Frozen(Matching.ImplementedInterfaces)]AtomEventsInMemory dummyInjectedIntoSut,
             AtomEventStream<XmlAttributedTestEventX> sut,
             XmlAttributedTestEventX tex)
         {
@@ -491,19 +493,19 @@ namespace Grean.AtomEventStore.UnitTests
             AtomEventStream<DataContractTestEventY> sut,
             Exception e)
         {
-            Assert.DoesNotThrow(() => sut.OnError(e));
+            Assert.Null(Record.Exception(() => sut.OnError(e)));
         }
 
         [Theory, AutoAtomData]
         public void OnCompletedDoesNotThrow(
             AtomEventStream<DataContractTestEventY> sut)
         {
-            Assert.DoesNotThrow(() => sut.OnCompleted());
+            Assert.Null(Record.Exception(() => sut.OnCompleted()));
         }
 
         [Theory, AutoAtomData]
         public void AppendAsyncWritesPreviousPageBeforeIndex(
-            [Frozen(As = typeof(IAtomEventStorage))]SpyAtomEventStore spyStore,
+            [Frozen(Matching.ImplementedInterfaces)]SpyAtomEventStore spyStore,
             AtomEventStream<XmlAttributedTestEventX> sut,
             Generator<XmlAttributedTestEventX> eventGenerator)
         {

@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Extensions;
 using Grean.AtomEventStore;
 using Moq;
-using Ploeh.AutoFixture;
+using AutoFixture;
 
 namespace Grean.AtomEventStore.UnitTests
 {

@@ -189,6 +189,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="Title" />
         public AtomEntry WithTitle(string newTitle)
         {
+            if (newTitle == null)
+                throw new ArgumentNullException("newTitle");
+
             return new AtomEntry(
                 this.id,
                 newTitle,
@@ -233,6 +236,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="Author" />
         public AtomEntry WithAuthor(AtomAuthor newAuthor)
         {
+            if (newAuthor == null)
+                throw new ArgumentNullException("newAuthor");
+
             return new AtomEntry(
                 this.id,
                 this.title,
@@ -255,6 +261,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="Content" />
         public AtomEntry WithContent(XmlAtomContent newContent)
         {
+            if (newContent == null)
+                throw new ArgumentNullException("newContent");
+
             return new AtomEntry(
                 this.id,
                 this.title,
@@ -277,6 +286,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="Links" />
         public AtomEntry WithLinks(IEnumerable<AtomLink> newLinks)
         {
+            if (newLinks == null)
+                throw new ArgumentNullException("newLinks");
+
             return new AtomEntry(
                 this.id,
                 this.title,
@@ -372,6 +384,8 @@ namespace Grean.AtomEventStore
         {
             if (serializer == null)
                 throw new ArgumentNullException("serializer");
+            if (xmlReader == null)
+                throw new ArgumentNullException("xmlReader");
 
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
@@ -464,6 +478,8 @@ namespace Grean.AtomEventStore
         {
             if (serializer == null)
                 throw new ArgumentNullException("serializer");
+            if (xml == null)
+                throw new ArgumentNullException("xml");
 
             var sr = new StringReader(xml);
             try

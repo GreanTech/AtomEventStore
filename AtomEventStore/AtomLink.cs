@@ -91,6 +91,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="Rel" />
         public AtomLink WithRel(string newRel)
         {
+            if (newRel == null)
+                throw new ArgumentNullException("newRel");
+
             return new AtomLink(newRel, this.href);
         }
 
@@ -106,6 +109,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="Href" />
         public AtomLink WithHref(Uri newHref)
         {
+            if (newHref == null)
+                throw new ArgumentNullException("newHref");
+
             return new AtomLink(this.rel, newHref);
         }
 
@@ -192,6 +198,9 @@ namespace Grean.AtomEventStore
         /// </remarks>
         public void WriteTo(XmlWriter xmlWriter, IContentSerializer serializer)
         {
+            if (serializer == null)
+                throw new ArgumentNullException("serializer");
+
             this.WriteTo(xmlWriter);
         }
 
@@ -209,6 +218,9 @@ namespace Grean.AtomEventStore
         /// </returns>
         public static AtomLink Parse(string xml)
         {
+            if (xml == null)
+                throw new ArgumentNullException("xml");
+
             var sr = new StringReader(xml);
             try
             {
@@ -244,6 +256,9 @@ namespace Grean.AtomEventStore
         /// </exception>
         public static AtomLink ReadFrom(XmlReader xmlReader)
         {
+            if (xmlReader == null)
+                throw new ArgumentNullException("xmlReader");
+
             var navigator = new XPathDocument(xmlReader).CreateNavigator();
 
             var resolver = new XmlNamespaceManager(new NameTable());

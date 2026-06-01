@@ -475,6 +475,9 @@ namespace Grean.AtomEventStore
         /// <seealso cref="AppendAsync(T)" />
         public void OnNext(T value)
         {
+            if (value is null)
+                throw new ArgumentNullException("value");
+
             this.AppendAsync(value).Wait();
         }
     }

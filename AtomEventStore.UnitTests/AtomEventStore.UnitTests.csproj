@@ -1,159 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C55E16B8-9FA9-4A22-A1A2-C72A8CB71701}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Grean.AtomEventStore.UnitTests</RootNamespace>
     <AssemblyName>Grean.AtomEventStore.UnitTests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <!-- Strict analyzer/warnings-as-errors gate is deferred to plan step 5. -->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Moq, Version=4.2.1312.1622, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Moq.4.2.1312.1622\lib\net40\Moq.dll</HintPath>
-    </Reference>
-    <Reference Include="Ploeh.Albedo">
-      <HintPath>..\packages\Albedo.0.1.1\lib\net35\Ploeh.Albedo.dll</HintPath>
-    </Reference>
-    <Reference Include="Ploeh.AutoFixture, Version=3.16.3.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\AutoFixture.3.16.3\lib\net40\Ploeh.AutoFixture.dll</HintPath>
-    </Reference>
-    <Reference Include="Ploeh.AutoFixture.AutoMoq, Version=3.16.3.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\AutoFixture.AutoMoq.3.16.3\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
-    </Reference>
-    <Reference Include="Ploeh.AutoFixture.Idioms, Version=3.16.3.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\AutoFixture.Idioms.3.16.3\lib\net40\Ploeh.AutoFixture.Idioms.dll</HintPath>
-    </Reference>
-    <Reference Include="Ploeh.AutoFixture.Xunit, Version=3.16.3.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\AutoFixture.Xunit.3.16.3\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
-    </Reference>
-    <Reference Include="Ploeh.SemanticComparison, Version=3.16.3.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SemanticComparison.3.16.3\lib\net40\Ploeh.SemanticComparison.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="xunit, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit.extensions, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="AutoFixture" Version="4.18.1" />
+    <PackageReference Include="AutoFixture.Xunit2" Version="4.18.1" />
+    <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageReference Include="AutoFixture.Idioms" Version="4.18.1" />
+    <PackageReference Include="Moq" Version="4.18.4" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="AtomAuthorTests.cs" />
-    <Compile Include="AtomEntryBuilder.cs" />
-    <Compile Include="AtomEntryComparer.cs" />
-    <Compile Include="AtomEntryLikeness.cs" />
-    <Compile Include="AtomEntryTests.cs" />
-    <Compile Include="AtomEnvy.cs" />
-    <Compile Include="AtomEventObserverTests.cs" />
-    <Compile Include="AtomEventsCustomization.cs" />
-    <Compile Include="AtomEventsInFilesTests.cs" />
-    <Compile Include="AtomEventStorageTests.cs" />
-    <Compile Include="AtomFeedBuilder.cs" />
-    <Compile Include="AtomFeedComparer.cs" />
-    <Compile Include="AtomFeedLikeness.cs" />
-    <Compile Include="AtomFeedParser.cs" />
-    <Compile Include="AtomFeedTests.cs" />
-    <Compile Include="AtomEventsInMemoryTests.cs" />
-    <Compile Include="AtomLinkTests.cs" />
-    <Compile Include="AtomXmlWriter.cs" />
-    <Compile Include="AutoAtomDataAttribute.cs" />
-    <Compile Include="AtomEventStreamTests.cs" />
-    <Compile Include="DataContractContentSerializerTests.cs" />
-    <Compile Include="DataContractEnvelope.cs" />
-    <Compile Include="XmlAttributedTestEventEnvy.cs" />
-    <Compile Include="DataContractTestEventEnvy.cs" />
-    <Compile Include="DataContractTestEventX.cs" />
-    <Compile Include="DataContractTestEventY.cs" />
-    <Compile Include="Demo\AcyclicVisitor\EmailChanged.cs" />
-    <Compile Include="Demo\AcyclicVisitor\EmailVerified.cs" />
-    <Compile Include="Demo\AcyclicVisitor\Stories.cs" />
-    <Compile Include="Demo\AcyclicVisitor\User.cs" />
-    <Compile Include="Demo\AcyclicVisitor\UserCreated.cs" />
-    <Compile Include="Demo\Visitor\EmailChanged.cs" />
-    <Compile Include="Demo\Visitor\EmailVerified.cs" />
-    <Compile Include="Demo\Visitor\IUserEvent.cs" />
-    <Compile Include="Demo\Visitor\IUserVisitor.cs" />
-    <Compile Include="Demo\Visitor\Stories.cs" />
-    <Compile Include="Demo\Visitor\User.cs" />
-    <Compile Include="Demo\Visitor\UserCreated.cs" />
-    <Compile Include="Demo\Visitor\UserVisitor.cs" />
-    <Compile Include="Disarray.cs" />
-    <Compile Include="FifoEventsTests.cs" />
-    <Compile Include="HashFreeEqualityComparer.cs" />
-    <Compile Include="IDataContractTestEvent.cs" />
-    <Compile Include="IDataContractTestEventVisitor.cs" />
-    <Compile Include="IXmlAttributedTestEvent.cs" />
-    <Compile Include="IXmlAttributedTestEventVisitor.cs" />
-    <Compile Include="LifoEventsTests.cs" />
-    <Compile Include="TestEventTypeResolver.cs" />
-    <Compile Include="TypeResolutionEntryTests.cs" />
-    <Compile Include="TypeResolutionTableTests.cs" />
-    <Compile Include="XmlAttributedChangeset.cs" />
-    <Compile Include="Conventions.cs" />
-    <Compile Include="InlineAutoAtomDataAttribute.cs" />
-    <Compile Include="SpyAtomEventStore.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UuidIriTests.cs" />
-    <Compile Include="XmlAtomContentTests.cs" />
-    <Compile Include="XmlAttributedTestEventY.cs" />
-    <Compile Include="XmlAttributedTestEventX.cs" />
-    <Compile Include="XmlContentSerializerTests.cs" />
-    <Compile Include="XmlWritableTests.cs" />
+    <ProjectReference Include="..\AtomEventStore\AtomEventStore.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AtomEventStore\AtomEventStore.csproj">
-      <Project>{a9d6cb62-1949-402a-95eb-007710e98735}</Project>
-      <Name>AtomEventStore</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

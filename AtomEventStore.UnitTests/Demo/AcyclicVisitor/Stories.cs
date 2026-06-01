@@ -1,5 +1,4 @@
-﻿using Ploeh.SemanticComparison;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -99,7 +98,10 @@ namespace Grean.AtomEventStore.UnitTests.Demo.AcyclicVisitor
                 var firstEvent = events.First();
 
                 var uc = Assert.IsAssignableFrom<UserCreated>(firstEvent);
-                Assert.Equal(userCreated, uc, new SemanticComparer<UserCreated>());
+                Assert.Equal(userCreated.UserId, uc.UserId);
+                Assert.Equal(userCreated.UserName, uc.UserName);
+                Assert.Equal(userCreated.Password, uc.Password);
+                Assert.Equal(userCreated.Email, uc.Email);
             }
         }
 
