@@ -1,39 +1,12 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using System;
 using System.Runtime.InteropServices;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("AtomEventStore")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Grean ApS")]
-[assembly: AssemblyProduct("AtomEventStore")]
-[assembly: AssemblyCopyright("Copyright © Grean ApS 2013, 2014")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+// Only the assembly-level attributes the SDK does NOT auto-generate live here;
+// title/company/product/copyright/version are set in the .csproj.
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ad56673b-9787-4ac5-8fc6-1f6767e6d631")]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.7.4.0")]
-[assembly: AssemblyFileVersion("1.7.4.0")]
-
+// The assembly is CLS-compliant; specific non-compliant members opt out locally
+// with [CLSCompliant(false)].
 [assembly: CLSCompliant(true)]
+
+// Types in this assembly are not exposed to COM.
+[assembly: ComVisible(false)]

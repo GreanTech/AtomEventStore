@@ -1,93 +1,33 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A9D6CB62-1949-402A-95EB-007710E98735}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Grean.AtomEventStore</RootNamespace>
     <AssemblyName>Grean.AtomEventStore</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <!-- Package / assembly metadata migrated from the retired AssemblyInfo.cs and
+       NuGetSpecs/Grean.AtomEventStore.nuspec. PackageId defaults to AssemblyName
+       (Grean.AtomEventStore). Version is the in-progress 2.0 line (prerelease);
+       confirm the exact published PackageId before the step-5 release. -->
+  <PropertyGroup>
+    <Version>2.0.0-alpha</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <Title>Atom Event Store</Title>
+    <Description>Event store implementation based on the Atom syndication format.</Description>
+    <Authors>Grean ApS</Authors>
+    <Company>Grean ApS</Company>
+    <Product>AtomEventStore</Product>
+    <Copyright>Copyright © Grean ApS</Copyright>
+    <PackageProjectUrl>https://github.com/GreanTech/AtomEventStore</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GreanTech/AtomEventStore</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>EventSourcing;Atom;EventStore</PackageTags>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Grean.AtomEventStore.XML</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Verify|AnyCPU'">
-    <OutputPath>bin\Verify\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\Grean.AtomEventStore.XML</DocumentationFile>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>..\AtomEventStore.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AtomAuthor.cs" />
-    <Compile Include="AtomEntry.cs" />
-    <Compile Include="AtomEventObserver.cs" />
-    <Compile Include="AtomEventsInFiles.cs" />
-    <Compile Include="AtomEventStorage.cs" />
-    <Compile Include="AtomFeed.cs" />
-    <Compile Include="AtomEventsInMemory.cs" />
-    <Compile Include="AtomLink.cs" />
-    <Compile Include="DataContractContentSerializer.cs" />
-    <Compile Include="FifoEvents.cs" />
-    <Compile Include="IAtomEventStorage.cs" />
-    <Compile Include="IContentSerializer.cs" />
-    <Compile Include="ITypeResolver.cs" />
-    <Compile Include="IXmlWritable.cs" />
-    <Compile Include="LifoEvents.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AtomEventStream.cs" />
-    <Compile Include="TypeResolutionEntry.cs" />
-    <Compile Include="TypeResolutionTable.cs" />
-    <Compile Include="UuidIri.cs" />
-    <Compile Include="XmlAtomContent.cs" />
-    <Compile Include="XmlContentSerializer.cs" />
-    <Compile Include="XmlWritable.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <CodeAnalysisDictionary Include="CodeAnalysisDictionary.xml" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
