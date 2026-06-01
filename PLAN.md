@@ -260,8 +260,11 @@ rewrite.
   tests, the Azure sample + its tests). The three transitional `.sln` files were
   deleted, and CI now builds/tests the one solution. (The `tools/` utilities are
   intentionally standalone, not in the solution.)
-- Apply the analyzer gate to the `AtomEventStore.AzureBlobAsync` sample (it
-  currently builds without `TreatWarningsAsErrors`, being a sample) — optional.
+- ✅ **Done.** Analyzer gate (`EnableNETAnalyzers` + `latest-recommended` +
+  `TreatWarningsAsErrors`) also applied to the `AtomEventStore.AzureBlobAsync`
+  sample; builds clean (0 warnings).
+
+_All planned and deferred work is complete._
 
 ---
 

@@ -54,7 +54,7 @@ namespace Grean.AtomEventStore.AzureBlobAsync
         public AtomEventsOnAzureAsync(BlobContainerClient container)
         {
             if (container == null)
-                throw new ArgumentNullException("container");
+                throw new ArgumentNullException(nameof(container));
 
             this.container = container;
         }
@@ -83,7 +83,7 @@ namespace Grean.AtomEventStore.AzureBlobAsync
         {
             // Validate synchronously (fail fast) before the async state machine.
             if (href == null)
-                throw new ArgumentNullException("href");
+                throw new ArgumentNullException(nameof(href));
 
             return this.CreateFeedReaderForAsyncImpl(href, cancellationToken);
         }
@@ -131,9 +131,9 @@ namespace Grean.AtomEventStore.AzureBlobAsync
         {
             // Validate synchronously (fail fast) before the async state machine.
             if (atomFeed == null)
-                throw new ArgumentNullException("atomFeed");
+                throw new ArgumentNullException(nameof(atomFeed));
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             return this.WriteFeedAsyncImpl(atomFeed, content, cancellationToken);
         }
