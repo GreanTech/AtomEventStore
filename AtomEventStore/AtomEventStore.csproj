@@ -23,10 +23,11 @@
   </ItemGroup>
 
   <!-- Package / assembly metadata migrated from the retired AssemblyInfo.cs and
-       NuGetSpecs/Grean.AtomEventStore.nuspec. PackageId defaults to AssemblyName
-       (Grean.AtomEventStore). Version is the in-progress 2.0 line (prerelease);
-       confirm the exact published PackageId before the step-5 release. -->
+       nuspec. PackageId is pinned to the historically-published id ("AtomEventStore",
+       per the README's NuGet link) so 2.0 updates the existing package rather than
+       creating a new one; the assembly name stays Grean.AtomEventStore as before. -->
   <PropertyGroup>
+    <PackageId>AtomEventStore</PackageId>
     <Version>2.0.0</Version>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>

@@ -34,15 +34,16 @@ When the call to `obs.OnNext` returns, the `userCreated` event has been written 
 
 #### Asynchronous writes
 
-Asynchronous writes can be done using the standard Task Parallel Library (TPL) model for asynchrony:
+As of 2.0, genuinely asynchronous writes are available through `AsyncAtomEventObserver<T>`, backed by an `IAsyncAtomEventStorage`. The built-in `AtomEventsInMemory` and `AtomEventsInFiles` implement both the synchronous and asynchronous storage interfaces, so the same storage works either way:
 
 ```C#
+var obs = new AsyncAtomEventObserver<object>(id, pageSize, storage, serializer);
 await obs.AppendAsync(userCreated);
 ```
 
-Notice that since `AtomEventObserver<T>` uses the standard TPL model, you can use it with `async` and `await`.
+When the task completes, the `userCreated` event has been written to `storage`.
 
-When the task returned by `obs.AppendAsync` completes, the `userCreated` event has been written to `storage`.
+> The older `AtomEventObserver<T>.AppendAsync` is now `[Obsolete]` (a warning): it offloaded *synchronous* I/O to the thread pool rather than performing real asynchronous I/O. Prefer `AsyncAtomEventObserver<T>`. The synchronous `AtomEventObserver<T>.OnNext` is unchanged.
 
 ### Reading events
 
@@ -54,12 +55,34 @@ var firstEvent = events.First();
 
 The above example simply reads the first event in the event stream.  
 
+#### Asynchronous reads
+
+As of 2.0 you can also read asynchronously via `AsyncFifoEvents<T>` and `AsyncLifoEvents<T>`, which implement `IAsyncEnumerable<T>`:
+
+```C#
+var events = new AsyncFifoEvents<object>(id, storage, serializer);
+await foreach (var e in events)
+{
+    // handle each event
+}
+```
+
+## Migrating to 2.0
+
+Version 2.0 modernises AtomEventStore for .NET Core / modern .NET while keeping the existing **synchronous API source-compatible**. Code that uses `AtomEventObserver<T>.OnNext`, `FifoEvents<T>`, `LifoEvents<T>`, `AtomEventsInMemory`, or `AtomEventsInFiles` continues to work unchanged.
+
+- **Target framework.** The library now targets **.NET Standard 2.0** (previously .NET Framework 4.5), so it is consumable from .NET Framework 4.6.1+, .NET Core, and modern .NET. *The one consumer-visible compatibility change:* projects still on .NET Framework **earlier than 4.6.1** must raise their target framework to use 2.0.
+- **New asynchronous API (additive).** Alongside the unchanged synchronous types, 2.0 adds `IAsyncAtomEventStorage`, `AsyncAtomEventObserver<T>`, and `AsyncFifoEvents<T>` / `AsyncLifoEvents<T>`. The asynchrony is at the I/O boundary; serialization stays synchronous (the underlying serializers expose no async API).
+- **Deprecation.** `AtomEventObserver<T>.AppendAsync` is now `[Obsolete]` (a warning, not an error) because it was never genuinely asynchronous. Migrate to `AsyncAtomEventObserver<T>`, or keep using synchronous `OnNext`.
+- **New dependency.** The package now depends on `Microsoft.Bcl.AsyncInterfaces` (which supplies `IAsyncEnumerable<T>` on .NET Standard 2.0).
+- **Azure Blob storage.** The published `AtomEventStore.AzureBlob` package (synchronous, on the legacy `WindowsAzure.Storage` SDK) is **frozen** and remains available for existing consumers. For modern asynchronous Azure Blob storage on **`Azure.Storage.Blobs` (v12)**, use the `AtomEventStore.AzureBlobAsync` **reference implementation** in this repository — it implements `IAsyncAtomEventStorage` and is meant to be copied or adapted rather than consumed as a separately published package.
+
 ## NuGet
 
 AtomEventStore is available via NuGet:
 
-- [AtomEventStore](http://www.nuget.org/packages/AtomEventStore/)
-- [AtomEventStore.AzureBlob](http://www.nuget.org/packages/AtomEventStore.AzureBlob/)
+- [AtomEventStore](http://www.nuget.org/packages/AtomEventStore/) — 2.0+ targets .NET Standard 2.0.
+- [AtomEventStore.AzureBlob](http://www.nuget.org/packages/AtomEventStore.AzureBlob/) — legacy, synchronous, .NET Framework; frozen (see *Migrating to 2.0* above).
 
 ## Versioning
 
