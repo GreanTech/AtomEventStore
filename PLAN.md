@@ -250,11 +250,18 @@ rewrite.
   the multi-page chain, and an `AsyncFifoEvents` traversal whose event count is
   validated against the corpus — read payload-agnostically via a pass-through
   `IContentSerializer`.
-- Modernize or formally retire the legacy `AtomEventStore.UnitTests.FSharp` and
-  `AtomEventStore.AzureBlob` (net45) projects, and consolidate/clean up the
-  transitional `.sln` files.
+- ✅ **Done.** Legacy net45 projects resolved: `AtomEventStore.UnitTests.FSharp`
+  modernized in place (SDK/net8 / xUnit 2 / AutoFixture 4 / Unquote 7; Rx dropped;
+  11/11 green), and `AtomEventStore.AzureBlob` retired (deleted — superseded by
+  `AtomEventStore.AzureBlobAsync`; its published package remains the historical
+  artifact). The orphaned `packages/` folder was removed.
+- ✅ **Done.** Solutions consolidated into a single `AtomEventStore.sln`
+  containing all six modern projects (core, both C#/F# test suites, the F# async
+  tests, the Azure sample + its tests). The three transitional `.sln` files were
+  deleted, and CI now builds/tests the one solution. (The `tools/` utilities are
+  intentionally standalone, not in the solution.)
 - Apply the analyzer gate to the `AtomEventStore.AzureBlobAsync` sample (it
-  currently builds without `TreatWarningsAsErrors`, being a sample).
+  currently builds without `TreatWarningsAsErrors`, being a sample) — optional.
 
 ---
 

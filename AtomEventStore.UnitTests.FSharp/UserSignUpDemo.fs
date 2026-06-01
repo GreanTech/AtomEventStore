@@ -1,4 +1,7 @@
-﻿namespace Grean.AtomEventStore.UnitTests.FSharp.Demo.UserSignUp
+﻿// The async demo intentionally exercises the (now-obsolete) AppendAsync.
+#nowarn "44"
+
+namespace Grean.AtomEventStore.UnitTests.FSharp.Demo.UserSignUp
 
 open System
 open System.Runtime.Serialization

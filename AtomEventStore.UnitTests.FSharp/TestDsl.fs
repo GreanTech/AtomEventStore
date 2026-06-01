@@ -1,10 +1,10 @@
-﻿namespace Grean.AtomEventStore.UnitTests.FSharp
+namespace Grean.AtomEventStore.UnitTests.FSharp
 
 open System.Reflection
 open Grean.AtomEventStore
-open Ploeh.AutoFixture
-open Ploeh.AutoFixture.Kernel
-open Ploeh.AutoFixture.Xunit
+open AutoFixture
+open AutoFixture.Kernel
+open AutoFixture.Xunit2
 
 type AtomStorageInMemoryCustomization() =
     let id = UuidIri.NewId()
@@ -53,7 +53,8 @@ type InMemoryXmlCustomization() =
         XmlTestRecordsResolverCustomization())
 
 type InMemoryXmlConventions() =
-    inherit AutoDataAttribute(Fixture().Customize(InMemoryXmlCustomization()))
+    inherit AutoDataAttribute(
+        System.Func<IFixture>(fun () -> Fixture().Customize(InMemoryXmlCustomization())))
 
 type FrozenEventsIdCustomization() =
     let freezeEventsId id = {
@@ -63,7 +64,7 @@ type FrozenEventsIdCustomization() =
                 | :? ParameterInfo as param
                     when param.ParameterType = typeof<UuidIri>
                     && param.Name = "id" -> id
-                | _ -> NoSpecimen(request) :> obj }
+                | _ -> NoSpecimen() :> obj }
     interface ICustomization with
         member this.Customize fixture =
             let id = fixture.Create<UuidIri>()
@@ -77,7 +78,8 @@ type InMemoryDataContractCustomization() =
         DataContracTestRecordsResolverCustomization())
 
 type InMemoryDataContractConventions() =
-    inherit AutoDataAttribute(Fixture().Customize(InMemoryDataContractCustomization()))
+    inherit AutoDataAttribute(
+        System.Func<IFixture>(fun () -> Fixture().Customize(InMemoryDataContractCustomization())))
 
 module TestDsl =
     let Verify = Swensen.Unquote.Assertions.test

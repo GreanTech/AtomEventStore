@@ -1,19 +1,18 @@
-﻿module Grean.AtomEventStore.UnitTests.FSharp.DataContractEventsFacadeTests
+module Grean.AtomEventStore.UnitTests.FSharp.DataContractEventsFacadeTests
 
 open System
 open Grean.AtomEventStore
 open Grean.AtomEventStore.UnitTests.FSharp.DataContractRecords
 open Grean.AtomEventStore.UnitTests.FSharp.TestDsl
-open Ploeh.AutoFixture
-open Xunit.Extensions
-
+open AutoFixture
+open Xunit
 [<Theory; InMemoryDataContractConventions>]
 let SutCorrectlyRoundTripsASingleElement
     (writer : AtomEventObserver<TestEventF>)
     (reader : FifoEvents<TestEventF>)
     (tef : TestEventF) =
 
-    writer.AppendAsync(tef).Wait()
+    writer.OnNext(tef)
     let actual = reader |> Seq.toList
 
     Verify <@ actual.Length = 1 @>
@@ -27,7 +26,7 @@ let SutCorrectlyRoundTripsMultipleElements
 
     let tefs = g |> Seq.take 3 |> Seq.toList
 
-    tefs |> List.iter (fun tef -> writer.AppendAsync(tef).Wait())
+    tefs |> List.iter (fun tef -> writer.OnNext(tef))
     let actual = reader |> Seq.toList
 
     let expected = tefs
@@ -43,7 +42,7 @@ let SutCorrectlyRoundTripsChangesetOfDiscriminatedUnion
 
     let expected = { Id = id; Items = [| tef |> F; teg |> G |] }
 
-    writer.AppendAsync(expected).Wait()
+    writer.OnNext(expected)
     let actual = reader |> Seq.toList
 
     Verify <@ actual.Length = 1 @>
@@ -63,8 +62,8 @@ let SutCorrectlyRoundTripsMultipleChangesetOfDiscriminatedUnion
     let changeset1 = { Id = id1; Items = [| tef1 |> F; teg1 |> G |] }
     let changeset2 = { Id = id2; Items = [| teg2 |> G; tef2 |> F |] }
 
-    writer.AppendAsync(changeset1).Wait()
-    writer.AppendAsync(changeset2).Wait()
+    writer.OnNext(changeset1)
+    writer.OnNext(changeset2)
     let actual = reader |> Seq.toList
 
     let expected = [changeset1; changeset2]

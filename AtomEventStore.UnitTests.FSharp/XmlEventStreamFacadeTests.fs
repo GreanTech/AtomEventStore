@@ -1,14 +1,11 @@
-﻿namespace Grean.AtomEventStore.UnitTests.FSharp
+namespace Grean.AtomEventStore.UnitTests.FSharp
 
 open System
-open System.Reactive
-open FSharp.Reactive
 open Grean.AtomEventStore
 open Grean.AtomEventStore.UnitTests.FSharp.XmlRecords
 open Grean.AtomEventStore.UnitTests.FSharp.TestDsl
-open Ploeh.AutoFixture
-open Xunit.Extensions
-
+open AutoFixture
+open Xunit
 module XmlEventStreamFacadeTests =
 
     [<Theory; InMemoryXmlConventions>]
@@ -17,7 +14,7 @@ module XmlEventStreamFacadeTests =
         (reader : FifoEvents<TestEventF>)
         (tef : TestEventF) =
         
-        writer.AppendAsync(tef).Wait()
+        writer.OnNext(tef)
         let actual = reader |> Seq.toList
 
         Verify <@ actual.Length = 1 @>
@@ -30,7 +27,7 @@ module XmlEventStreamFacadeTests =
 
         let tefs = g |> Seq.take 3 |> Seq.toList
 
-        tefs |> List.iter(fun tef -> writer.AppendAsync(tef).Wait())
+        tefs |> List.iter(fun tef -> writer.OnNext(tef))
         let actual = reader |> Seq.toList
 
         let expected = tefs
@@ -46,9 +43,9 @@ module XmlEventStreamFacadeTests =
         let extract = function
             | F(x) -> x :> obj
             | G(x) -> x :> obj
-        let duObs = Observer.Create(extract >> writer.OnNext)
-        duObs.OnNext(tef |> F)
-        duObs.OnNext(teg |> G)
+        let push = extract >> writer.OnNext
+        push (tef |> F)
+        push (teg |> G)
         
         let infuse (x : obj) =
             match x with
@@ -75,8 +72,8 @@ module XmlEventStreamFacadeTests =
                 | G(x) -> x :> obj
             let events = changeset.Items |> Seq.map extract |> Seq.toArray
             { SerializableChangeset.Id = changeset.Id; Items = events }
-        let duObs = Observer.Create(toObj >> writer.OnNext)
-        duObs.OnNext({ Id = id; Items = [| tef |> F; teg |> G |]})
+        let push = toObj >> writer.OnNext
+        push { Id = id; Items = [| tef |> F; teg |> G |] }
 
         let ofObj (changeset : SerializableChangeset) =
             let infuse (x : obj) =
