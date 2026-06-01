@@ -1,0 +1,11 @@
+# Build output
+bin/
+obj/
+
+# Extracted samples are REAL production payloads — never commit them from here.
+# Review/scrub, then copy the curated subset into the test fixtures deliberately.
+samples/
+
+# Local SAS secret — never commit.
+*.sas
+sas.txt

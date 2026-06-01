@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>urn:uuid:27816c58-78cd-4986-8478-feb20d53f318</id>
+  <title type="text">Index of event stream 27816c58-78cd-4986-8478-feb20d53f318</title>
+  <updated>2017-01-18T23:12:04.1417479+00:00</updated>
+  <author>
+    <name>Grean</name>
+  </author>
+  <link href="27816c58-78cd-4986-8478-feb20d53f318/27816c58-78cd-4986-8478-feb20d53f318" rel="self" />
+  <link href="27816c58-78cd-4986-8478-feb20d53f318/e8c55bca-0185-41c8-b8b5-213ec8b65d75" rel="first" />
+  <link href="27816c58-78cd-4986-8478-feb20d53f318/7533955c-a633-45c6-85d3-0d4c299c0e2e" rel="last" />
+</feed>

@@ -165,9 +165,29 @@ rewrite.
    on NuGet.org is **1.7.4** (matches the assembly version `1.7.4.0`; the in-repo
    nuspec's `0.4.0` is stale). 2.0.0 follows directly from 1.7.4. The stale
    nuspec becomes moot once packaging moves into the SDK-style `.csproj`.
-2. **Golden-master corpus (right-sized).** A production store of several GB /
-   millions of blobs is available to sample from. Do **not** commit it
-   wholesale — **stratify** and pull a handful per bucket:
+2. **Golden-master corpus (right-sized).** _Status: extracted + scrubbed (pending
+   review/commit)._ Two tools under `tools/` produced a PII-free corpus:
+   `AtomSampleExtractor` listed 69,186 blobs across all ten categories and
+   stratified-sampled 1,200 (41 buckets, 116 kept); `AtomFixtureScrubber` emptied
+   each `<content>` payload (where all PII lives) and renamed by structural role
+   from PII-free XML only, then **thinned to minimal coverage: 8 fixtures** in two
+   sets under `tools/AtomFixtureScrubber/fixtures/`:
+   - `chain/` (6) — one real `/Organizations` stream as a **walkable linked list**:
+     `index-n0` → `first-nmany` → 3×`middle-nmany` → `last-nmany`, cross-referencing
+     by GUID (every `next`/`previous`/`first`/`last` href verified to resolve within
+     the set). The end-to-end traversal fixture.
+   - `shapes/` (2) — `single-n1`, `single-nmany`: the single-page variants a chain
+     doesn't contain.
+   Together they cover every page role + entry-band boundary in the smallest set,
+   with the multi-page roles as a genuine chain rather than unrelated pages.
+   Verified: no `auth0_`/`samlp_` identity-provider ids (nor any `@`) in any name
+   or body. Findings: persisted content is `changeset-of-*` under
+   `http://api.grean.com/authorization/2015/1` (no bare DUs); identity-provider
+   ids live only in blob _paths_ (stripped from fixture names), never in the
+   envelope (ids/hrefs are GUIDs, author is `Grean`). Remaining: human review of
+   the envelope, then place the curated subset into the test project.
+
+   Original sampling guidance (for reference / re-runs):
    - **by content type** — group by the `<content>` child's qualified name (the
      unfolded case types);
    - **by structural shape** — index feed vs first/middle/last page; which link
@@ -201,7 +221,10 @@ rewrite.
 1. SDK conversion + `netstandard2.0` retarget of the core (already proven to
    compile unchanged) → green build.
 2. Modernize the C# test suite (xUnit 2 / AutoFixture 4 / record projections)
-   → restore regression coverage on the synchronous core.
+   → restore regression coverage on the synchronous core. Also relocate the
+   golden-master fixtures from `tools/AtomFixtureScrubber/fixtures/`
+   (`chain/` + `shapes/`) into the test project, e.g.
+   `test/AtomEventStore.UnitTests/Fixtures/golden-master/`.
 3. Add the async family (interfaces, backends, observer, readers) + F# async
    tests.
 4. Stand up `AtomEventStore.AzureBlobAsync` (separate solution, Azure SDK v12)

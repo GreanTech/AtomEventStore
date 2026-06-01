@@ -1,0 +1,311 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>urn:uuid:e8c55bca-0185-41c8-b8b5-213ec8b65d75</id>
+  <title type="text">Partial event stream</title>
+  <updated>2017-02-21T13:51:41.8022443+00:00</updated>
+  <author>
+    <name>Grean</name>
+  </author>
+  <link href="27816c58-78cd-4986-8478-feb20d53f318/e8c55bca-0185-41c8-b8b5-213ec8b65d75" rel="self" />
+  <link href="27816c58-78cd-4986-8478-feb20d53f318/e85a44a5-3701-4074-905e-5eafd3d78c3a" rel="next" />
+  <entry>
+    <id>urn:uuid:3f35eb84-829c-4ee9-b40c-e976c3e65791</id>
+    <title type="text">Changeset 3f35eb84-829c-4ee9-b40c-e976c3e65791</title>
+    <published>2017-02-21T13:51:41.8022443+00:00</published>
+    <updated>2017-02-21T13:51:41.8022443+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:f0bc122a-b90f-400e-b156-60f3b93df759</id>
+    <title type="text">Changeset f0bc122a-b90f-400e-b156-60f3b93df759</title>
+    <published>2017-02-21T13:50:55.0759201+00:00</published>
+    <updated>2017-02-21T13:50:55.0759201+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:489adcb1-e618-4521-b21f-1d10cdfbaafc</id>
+    <title type="text">Changeset 489adcb1-e618-4521-b21f-1d10cdfbaafc</title>
+    <published>2017-02-21T13:50:54.8258624+00:00</published>
+    <updated>2017-02-21T13:50:54.8258624+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:e2031f4c-1e8a-4f40-bf50-dac7808f9bdb</id>
+    <title type="text">Changeset e2031f4c-1e8a-4f40-bf50-dac7808f9bdb</title>
+    <published>2017-02-21T13:50:53.9967419+00:00</published>
+    <updated>2017-02-21T13:50:53.9967419+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:4190e2b5-f002-45db-be08-cc290b876609</id>
+    <title type="text">Changeset 4190e2b5-f002-45db-be08-cc290b876609</title>
+    <published>2017-02-21T13:50:53.8717387+00:00</published>
+    <updated>2017-02-21T13:50:53.8717387+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:d926a54a-d313-402d-bf38-cc251222104e</id>
+    <title type="text">Changeset d926a54a-d313-402d-bf38-cc251222104e</title>
+    <published>2017-02-21T13:48:41.5321024+00:00</published>
+    <updated>2017-02-21T13:48:41.5321024+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:f35bbdb9-8dbd-411c-a81b-8648c1b3f7dd</id>
+    <title type="text">Changeset f35bbdb9-8dbd-411c-a81b-8648c1b3f7dd</title>
+    <published>2017-02-21T13:48:41.4554100+00:00</published>
+    <updated>2017-02-21T13:48:41.4554100+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:884f0e9f-8919-418b-a2fe-e70726f5da4d</id>
+    <title type="text">Changeset 884f0e9f-8919-418b-a2fe-e70726f5da4d</title>
+    <published>2017-02-21T13:48:13.4511224+00:00</published>
+    <updated>2017-02-21T13:48:13.4511224+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:7d96d477-5f4a-442e-9bf6-a422ddc0a06e</id>
+    <title type="text">Changeset 7d96d477-5f4a-442e-9bf6-a422ddc0a06e</title>
+    <published>2017-02-21T13:48:13.3411341+00:00</published>
+    <updated>2017-02-21T13:48:13.3411341+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:ed401299-9d47-4827-ad1f-42494fa16304</id>
+    <title type="text">Changeset ed401299-9d47-4827-ad1f-42494fa16304</title>
+    <published>2017-02-21T13:46:08.6736084+00:00</published>
+    <updated>2017-02-21T13:46:08.6736084+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:149c8e5c-f645-4213-82a3-212288b8f318</id>
+    <title type="text">Changeset 149c8e5c-f645-4213-82a3-212288b8f318</title>
+    <published>2017-02-21T13:46:08.3285901+00:00</published>
+    <updated>2017-02-21T13:46:08.3285901+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:781747ff-be9e-457a-b678-43105215083e</id>
+    <title type="text">Changeset 781747ff-be9e-457a-b678-43105215083e</title>
+    <published>2017-02-21T13:44:49.9134730+00:00</published>
+    <updated>2017-02-21T13:44:49.9134730+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:8ae0dd31-c627-4ea4-b63d-6ee5a1fe5fa3</id>
+    <title type="text">Changeset 8ae0dd31-c627-4ea4-b63d-6ee5a1fe5fa3</title>
+    <published>2017-02-21T13:44:49.8198143+00:00</published>
+    <updated>2017-02-21T13:44:49.8198143+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:f35cb339-8df2-4ee6-8bd0-56a923ff9cd1</id>
+    <title type="text">Changeset f35cb339-8df2-4ee6-8bd0-56a923ff9cd1</title>
+    <published>2017-02-21T13:43:20.8877317+00:00</published>
+    <updated>2017-02-21T13:43:20.8877317+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:939f235f-fa5c-466e-a66d-9de3dc187098</id>
+    <title type="text">Changeset 939f235f-fa5c-466e-a66d-9de3dc187098</title>
+    <published>2017-02-21T13:43:20.7776291+00:00</published>
+    <updated>2017-02-21T13:43:20.7776291+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:fddda493-ba6b-4fe8-9e78-5b5b4e16fbbd</id>
+    <title type="text">Changeset fddda493-ba6b-4fe8-9e78-5b5b4e16fbbd</title>
+    <published>2017-02-21T13:43:14.7620572+00:00</published>
+    <updated>2017-02-21T13:43:14.7620572+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:a95cdac1-bf57-4222-95fd-20dea0246c9d</id>
+    <title type="text">Changeset a95cdac1-bf57-4222-95fd-20dea0246c9d</title>
+    <published>2017-02-21T13:43:14.6538907+00:00</published>
+    <updated>2017-02-21T13:43:14.6538907+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:208fb643-f0d2-4ed0-baf0-c7c06e90aa1e</id>
+    <title type="text">Changeset 208fb643-f0d2-4ed0-baf0-c7c06e90aa1e</title>
+    <published>2017-02-21T13:35:10.1617902+00:00</published>
+    <updated>2017-02-21T13:35:10.1617902+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:160719a7-e355-42c9-bf70-e4870b414a07</id>
+    <title type="text">Changeset 160719a7-e355-42c9-bf70-e4870b414a07</title>
+    <published>2017-02-21T13:35:10.0836644+00:00</published>
+    <updated>2017-02-21T13:35:10.0836644+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:36c33371-26e6-4b7e-9d9b-c8ff65cd1613</id>
+    <title type="text">Changeset 36c33371-26e6-4b7e-9d9b-c8ff65cd1613</title>
+    <published>2017-02-21T13:24:09.3679428+00:00</published>
+    <updated>2017-02-21T13:24:09.3679428+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:b65cd19b-f79a-4d29-9820-103bcd5676cc</id>
+    <title type="text">Changeset b65cd19b-f79a-4d29-9820-103bcd5676cc</title>
+    <published>2017-02-21T13:24:09.2745578+00:00</published>
+    <updated>2017-02-21T13:24:09.2745578+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:ca4607ce-fdd4-4ada-aeaf-c9a7c6ceac39</id>
+    <title type="text">Changeset ca4607ce-fdd4-4ada-aeaf-c9a7c6ceac39</title>
+    <published>2017-01-18T23:12:04.5643060+00:00</published>
+    <updated>2017-01-18T23:12:04.5643060+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-granted-access-to-application xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:8384d689-ad0c-41bd-904a-b99c74783284</id>
+    <title type="text">Changeset 8384d689-ad0c-41bd-904a-b99c74783284</title>
+    <published>2017-01-18T23:12:04.4398497+00:00</published>
+    <updated>2017-01-18T23:12:04.4398497+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-added-to-service-role xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:a9d28ca4-83f1-4c42-a3b7-1623d91af030</id>
+    <title type="text">Changeset a9d28ca4-83f1-4c42-a3b7-1623d91af030</title>
+    <published>2017-01-18T23:12:04.2989646+00:00</published>
+    <updated>2017-01-18T23:12:04.2989646+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-user-added-to-organization xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+  <entry>
+    <id>urn:uuid:5b5c6c28-b56b-4469-b574-a6aec5be9eef</id>
+    <title type="text">Changeset 5b5c6c28-b56b-4469-b574-a6aec5be9eef</title>
+    <published>2017-01-18T23:12:04.1262169+00:00</published>
+    <updated>2017-01-18T23:12:04.1262169+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-organization-created xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+</feed>

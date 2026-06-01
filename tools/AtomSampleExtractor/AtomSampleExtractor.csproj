@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Stratified sampling / extraction tool (PLAN.md, open item #2).
+    Standalone utility - NOT part of the library solutions. Pulls a compact,
+    representative corpus of real Atom-feed blobs from a production container,
+    stratified by content type x structural shape x temporal extremes, so the
+    modern read path can be validated against what was actually persisted.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Grean.AtomEventStore.Tools.SampleExtractor</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Turns extracted production Atom-feed blobs into PII-free test fixtures.
+    Keeps the Atom envelope (ids, titles, timestamps, author, links) and each
+    <content> element's qualified name, but replaces the content payload (where
+    all PII lives) with an empty same-named element. No external dependencies.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Grean.AtomEventStore.Tools.FixtureScrubber</RootNamespace>
+  </PropertyGroup>
+
+</Project>

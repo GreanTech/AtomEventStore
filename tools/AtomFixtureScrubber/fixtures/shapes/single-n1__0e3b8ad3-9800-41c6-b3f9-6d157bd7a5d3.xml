@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>urn:uuid:0e3b8ad3-9800-41c6-b3f9-6d157bd7a5d3</id>
+  <title type="text">Partial event stream</title>
+  <updated>2017-02-21T13:58:40.5751601+00:00</updated>
+  <author>
+    <name>Grean</name>
+  </author>
+  <link href="a4b5431a-1dd9-481e-9538-5059c57ca128/0e3b8ad3-9800-41c6-b3f9-6d157bd7a5d3" rel="self" />
+  <entry>
+    <id>urn:uuid:d6a72aa7-62af-4da2-ab34-d88da7b7dd13</id>
+    <title type="text">Changeset d6a72aa7-62af-4da2-ab34-d88da7b7dd13</title>
+    <published>2017-02-21T13:58:40.5751601+00:00</published>
+    <updated>2017-02-21T13:58:40.5751601+00:00</updated>
+    <author>
+      <name>Grean</name>
+    </author>
+    <content type="application/xml">
+      <changeset-of-partner-user-claims-added xmlns="http://api.grean.com/authorization/2015/1" />
+    </content>
+  </entry>
+</feed>
