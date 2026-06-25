@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,6 +25,19 @@ namespace Grean.AtomEventStore
     public class DataContractContentSerializer : IContentSerializer
     {
         private readonly ITypeResolver resolver;
+
+        // DataContractSerializer construction is expensive (it builds the contract's read/write plan), but a
+        // constructed instance is documented thread-safe for ReadObject/WriteObject. The previous code built a
+        // fresh serializer on EVERY Serialize/Deserialize call, which dominated read CPU when folding large
+        // event streams. Cache one per CLR type (the serializer depends only on the type, not the resolver),
+        // process-wide.
+        private static readonly ConcurrentDictionary<Type, DataContractSerializer> serializerCache =
+            new ConcurrentDictionary<Type, DataContractSerializer>();
+
+        private static DataContractSerializer SerializerFor(Type type)
+        {
+            return serializerCache.GetOrAdd(type, t => new DataContractSerializer(t));
+        }
 
         /// <summary>
         /// Initializes a new instance of the
@@ -66,7 +80,7 @@ namespace Grean.AtomEventStore
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            var serializer = new DataContractSerializer(value.GetType());
+            var serializer = SerializerFor(value.GetType());
             serializer.WriteObject(xmlWriter, value);
         }
 
@@ -101,7 +115,7 @@ namespace Grean.AtomEventStore
             var xmlNamespace = xmlReader.NamespaceURI;
             var type = this.resolver.Resolve(localName, xmlNamespace);
 
-            var serializer = new DataContractSerializer(type);
+            var serializer = SerializerFor(type);
             var value = serializer.ReadObject(xmlReader);
 
             return new XmlAtomContent(value);
